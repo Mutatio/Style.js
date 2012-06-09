@@ -20,44 +20,30 @@ var Styles = [];
  * Basic functions
  */
 function isString(value) {
-	'use strict';
-
 	return typeof value === 'string';
 }
 
 function isNumber(value, disableTypesafe) {
-	'use strict';
-
 	return typeof value === 'number' || (disableTypesafe === true && isString(value) && !isNaN(value));
 }
 
 function isObject(value) {
-	'use strict';
-
 	return value instanceof Object;
 }
 
 function isArray(value) {
-	'use strict';
-
 	return value instanceof Array;
 }
 
 function isFunction(value) {
-	'use strict';
-
 	return typeof value === 'function';
 }
 
 function empty(value) {
-	'use strict';
-
 	return (value === undefined || value === null) || (isString(value) && value === '') || (isArray(value) && value.length === 0);
 }
 
 function getType(value, disableTypesafe) {
-	'use strict';
-
 	if (value !== undefined && value !== null) {
 		if (isNumber(value, disableTypesafe)) {
 			return 'number';
@@ -77,8 +63,6 @@ function getType(value, disableTypesafe) {
  * Style class
  */
 function Style(obj) {
-	'use strict';
-
 	if (this === undefined) {
 		return new Style(obj);
 	}
@@ -214,20 +198,14 @@ Style.prototype.toCSS = function () {
 };
 
 Style.prototype.toString = function () {
-	'use strict';
-
 	return this.toCSS();
 };
 
 function isStyle(value) {
-	'use strict';
-
 	return value instanceof Style;
 }
 
 function Property(obj) {
-	'use strict';
-
 	if (this === undefined) {
 		return new Property(obj);
 	}
@@ -237,8 +215,6 @@ function Property(obj) {
 }
 
 Property.prototype.compile = function (name) {
-	'use strict';
-
 	var type;
 	var out = [];
 
@@ -263,14 +239,10 @@ Property.prototype.compile = function (name) {
 };
 
 function isProperty(value) {
-	'use strict';
-
 	return value instanceof Property;
 }
 
 function toCSS() {
-	'use strict';
-
 	var len = Styles.length, CSS = '';
 
 	if (len > 0) {
@@ -288,14 +260,10 @@ function toCSS() {
  * Number Prototypes
  */
 Number.prototype.between = function (min, max) {
-	'use strict';
-
 	return this >= min && this <= max;
 };
 
 Number.prototype.equals = function () {
-	'use strict';
-
 	var len = arguments.length;
 
 	if (len > 0) {
@@ -310,8 +278,6 @@ Number.prototype.equals = function () {
 };
 
 Number.prototype.round = function (decimalPlaces) {
-	'use strict';
-
 	var multiplier = parseInt('1'.padRight('0', decimalPlaces + 1));
 
 	return Math.round(this * multiplier) / multiplier;
@@ -325,14 +291,10 @@ String.prototype.toStyle = function () {
 };
 
 String.prototype.trim = function () {
-	'use strict';
-
 	return this.replace(/^[\s]+|[\s]+$/, '');
 };
 
 String.prototype.repeat = function (count) {
-	'use strict';
-
 	if (count >= 1) {
 		var out = this.toString();
 
@@ -349,8 +311,6 @@ String.prototype.repeat = function (count) {
 };
 
 String.prototype.pad = function (character, length, direction) {
-	'use strict';
-
 	var out = this;
 
 	if (this.length < length && character.length === 1 && (direction === undefined || direction === 'left' || direction === 'right')) {
@@ -1476,8 +1436,6 @@ function toCIELab(color) {
  * Convert color to its nearest web safe equivalent
  */
 function toWebSafe(color, disableBias) {
-	'use strict';
-
 	var type = Color.getType(color);
 
 	if (type) {
@@ -1826,8 +1784,6 @@ function gradient() {
 }
 
 function shiftHue(color, angle, count) {
-	'use strict';
-
 	var type = Color.getType(color);
 
 	if (type) {
@@ -1860,8 +1816,6 @@ function shiftHue(color, angle, count) {
 }
 
 function complement(color) {
-	'use strict';
-
 	var type = Color.getType(color);
 
 	if (type) {
@@ -1888,8 +1842,6 @@ function triad(color) {
 }
 
 function square(color) {
-	'use strict';
-
 	var type = Color.getType(color);
 
 	if (type) {
@@ -1916,8 +1868,6 @@ function square(color) {
 }
 
 function tetradic(color) {
-	'use strict';
-
 	var type = Color.getType(color);
 
 	if (type) {
@@ -1956,8 +1906,6 @@ function expressionMatch(match, contents, offset, s) {
 }
 
 function calculate(expression) {
-	'use strict';
-
 	if (isNumber(emSize)) {
 		var result = eval(expression.replace(/([0-9]+(\.[0-9]+)?)em/gi,
 			expressionMatch).replace(/([0-9]+(\.[0-9]+)?)px/gi, '$1'));
@@ -1984,8 +1932,6 @@ var Properties = {
 };
 
 function borderRadius(topLeft, bottomLeft, bottomRight, topRight) {
-	'use strict';
-
 	if (topLeft && (!bottomLeft && !bottomRight && !topRight)) {
 		var len = Properties.borderRadius.length;
 		var out = {};
@@ -2038,8 +1984,6 @@ String.prototype.toHex = function () {
 };
 
 Object.prototype.toHex = function () {
-	'use strict';
-
 	var out = {};
 
 	for (var i in this) {
@@ -2054,8 +1998,6 @@ Object.prototype.toHex = function () {
 };
 
 Object.prototype.toRGB = function () {
-	'use strict';
-
 	var out = {};
 
 	for (var i in this) {
@@ -2104,8 +2046,6 @@ String.prototype.toHSL = function () {
  * Very basic CSS "parsing", very easy to break...
  */
 String.prototype.toObject = function () {
-	'use strict';
-
 	var out = {};
 	// Remove comments
 	var definitions = this.replace(/\/\*([\s\S]*?)\*\//g, '').split(/\s*\}\s*/m);
