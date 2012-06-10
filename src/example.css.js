@@ -11,17 +11,21 @@ for (var i = 0; i < 10; ++i) {
 }
 
 var CSS = '#myTestCSS {\n\
-background: red;\n\
-font-family: Arial;\n\
-border: red 1px solid;\n\
-margin: 3em;\n\
-}\n\n\
-\n\n\
-/*Comment*/\n\
-.testing h2 {\n\
-background: red;\n\
-font-family: Arial\n\
+	background: red;\n\
+	font-family: Arial;\n\
+	border: red 1px solid;\n\
+	margin: 3em;\n\
+	}\n\n\
+	\n\n\
+	/*Comment*/\n\
+	.testing h2 {\n\
+	background: red;\n\
+	font-family: Arial\n\
 }'.toObject();
+
+'inlineCSS_example {\n\
+	display: none\n\
+}'.toStyle();
 
 /**
  * Links
