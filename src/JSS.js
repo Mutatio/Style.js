@@ -92,6 +92,8 @@ function Style(obj) {
  * Compiles Style object into simple object
  */
 Style.prototype.compile = function (obj, output, parent, child) {
+	'use strict';
+
 	if (isString(this.self)) {
 		return this.self;
 	}
@@ -121,6 +123,8 @@ Style.prototype.compile = function (obj, output, parent, child) {
 };
 
 Style.prototype.compileObject = function (obj, output, parent, child) {
+	'use strict';
+
 	var compile = false;
 
 	if (child !== undefined) {
@@ -132,16 +136,13 @@ Style.prototype.compileObject = function (obj, output, parent, child) {
 			if (!(firstChar === '$' && lastChar === '$')) {
 				if (lastChar != '$') {
 					// Add pseudo class
-					child = firstChar === '$' ? ':' + child.substr(1) : ' '
-					+ child;
+					child = firstChar === '$' ? ':' + child.substr(1) : ' ' + child;
 					// Add hierarchy to CSS selectors
-					parent = parent.replace(/\s*,\s*/g, child + ', ')
-					+ child.replace(/\s*,\s*/g, ', ' + parent + ' ');
+					parent = parent.replace(/\s*,\s*/g, child + ', ') + child.replace(/\s*,\s*/g, ', ' + parent + ' ');
 				} else {
 					child = child.substr(0, len);
 					// Add hierarchy to CSS selectors
-					parent = child + ' '
-					+ parent.replace(/\s*,\s*/g, ', ' + child);
+					parent = child + ' ' + parent.replace(/\s*,\s*/g, ', ' + child);
 				}
 
 				compile = true;
@@ -167,15 +168,13 @@ Style.prototype.compileObject = function (obj, output, parent, child) {
 				else if (isArray(obj[x])) {
 					for (var y in obj[x]) {
 						if (!isFunction(obj[x][y])) {
-							output[parent].push(x.replace(/\_/g, '-') + ": "
-								+ obj[x][y]);
+							output[parent].push(x.replace(/\_/g, '-') + ": " + obj[x][y]);
 						}
 					}
 				}
 
 				else if (isProperty(obj[x])) {
-					output[parent] = output[parent].concat(obj[x].compile(x
-						.replace(/\_/g, '-')));
+					output[parent] = output[parent].concat(obj[x].compile(x.replace(/\_/g, '-')));
 				}
 
 				else if (isObject(obj[x])) {
@@ -190,6 +189,8 @@ Style.prototype.compileObject = function (obj, output, parent, child) {
  * Convert this style object to CSS
  */
 Style.prototype.toCSS = function () {
+	'use strict';
+
 	var CSS = '';
 
 	// Compile
@@ -201,8 +202,7 @@ Style.prototype.toCSS = function () {
 				// Must contain properties
 				if (obj[definition].length > 0) {
 					// Convert simple object to string
-					CSS += "\n\n" + definition + " {\n\t"
-					+ obj[definition].join(";\n\t") + "\n}";
+					CSS += "\n\n" + definition + " {\n\t" + obj[definition].join(";\n\t") + "\n}";
 				}
 			}
 		}
@@ -321,6 +321,8 @@ Number.prototype.round = function (decimalPlaces) {
  * String Prototypes
  */
 String.prototype.toStyle = function () {
+	'use strict';
+
 	Styles.push(this);
 };
 
@@ -371,18 +373,26 @@ String.prototype.pad = function (character, length, direction) {
 };
 
 String.prototype.padRight = function (character, length) {
+	'use strict';
+
 	return this.pad(character, length, 'right');
 };
 
 String.prototype.padLeft = function (character, length) {
+	'use strict';
+
 	return this.pad(character, length, 'left');
 };
 
 String.prototype.isHex = function () {
+	'use strict';
+
 	return /^([0-9a-f]+)$/i.test(this);
 };
 
 String.prototype.lengthBetween = function (min, max) {
+	'use strict';
+
 	var len = this.length;
 
 	return len >= min && len <= max;
@@ -392,6 +402,8 @@ String.prototype.lengthBetween = function (min, max) {
  * Array Prototypes
  */
 Array.prototype.unique = function () {
+	'use strict';
+
 	var assoc = {}, out = [], len = this.length;
 
 	while (len--) {
@@ -408,14 +420,20 @@ Array.prototype.unique = function () {
 };
 
 Array.prototype.max = function () {
+	'use strict';
+
 	return Math.max.apply(Math, this);
 };
 
 Array.prototype.min = function () {
+	'use strict';
+
 	return Math.min.apply(Math, this);
 };
 
 Array.prototype.sum = function (disableTypeSafe) {
+	'use strict';
+
 	var total = 0;
 
 	for (var i in this) {
@@ -428,6 +446,8 @@ Array.prototype.sum = function (disableTypeSafe) {
 };
 
 Array.prototype.contains = function (value, disableTypeSafe) {
+	'use strict';
+
 	var i = this.length;
 
 	if (disableTypeSafe !== true) {
@@ -451,6 +471,8 @@ Array.prototype.contains = function (value, disableTypeSafe) {
  * Object Prototypes
  */
 Object.prototype.extend = function (obj, override) {
+	'use strict';
+
 	if (obj) {
 		if (override) {
 			for (var property in obj) {
@@ -465,7 +487,7 @@ Object.prototype.extend = function (obj, override) {
 						this[property] = this[property].unique();
 					} else if (!isFunction(this[property])) {
 						if (isArray(obj[property])) {
-							this[property] = [ this[property] ].concat(obj[property]).unique();
+							this[property] = [this[property]].concat(obj[property]).unique();
 						} else {
 							this[property] = obj[property];
 						}
@@ -481,6 +503,8 @@ Object.prototype.extend = function (obj, override) {
 };
 
 Object.prototype.sum = function (multidimensional) {
+	'use strict';
+
 	var total = 0;
 
 	for (var i in this) {
@@ -498,6 +522,8 @@ Object.prototype.sum = function (multidimensional) {
  * Retain the JSS object, but disable in CSS output
  */
 Object.prototype.disable = function () {
+	'use strict';
+
 	return null;
 };
 
@@ -505,10 +531,14 @@ Object.prototype.disable = function () {
  * Wraps object in Style class
  */
 Object.prototype.toStyle = function () {
+	'use strict';
+
 	return new Style(this);
 };
 
 Object.prototype.stringify = function () {
+	'use strict';
+
 	var out = [];
 
 	for (var i in this) {
@@ -525,9 +555,13 @@ Object.prototype.stringify = function () {
 };
 
 Object.prototype.getType = function () {
+	'use strict';
+
 	var result = /function (.{1,})\(/.exec(this.constructor);
 
-	return (result && result.length > 1) ? result[1] : null;
+	if (result && result.length > 1) {
+		return result[1];
+	}
 };
 
 var Colors = {
@@ -570,7 +604,7 @@ var Colors = {
 	'00008b': 'darkblue',
 	'008b8b': 'darkcyan',
 	'b8860b': 'darkgoldenrod',
-	'a9a9a9': [ 'darkgray', 'darkgrey' ],
+	'a9a9a9': ['darkgray', 'darkgrey'],
 	'006400': 'darkgreen',
 	'bdb76b': 'darkkhaki',
 	'8b008b': 'darkmagenta',
@@ -581,12 +615,12 @@ var Colors = {
 	'e9967a': 'darksalmon',
 	'8fbc8f': 'darkseagreen',
 	'483d8b': 'darkslateblue',
-	'2f4f4f': [ 'darkslategray', 'darkslategrey' ],
+	'2f4f4f': ['darkslategray', 'darkslategrey'],
 	'00ced1': 'darkturquoise',
 	'9400d3': 'darkviolet',
 	'ff1493': 'deeppink',
 	'00bfff': 'deepskyblue',
-	'696969': [ 'dimgray', 'dimgrey' ],
+	'696969': ['dimgray', 'dimgrey'],
 	'1e90ff': 'dodgerblue',
 	'b22222': 'firebrick',
 	'fffaf0': 'floralwhite',
@@ -610,13 +644,13 @@ var Colors = {
 	'f08080': 'lightcoral',
 	'e0ffff': 'lightcyan',
 	'fafad2': 'lightgoldenrodyellow',
-	'd3d3d3': [ 'lightgray', 'lightgrey' ],
+	'd3d3d3': ['lightgray', 'lightgrey'],
 	'90ee90': 'lightgreen',
 	'ffb6c1': 'lightpink',
 	'ffa07a': 'lightsalmon',
 	'20b2aa': 'lightseagreen',
 	'87cefa': 'lightskyblue',
-	'778899': [ 'lightslategray', 'lightslategrey' ],
+	'778899': ['lightslategray', 'lightslategrey'],
 	'b0c4de': 'lightsteelblue',
 	'ffffe0': 'lightyellow',
 	'32cd32': 'limegreen',
@@ -660,7 +694,7 @@ var Colors = {
 	'a0522d': 'sienna',
 	'87ceeb': 'skyblue',
 	'6a5acd': 'slateblue',
-	'708090': [ 'slategray', 'slategrey' ],
+	'708090': ['slategray', 'slategrey'],
 	'fffafa': 'snow',
 	'00ff7f': 'springgreen',
 	'4682b4': 'steelblue',
@@ -807,13 +841,13 @@ var Color = {
 var Colour = Color;
 
 function RGB(red, green, blue) {
-	// Public
+	'use strict';
+
 	this.red = null;
 	this.green = null;
 	this.blue = null;
 
-	if (red !== undefined
-		&& ((green === undefined && blue === undefined) || (isNumber(green) && isNumber(blue)))) {
+	if (red !== undefined && ((green === undefined && blue === undefined) || (isNumber(green) && isNumber(blue)))) {
 		if (green === undefined) {
 			if (isObject(red) && red instanceof this.constructor) {
 				this.red = red.red;
@@ -839,22 +873,30 @@ function RGB(red, green, blue) {
 }
 
 RGB.prototype.isSet = function () {
+	'use strict';
+
 	return isNumber(this.red) && isNumber(this.green) && isNumber(this.blue);
 };
 
 RGB.prototype.toHex = function () {
+	'use strict';
+
 	if (this.isSet()) {
 		return new Hex('#' + (1 << 24 | this.red << 16 | this.green << 8 | this.blue).toString(16).substr(1));
 	}
 };
 
 RGB.prototype.toRGBA = function () {
+	'use strict';
+
 	if (this.isSet()) {
 		return new RGBA(this.red, this.green, this.blue, 1);
 	}
 };
 
 RGB.prototype.toHSL = function () {
+	'use strict';
+
 	if (this.isSet()) {
 		var red = this.red / 255;
 		var green = this.green / 255;
@@ -893,6 +935,8 @@ RGB.prototype.toHSL = function () {
 };
 
 RGB.prototype.toHSV = function () {
+	'use strict';
+
 	if (this.isSet()) {
 		var hue = null, saturation = null;
 		var max = Math.max(this.red, this.green, this.blue);
@@ -919,6 +963,8 @@ RGB.prototype.toHSV = function () {
 };
 
 RGB.prototype.toXYZ = function () {
+	'use strict';
+
 	if (this.isSet()) {
 		var X = this.red / 255;
 		var Y = this.green / 255;
@@ -933,53 +979,53 @@ RGB.prototype.toXYZ = function () {
 };
 
 RGB.prototype.toCSS = function () {
+	'use strict';
+
 	if (this.isSet()) {
 		return 'rgb(' + Math.round(this.red) + ', ' + Math.round(this.green) + ', ' + Math.round(this.blue) + ')';
 	}
 };
 
 RGB.prototype.toString = function () {
+	'use strict';
+
 	return this.toCSS();
 };
 
 RGB.random = function () {
-	return new RGB(Math.floor(Math.random() * 255), Math
-		.floor(Math.random() * 255), Math.floor(Math.random() * 255));
+	'use strict';
+
+	return new RGB(Math.floor(Math.random() * 255), Math.floor(Math.random() * 255), Math.floor(Math.random() * 255));
 };
 
 RGBA.prototype = new RGB();
 RGBA.prototype.constructor = RGBA;
 
 function RGBA(red, green, blue, alpha) {
+	'use strict';
+
 	this.red = null;
 	this.green = null;
 	this.blue = null;
 	this.alpha = null;
 
 	this.isSet = function () {
-		return isNumber(this.red) && isNumber(this.green)
-		&& isNumber(this.blue) && isNumber(this.alpha);
+		return isNumber(this.red) && isNumber(this.green) && isNumber(this.blue) && isNumber(this.alpha);
 	};
 
 	this.toHex = function () {
 		if (this.isSet()) {
-			return (256 + this.red).toString(16).substr(1)
-			+ ((1 << 24) + (this.green << 16) | (this.blue << 8) | this.alpha)
-			.toString(16).substr(1);
+			return (256 + this.red).toString(16).substr(1) + ((1 << 24) + (this.green << 16) | (this.blue << 8) | this.alpha).toString(16).substr(1);
 		}
 	};
 
 	this.toCSS = function () {
 		if (this.isSet()) {
-			return 'rgba(' + Math.round(this.red) + ', '
-			+ Math.round(this.green) + ', ' + Math.round(this.blue)
-			+ ', ' + this.alpha + ')';
+			return 'rgba(' + Math.round(this.red) + ', ' + Math.round(this.green) + ', ' + Math.round(this.blue) + ', ' + this.alpha + ')';
 		}
 	};
 
-	if (red !== undefined
-		&& ((green === undefined && blue === undefined && alpha === undefined) || (isNumber(green)
-			&& isNumber(blue) && isNumber(alpha)))) {
+	if (red !== undefined && ((green === undefined && blue === undefined && alpha === undefined) || (isNumber(green) && isNumber(blue) && isNumber(alpha)))) {
 		if (green === undefined) {
 			if (isObject(red) && red instanceof this.constructor) {
 				this.red = red.red;
@@ -1012,6 +1058,8 @@ RGBA.prototype.toString = function () {
 };
 
 function Hex(hex) {
+	'use strict';
+
 	this.value = null;
 
 	if (isString(hex)) {
@@ -1022,10 +1070,14 @@ function Hex(hex) {
 }
 
 Hex.prototype.isSet = function () {
+	'use strict';
+
 	return !empty(this.value);
 };
 
 Hex.prototype.setValue = function (hex) {
+	'use strict';
+
 	if (hex) {
 		hex = hex.toLowerCase();
 
@@ -1042,34 +1094,46 @@ Hex.prototype.setValue = function (hex) {
 };
 
 Hex.prototype.toRGB = function () {
+	'use strict';
+
 	if (this.value) {
 		return new RGB(parseInt(this.value.substring(0, 2), 16), parseInt(this.value.substring(2, 4), 16), parseInt(this.value.substring(4, 6), 16));
 	}
 };
 
 Hex.prototype.toHSL = function () {
+	'use strict';
+
 	if (this.value) {
 		return this.toRGB().toHSL();
 	}
 };
 
 Hex.prototype.toHSV = function () {
+	'use strict';
+
 	if (this.value) {
 		return this.toRGB().toHSV();
 	}
 };
 
 Hex.prototype.toCSS = function () {
+	'use strict';
+
 	if (!empty(this.value)) {
 		return '#' + this.value;
 	}
 };
 
 Hex.prototype.toString = function () {
+	'use strict';
+
 	return this.toCSS();
 };
 
 Hex.isValid = function (hex) {
+	'use strict';
+
 	if (hex) {
 		if (hex.charAt(0) === '#') {
 			hex = hex.substring(1);
@@ -1082,10 +1146,14 @@ Hex.isValid = function (hex) {
 };
 
 Hex.isTriplet = function (hex) {
+	'use strict';
+
 	return hex && hex.length === 3;
 };
 
 Hex.expand = function (hex) {
+	'use strict';
+
 	if (Hex.isTriplet(hex)) {
 		var c = hex.split('');
 
@@ -1096,10 +1164,14 @@ Hex.expand = function (hex) {
 };
 
 Hex.random = function () {
+	'use strict';
+
 	return RGB.random().toHex();
 };
 
 function HSL(hue, saturation, lightness) {
+	'use strict';
+
 	this.hue = null;
 	this.saturation = null;
 	this.lightness = null;
@@ -1120,10 +1192,14 @@ function HSL(hue, saturation, lightness) {
 }
 
 HSL.prototype.isSet = function () {
+	'use strict';
+
 	return isNumber(this.hue) && isNumber(this.saturation) && isNumber(this.lightness);
 };
 
 HSL.prototype.toRGB = function () {
+	'use strict';
+
 	if (this.isSet()) {
 		var red, green, blue;
 		var hue = this.hue / 360;
@@ -1148,34 +1224,44 @@ HSL.prototype.toRGB = function () {
 };
 
 HSL.prototype.toHex = function () {
+	'use strict';
+
 	if (this.isSet()) {
 		return this.toRGB().toHex();
 	}
 };
 
 HSL.prototype.toHSV = function () {
+	'use strict';
+
 	if (this.isSet()) {
 		return this.toRGB().toHSV();
 	}
 };
 
 HSL.prototype.toCSS = function () {
+	'use strict';
+
 	if (this.isSet()) {
-		return 'hsl(' + Math.round(this.hue) + ', '
-		+ Math.round(this.saturation) + '%, '
-		+ Math.round(this.lightness) + '%)';
+		return 'hsl(' + Math.round(this.hue) + ', ' + Math.round(this.saturation) + '%, ' + Math.round(this.lightness) + '%)';
 	}
 };
 
 HSL.prototype.toString = function () {
+	'use strict';
+
 	return this.toCSS();
 };
 
 HSL.random = function () {
+	'use strict';
+
 	return RGB.random().toHSL();
 };
 
 function HSV(hue, saturation, value) {
+	'use strict';
+
 	this.hue = null;
 	this.saturation = null;
 	this.value = null;
@@ -1196,10 +1282,14 @@ function HSV(hue, saturation, value) {
 }
 
 HSV.prototype.isSet = function () {
+	'use strict';
+
 	return isNumber(this.hue) && isNumber(this.saturation) && isNumber(this.value);
 };
 
 HSV.prototype.toRGB = function () {
+	'use strict';
+
 	if (this.isSet()) {
 		var hue = this.hue;
 		var saturation = this.saturation;
@@ -1271,22 +1361,30 @@ HSV.prototype.toRGB = function () {
 };
 
 HSV.prototype.toHex = function () {
+	'use strict';
+
 	if (this.isSet()) {
 		return this.toRGB().toHex();
 	}
 };
 
 HSV.prototype.toHSL = function () {
+	'use strict';
+
 	if (this.isSet()) {
 		return this.toRGB().toHSL();
 	}
 };
 
 HSV.random = function () {
+	'use strict';
+
 	return RGB.random().toHSV();
 };
 
 function XYZ(X, Y, Z) {
+	'use strict';
+
 	this.X = null;
 	this.Y = null;
 	this.Z = null;
@@ -1307,10 +1405,14 @@ function XYZ(X, Y, Z) {
 }
 
 XYZ.prototype.isSet = function () {
+	'use strict';
+
 	return isNumber(this.X) && isNumber(this.Y) && isNumber(this.Z);
 };
 
 XYZ.prototype.toRGB = function () {
+	'use strict';
+
 	if (this.isSet()) {
 		var X = this.X / 100;
 		var Y = this.Y / 100;
@@ -1327,12 +1429,16 @@ XYZ.prototype.toRGB = function () {
 };
 
 XYZ.prototype.toHex = function () {
+	'use strict';
+
 	if (this.isSet()) {
 		return this.toRGB().toHex();
 	}
 };
 
 XYZ.prototype.toCIELab = function () {
+	'use strict';
+
 	if (this.isSet()) {
 		var X = this.X / 95.047;
 		var Y = this.Y / 100;
@@ -1351,6 +1457,8 @@ XYZ.prototype.toCIELab = function () {
 };
 
 function CIELab(L, a, b) {
+	'use strict';
+
 	this.L = null;
 	this.a = null;
 	this.b = null;
@@ -1371,22 +1479,30 @@ function CIELab(L, a, b) {
 }
 
 CIELab.prototype.isSet = function () {
+	'use strict';
+
 	return isNumber(this.L) && isNumber(this.a) && isNumber(this.b);
 };
 
 CIELab.prototype.toRBG = function () {
+	'use strict';
+
 	if (this.isSet()) {
 		return this.toXYZ().toRBG();
 	}
 };
 
 CIELab.prototype.toHex = function () {
+	'use strict';
+
 	if (this.isSet()) {
 		return this.toXYZ().toRBG().toHex();
 	}
 };
 
 CIELab.prototype.toXYZ = function () {
+	'use strict';
+
 	var Y = (this.L + 16) / 116;
 	var X = this.a / 500 + Y;
 	var Z = Y - this.b / 200;
@@ -1435,12 +1551,14 @@ var Hue = {
 };
 
 function toColorSpace(color, space) {
+	'use strict';
+
 	var type = Color.getType(color);
 
 	if (type && space) {
 		var func = 'to' + space;
 
-		color = new this[type](color);
+		color = new global[type](color);
 
 		if (isFunction(color[func])) {
 			return color[func]();
@@ -1449,26 +1567,38 @@ function toColorSpace(color, space) {
 }
 
 function toRGB(color) {
+	'use strict';
+
 	return toColorSpace(color, Color.RGB);
 }
 
 function toHex(color) {
+	'use strict';
+
 	return toColorSpace(color, Color.HEX);
 }
 
 function toHSL(color) {
+	'use strict';
+
 	return toColorSpace(color, Color.HSL);
 }
 
 function toHSV(color) {
+	'use strict';
+
 	return toColorSpace(color, Color.HSV);
 }
 
 function toXYZ(color) {
+	'use strict';
+
 	return toColorSpace(color, Color.XYZ);
 }
 
 function toCIELab(color) {
+	'use strict';
+
 	return toColorSpace(color, Color.CIELAB);
 }
 
@@ -1507,6 +1637,8 @@ function toWebSafe(color, disableBias) {
  * Convert color to its exact or nearest named equivalent
  */
 function toNamed(color, approximate, disableBias) {
+	'use strict';
+
 	color = toHex(color);
 
 	if (color !== undefined && color.isSet()) {
@@ -1559,23 +1691,20 @@ function toNamed(color, approximate, disableBias) {
  * Calculate Euclidean distance between two colors
  */
 function distance(color1, color2, disableBias) {
+	'use strict';
+
 	color1 = toRGB(color1);
 	color2 = toRGB(color2);
 
-	if (color1 !== undefined && color2 !== undefined && color1.isSet()
-		&& color2.isSet()) {
+	if (color1 !== undefined && color2 !== undefined && color1.isSet() && color2.isSet()) {
 		var result = 0;
 
 		// Euclidean distance
 		if (disableBias !== true) {
 			// Bias according to eye sensitivity
-			result = (Math.pow(color2.red - color1.red, 2) * 0.3)
-			+ (Math.pow(color2.green - color1.green, 2) * 0.59)
-			+ (Math.pow(color2.blue - color1.blue, 2) * 0.11);
+			result = (Math.pow(color2.red - color1.red, 2) * 0.3) + (Math.pow(color2.green - color1.green, 2) * 0.59) + (Math.pow(color2.blue - color1.blue, 2) * 0.11);
 		} else {
-			result = Math.pow(color2.red - color1.red, 2)
-			+ Math.pow(color2.green - color1.green, 2)
-			+ Math.pow(color2.blue - color1.blue, 2);
+			result = Math.pow(color2.red - color1.red, 2) + Math.pow(color2.green - color1.green, 2) + Math.pow(color2.blue - color1.blue, 2);
 		}
 
 		return Math.sqrt(result);
@@ -1583,6 +1712,8 @@ function distance(color1, color2, disableBias) {
 }
 
 function mix() {
+	'use strict';
+
 	var len = arguments.length;
 
 	if (len > 0) {
@@ -1624,6 +1755,8 @@ function mix() {
 }
 
 function mutate(color, change) {
+	'use strict';
+
 	var type = Color.getType(color);
 
 	if (type && isNumber(change) && change.between(0, 1)) {
@@ -1632,9 +1765,7 @@ function mutate(color, change) {
 
 		if (color !== undefined && color.isSet()) {
 			// Mutated red
-			var red = Math.random() * 2 > 1 ? color.red + change : color.red
-			- change;
-			// var red = color.red + (Math.random() * 2 > 1 ? change : -change);
+			var red = Math.random() * 2 > 1 ? color.red + change : color.red - change;
 
 			if (red > 255) {
 				red = color.red - change;
@@ -1643,10 +1774,7 @@ function mutate(color, change) {
 			}
 
 			// Mutated green
-			var green = Math.random() * 2 > 1 ? color.green + change
-			: color.green - change;
-			// var green = color.green + (Math.random() * 2 > 1 ? change :
-			// -change);
+			var green = Math.random() * 2 > 1 ? color.green + change : color.green - change;
 
 			if (green > 255) {
 				green = color.green - change;
@@ -1655,10 +1783,7 @@ function mutate(color, change) {
 			}
 
 			// Mutated blue
-			var blue = Math.random() * 2 > 1 ? color.blue + change : color.blue
-			- change;
-			// var blue = color.blue + (Math.random() * 2 > 1 ? change :
-			// -change);
+			var blue = Math.random() * 2 > 1 ? color.blue + change : color.blue - change;
 
 			if (blue > 255) {
 				blue = color.blue - change;
@@ -1672,10 +1797,11 @@ function mutate(color, change) {
 }
 
 function adjustSaturation(color, multiplier, adjustment) {
+	'use strict';
+
 	var type = Color.getType(color);
 
-	if (type && isNumber(multiplier)
-		&& [ 'saturate', 'desaturate' ].contains(adjustment)) {
+	if (type && isNumber(multiplier) && ['saturate', 'desaturate'].contains(adjustment)) {
 		color = toHSV(color);
 
 		if (color !== undefined && color.isSet()) {
@@ -1701,18 +1827,26 @@ function adjustSaturation(color, multiplier, adjustment) {
 }
 
 function saturate(color, multiplier) {
+	'use strict';
+
 	return adjustSaturation(color, multiplier, 'saturate');
 }
 
 function desaturate(color, multiplier) {
+	'use strict';
+
 	return adjustSaturation(color, multiplier, 'desaturate');
 }
 
 function grayscale(color) {
+	'use strict';
+
 	return adjustSaturation(color, 1, 'desaturate');
 }
 
 function greyscale(color) {
+	'use strict';
+
 	return adjustSaturation(color, 1, 'desaturate');
 }
 
@@ -1720,10 +1854,11 @@ function greyscale(color) {
  * Basic adjustment of the lightness of a color
  */
 function adjustLightness(color, multiplier, adjustment) {
+	'use strict';
+
 	var type = Color.getType(color);
 
-	if (type && isNumber(multiplier)
-		&& [ 'darken', 'lighten' ].contains(adjustment)) {
+	if (type && isNumber(multiplier) && ['darken', 'lighten'].contains(adjustment)) {
 		color = toHSL(color);
 
 		if (color !== undefined && color.isSet()) {
@@ -1750,6 +1885,8 @@ function adjustLightness(color, multiplier, adjustment) {
  * Darkens a color by a multiplier value, e.g. 0.25 darkens by 25%
  */
 function darken(color, multiplier) {
+	'use strict';
+
 	return adjustLightness(color, multiplier, 'darken');
 }
 
@@ -1757,10 +1894,14 @@ function darken(color, multiplier) {
  * Lightens a color by a multiplier value, e.g. 0.25 lightens by 25%
  */
 function lighten(color, multiplier) {
+	'use strict';
+
 	return adjustLightness(color, multiplier, 'lighten');
 }
 
 function gradient() {
+	'use strict';
+
 	var len = arguments.length;
 
 	if (len > 1) {
@@ -1789,7 +1930,7 @@ function gradient() {
 
 				if (colorsLen > 1) {
 					var last = toRGB(colors[0]);
-					var out = [ Color.toType(last, type) ];
+					var out = [Color.toType(last, type)];
 					var realLen = 1;
 					var current, changeR, changeG, changeB;
 
@@ -1844,7 +1985,6 @@ function shiftHue(color, angle, count) {
 				count++;
 
 				color.hue = Hue.shift(color.hue, -angle);
-
 				out.push(Color.toType(color, type));
 
 				for (var i = 2; i < count; ++i) {
@@ -1876,14 +2016,20 @@ function complement(color) {
 }
 
 function analogous(color) {
+	'use strict';
+
 	return shiftHue(color, 30);
 }
 
 function split(color) {
+	'use strict';
+
 	return shiftHue(color, 150);
 }
 
 function triad(color) {
+	'use strict';
+
 	return shiftHue(color, 120);
 }
 
@@ -1946,12 +2092,16 @@ function tetradic(color) {
 var emSize = 16;
 
 function setEmSize(value) {
+	'use strict';
+
 	if (isNumber(value)) {
 		emSize = value;
 	}
 }
 
 function expressionMatch(match, contents, offset, s) {
+	'use strict';
+
 	return contents * emSize;
 }
 
@@ -1972,15 +2122,17 @@ function calculate(expression) {
  * CSS3-like calc()
  */
 function calc(expression) {
+	'use strict';
+
 	return calculate(expression);
 }
 
 var Properties = {
-	borderRadius: [ '-webkit-border-radius', '-moz-border-radius', 'border-radius' ],
-	borderTopLeft: [ '-webkit-border-top-left-radius', '-moz-border-radius-topleft', 'border-top-left-radius' ],
-	borderBottomLeft: [ '-webkit-border-bottom-left-radius', '-moz-border-radius-bottomleft', 'border-bottom-left-radius' ],
-	borderBottomRight: [ '-webkit-border-bottom-right-radius', '-moz-border-radius-bottomright', 'border-bottom-right-radius' ],
-	borderTopRight: [ '-webkit-border-top-right-radius', '-moz-border-radius-topright', 'border-top-right-radius' ]
+	borderRadius: ['-webkit-border-radius', '-moz-border-radius', 'border-radius'],
+	borderTopLeft: ['-webkit-border-top-left-radius', '-moz-border-radius-topleft', 'border-top-left-radius'],
+	borderBottomLeft: ['-webkit-border-bottom-left-radius', '-moz-border-radius-bottomleft', 'border-bottom-left-radius'],
+	borderBottomRight: ['-webkit-border-bottom-right-radius', '-moz-border-radius-bottomright', 'border-bottom-right-radius'],
+	borderTopRight: ['-webkit-border-top-right-radius', '-moz-border-radius-topright', 'border-top-right-radius']
 };
 
 function borderRadius(topLeft, bottomLeft, bottomRight, topRight) {
@@ -2030,10 +2182,14 @@ function borderRadius(topLeft, bottomLeft, bottomRight, topRight) {
 }
 
 function toHexMatch(match, contents, offset, s) {
+	'use strict';
+
 	return toHex(contents);
 }
 
 String.prototype.toHex = function () {
+	'use strict';
+
 	return this.replace(Color.regex.all, toHexMatch);
 };
 
@@ -2070,6 +2226,8 @@ Object.prototype.toRGB = function () {
 };
 
 Object.prototype.toHSL = function () {
+	'use strict';
+
 	var out = {};
 
 	for (var i in this) {
@@ -2084,18 +2242,26 @@ Object.prototype.toHSL = function () {
 };
 
 function toRGBMatch(match, contents, offset, s) {
+	'use strict';
+
 	return toRGB(contents);
 }
 
 String.prototype.toRGB = function () {
+	'use strict';
+
 	return this.replace(Color.regex.all, toRGBMatch);
 };
 
 function toHSLMatch(match, contents, offset, s) {
+	'use strict';
+
 	return toHSL(contents);
 }
 
 String.prototype.toHSL = function () {
+	'use strict';
+
 	return this.replace(Color.regex.all, toHSLMatch);
 };
 
