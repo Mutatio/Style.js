@@ -1,0 +1,3 @@
+# Ignore tmp dir
+tmp/*
+
