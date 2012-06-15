@@ -18,7 +18,6 @@
 
 	var Styles = [];
 	var emSize = 16;
-	//var CSSColorTypes = ['Hex', 'RGB', 'RGBA', 'HSL', 'HSLA'];
 	var CSSColorTypes = ['Hex', 'RGB', 'HSL'];
 	var Properties = {
 		borderRadius: ['-webkit-border-radius', '-moz-border-radius', 'border-radius'],
@@ -1712,7 +1711,6 @@
 			}
 		}
 	};
-
 
 	/**
 	 * Dynamically add 'toSpace' methods
