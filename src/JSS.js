@@ -18,7 +18,8 @@
 
 	var Styles = [];
 	var emSize = 16;
-	var CSSColorValues = ['Hex', 'RGB', 'RGBA', 'HSL', 'HSLA'];
+	//var CSSColorTypes = ['Hex', 'RGB', 'RGBA', 'HSL', 'HSLA'];
+	var CSSColorTypes = ['Hex', 'RGB', 'HSL'];
 	var Properties = {
 		borderRadius: ['-webkit-border-radius', '-moz-border-radius', 'border-radius'],
 		borderTopLeft: ['-webkit-border-top-left-radius', '-moz-border-radius-topleft', 'border-top-left-radius'],
@@ -467,7 +468,7 @@
 	function Color() {
 	}
 
-	Color.NAMED = 'NAMED';
+	Color.NAMED = 'Named';
 	Color.HEX = 'Hex';
 	Color.RGB = 'RGB';
 	Color.RGBA = 'RGBA';
@@ -475,6 +476,14 @@
 	Color.HSV = 'HSV';
 	Color.XYZ = 'XYZ';
 	Color.CIELAB = 'CIELab';
+	Color.types = [];
+
+	for (var i in Color) {
+		if (isString(Color[i])) {
+			Color.types.push(Color[i]);
+		}
+	}
+
 	Color.regex = {};
 	Color.regex.hex = /^\s*#[a-f0-9]{3,6}\s*$/i;
 	Color.regex.RGB = /^\s*rgb\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\)\s*$/i;
@@ -556,8 +565,8 @@
 	};
 
 	/**
-    * Style class
-    */
+	* Style class
+	*/
 	function Style(obj) {
 		if (this === undefined) {
 			return new Style(obj);
@@ -659,8 +668,8 @@
 	};
 
 	/**
-    * Convert this style object to CSS
-    */
+	* Convert this style object to CSS
+	*/
 	Style.prototype.toCSS = function () {
 		var CSS = '';
 
@@ -729,8 +738,8 @@
 	};
 
 	/**
-     * RGB color functionality
-     */
+	* RGB color functionality
+	*/
 	function RGB(red, green, blue) {
 		this.red = null;
 		this.green = null;
@@ -872,8 +881,8 @@
 	$.RGB = RGB;
 
 	/**
-     * Hex color functionality
-     */
+	* Hex color functionality
+	*/
 	function Hex(hex) {
 		this.value = null;
 
@@ -1313,8 +1322,8 @@
 	};
 
 	/**
-    * Calculate Euclidean distance between two colors
-    */
+	* Calculate Euclidean distance between two colors
+	*/
 	$.distance = function (color1, color2, disableBias) {
 		color1 = toRGB(color1);
 		color2 = toRGB(color2);
@@ -1419,7 +1428,7 @@
 		var type = Color.getType(color);
 
 		if (type && isNumber(multiplier) && ['saturate', 'desaturate'].contains(adjustment)) {
-			color = toHSV(color);
+			color = toHSL(color);
 
 			if (color !== undefined && color.isSet()) {
 				var saturation = color.saturation;
@@ -1456,8 +1465,8 @@
 	};
 
 	/**
-    * Basic adjustment of the lightness of a color
-    */
+	* Basic adjustment of the lightness of a color
+	*/
 	$.adjustLightness = function (color, multiplier, adjustment) {
 		var type = Color.getType(color);
 
@@ -1485,15 +1494,15 @@
 	};
 
 	/**
-    * Darkens a color by a multiplier value, e.g. 0.25 darkens by 25%
-    */
+	* Darkens a color by a multiplier value, e.g. 0.25 darkens by 25%
+	*/
 	$.darken = function (color, multiplier) {
 		return adjustLightness(color, multiplier, 'darken');
 	};
 
 	/**
-    * Lightens a color by a multiplier value, e.g. 0.25 lightens by 25%
-    */
+	* Lightens a color by a multiplier value, e.g. 0.25 lightens by 25%
+	*/
 	$.lighten = function (color, multiplier) {
 		return adjustLightness(color, multiplier, 'lighten');
 	};
@@ -1640,8 +1649,8 @@
 	};
 
 	/**
-    * CSS3-like calc()
-    */
+	* CSS3-like calc()
+	*/
 	$.calc = function (expression) {
 		return calculate(expression);
 	};
@@ -1704,33 +1713,23 @@
 		}
 	};
 
-	$.toRGB = function (color) {
-		return toColorSpace(color, Color.RGB);
-	};
-
-	$.toHex = function (color) {
-		return toColorSpace(color, Color.HEX);
-	};
-
-	$.toHSL = function (color) {
-		return toColorSpace(color, Color.HSL);
-	};
-
-	$.toHSV = function (color) {
-		return toColorSpace(color, Color.HSV);
-	};
-
-	$.toXYZ = function (color) {
-		return toColorSpace(color, Color.XYZ);
-	};
-
-	$.toCIELab = function (color) {
-		return toColorSpace(color, Color.CIELAB);
-	};
 
 	/**
-    * Convert color to its nearest web safe equivalent
-    */
+	 * Dynamically add 'toSpace' methods
+	 */
+	for (var i in Color.types) {
+		var type = Color.types[i];
+
+		if (isString(type)) {
+			var func = 'to' + type;
+
+			$[func] = new Function('color', 'return toColorSpace(color, \'' + type + '\');');
+		}
+	}
+
+	/**
+	* Convert color to its nearest web safe equivalent
+	*/
 	$.toWebSafe = function (color, disableBias) {
 		var type = Color.getType(color);
 
@@ -1762,8 +1761,8 @@
 	};
 
 	/**
-    * Convert color to its exact or nearest named equivalent
-    */
+	* Convert color to its exact or nearest named equivalent
+	*/
 	$.toNamed = function (color, approximate, disableBias) {
 		color = toHex(color);
 
@@ -1856,34 +1855,31 @@
 		return out;
 	};
 
-	$.toRGBMatch = function (match, contents, offset, s) {
-		return toRGB(contents);
-	};
-
-	String.prototype.toRGB = function () {
-		return this.replace(Color.regex.all, toRGBMatch);
-	};
-
-	$.toHexMatch = function (match, contents, offset, s) {
-		return toHex(contents);
-	};
-
-	String.prototype.toHex = function () {
-		return this.replace(Color.regex.all, toHexMatch);
-	};
-
-	$.toHSLMatch = function (match, contents, offset, s) {
-		return toHSL(contents);
-	};
-
-	String.prototype.toHSL = function () {
-		return this.replace(Color.regex.all, toHSLMatch);
+	/**
+	 * Functionality to extract CSS color values from strings and convert them as desired
+	 */
+	String.prototype.toColorSpace = function (space) {
+		return this.replace(Color.regex.all, function (match, contents, offset, s) {
+			return $['to' + space](contents);
+		});
 	};
 
 	/**
-    * TODO: IMPROVE
-    * Very basic CSS "parsing", very easy to break...
-    */
+	 * Dynamically add String.prototype.'toSpace' methods
+	 */
+	for (i in CSSColorTypes) {
+		type = CSSColorTypes[i];
+
+		if (isString(type)) {
+			func = 'to' + type;
+			String.prototype[func] = new Function('return this.toColorSpace(\'' + type + '\');');
+		}
+	}
+
+	/**
+	* TODO: IMPROVE
+	* Very basic CSS "parsing", very easy to break...
+	*/
 	String.prototype.toObject = function () {
 		var out = {};
 		// Remove comments
