@@ -1696,8 +1696,6 @@
 		}
 	};
 
-
-
 	/**
 	 * Dynamically add 'toSpace' methods
 	 */
@@ -1793,16 +1791,6 @@
 				return out;
 			}
 		}
-	};
-
-	Array.prototype.toHex = function () {
-		var out = [];
-
-		for (var i in this) {
-			out.push(isString(this[i]) ? this[i].toHex() : this[i]);
-		}
-
-		return out;
 	};
 
 	/**
