@@ -813,20 +813,20 @@
 			var max = Math.max(this.red, this.green, this.blue);
 			var diff = max - Math.min(this.red, this.green, this.blue);
 
-			saturation = (max == 0.0) ? 0 : (100 * diff / max);
+			saturation = (max == 0) ? 0 : (100 * diff / max);
 
 			if (saturation === 0) {
 				hue = 0;
 			} else if (this.red === max) {
-				hue = 60.0 * (this.green - this.blue) / diff;
+				hue = 60 * (this.green - this.blue) / diff;
 			} else if (this.green === max) {
-				hue = 120.0 + 60.0 * (this.blue - this.red) / diff;
+				hue = 120 + 60 * (this.blue - this.red) / diff;
 			} else if (this.blue === max) {
-				hue = 240.0 + 60.0 * (this.red - this.green) / diff;
+				hue = 240 + 60 * (this.red - this.green) / diff;
 			}
 
-			if (hue < 0.0) {
-				hue += 360.0;
+			if (hue < 0) {
+				hue += 360;
 			}
 
 			return new HSV(Math.round(hue), Math.round(saturation), Math.round(max * 100 / 255));
@@ -1176,6 +1176,7 @@
 			var red = (X * 3.2406) + (Y * -1.5372) + (Z * -0.4986);
 			var green = (X * -0.9689) + (Y * 1.8758) + (Z * 0.0415);
 			var blue = (X * 0.0557) + (Y * -0.2040) + (Z * 1.0570);
+
 			red = Math.round((red > 0.0031308 ? (1.055 * Math.pow(red, 1 / 2.4)) - 0.055 : 12.92 * red) * 255);
 			green = Math.round((green > 0.0031308 ? (1.055 * Math.pow(green, 1 / 2.4)) - 0.055 : 12.92 * green) * 255);
 			blue = Math.round((blue > 0.0031308 ? (1.055 * Math.pow(blue, 1 / 2.4)) - 0.055 : 12.92 * blue) * 255);
@@ -1293,12 +1294,12 @@
 	Hue.shift = function (hue, angle) {
 		hue += angle;
 
-		while (hue >= 360.0) {
-			hue -= 360.0;
+		while (hue >= 360) {
+			hue -= 360;
 		}
 
-		while (hue < 0.0) {
-			hue += 360.0;
+		while (hue < 0) {
+			hue += 360;
 		}
 
 		return hue;
@@ -1695,6 +1696,8 @@
 		}
 	};
 
+
+
 	/**
 	 * Dynamically add 'toSpace' methods
 	 */
@@ -1713,7 +1716,7 @@
 		var type = Color.getType(color);
 
 		if (type) {
-			var out = '', current = 0.0, last = null;
+			var out = '', current = 0, last = null;
 
 			if (type !== Color.NAMED) {
 				color = new Hex(color);
@@ -1763,7 +1766,7 @@
 					}
 				}
 			} else {
-				var dist = 0.0;
+				var dist = 0;
 				var out = undefined, last = null;
 
 				for (hex in Colors.list) {
@@ -1792,50 +1795,18 @@
 		}
 	};
 
-	Object.prototype.toHex = function () {
-		var out = {};
+	Array.prototype.toHex = function () {
+		var out = [];
 
 		for (var i in this) {
-			if (isString(this[i])) {
-				out[i] = this[i].toHex();
-			} else {
-				out[i] = this[i];
-			}
-		}
-
-		return out;
-	};
-
-	Object.prototype.toRGB = function () {
-		var out = {};
-
-		for (var i in this) {
-			if (isString(this[i])) {
-				out[i] = this[i].toRGB();
-			} else {
-				out[i] = this[i];
-			}
-		}
-
-		return out;
-	};
-
-	Object.prototype.toHSL = function () {
-		var out = {};
-
-		for (var i in this) {
-			if (isString(this[i])) {
-				out[i] = this[i].toHSL();
-			} else {
-				out[i] = this[i];
-			}
+			out.push(isString(this[i]) ? this[i].toHex() : this[i]);
 		}
 
 		return out;
 	};
 
 	/**
-	 * Functionality to extract CSS color values from strings and convert them as desired
+	 * Functionality to extract CSS color values from strings / arrays / objects and convert them as desired
 	 */
 	String.prototype.toColorSpace = function (space) {
 		return this.replace(Color.regex.all, function (undefined, contents) {
@@ -1843,14 +1814,41 @@
 		});
 	};
 
+	Object.prototype.toColorSpace = function (space) {
+		var out = {};
+		var func = 'to' + space;
+
+		for (var i in this) {
+			out[i] = isString(this[i]) || isArray(this[i]) ? this[i][func]() : this[i];
+		}
+
+		return out;
+	};
+
+	Array.prototype.toColorSpace = function (space) {
+		var out = [];
+		var func = 'to' + space;
+
+		for (var i in this) {
+			out.push(isString(this[i]) ? this[i][func]() : this[i]);
+		}
+
+		return out;
+	};
+
 	/**
 	 * Dynamically add String.prototype.'toSpace' methods
 	 */
-	for (i in CSSColorTypes) {
+	for (var i in CSSColorTypes) {
 		var type = CSSColorTypes[i];
+		var content = 'return this.toColorSpace(\'' + type + '\');';
 
 		if (isString(type)) {
-			String.prototype['to' + type] = new Function('return this.toColorSpace(\'' + type + '\');');
+			var func = 'to' + type;
+
+			String.prototype[func] = new Function(content);
+			Array.prototype[func] = new Function(content);
+			Object.prototype[func] = new Function(content);
 		}
 	}
 
