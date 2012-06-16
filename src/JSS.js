@@ -30,29 +30,29 @@
 	/**
      * Type checking functionality
      */
-	$.isString = function (value) {
+	function isString(value) {
 		return typeof value === 'string';
-	};
+	}
 
-	$.isNumber = function (value, disableTypesafe) {
+	function isNumber(value, disableTypesafe) {
 		return typeof value === 'number' || (disableTypesafe === true && !isNaN(value));
-	};
+	}
 
-	$.isObject = function (value) {
+	function isObject(value) {
 		return value instanceof Object;
-	};
+	}
 
-	$.isArray = function (value) {
+	function isArray(value) {
 		return value instanceof Array;
-	};
+	}
 
-	$.isFunction = function (value) {
+	function isFunction(value) {
 		return typeof value === 'function';
-	};
+	}
 
-	$.empty = function (value) {
+	function empty(value) {
 		return (value === undefined || value === null) || (isString(value) && value === '') || (isArray(value) && value.length === 0);
-	};
+	}
 
 	/**
     * Number Prototypes
@@ -76,22 +76,6 @@
 
 	String.prototype.trim = function () {
 		return this.replace(/^[\s]+|[\s]+$/, '');
-	};
-
-	String.prototype.repeat = function (count) {
-		if (count >= 1) {
-			var out = this.toString();
-
-			if (count > 1) {
-				while (count--) {
-					out += out;
-				}
-			}
-
-			return out;
-		}
-
-		return '';
 	};
 
 	String.prototype.pad = function (character, length, direction) {
@@ -274,7 +258,7 @@
 		}
 	};
 
-	$.getType = function (value, disableTypesafe) {
+	function getType(value, disableTypesafe) {
 		if (value !== undefined && value !== null) {
 			if (isNumber(value, disableTypesafe)) {
 				return 'number';
@@ -288,7 +272,7 @@
 				return value.getType() || 'object';
 			}
 		}
-	};
+	}
 
 	function Colors() {
 	}
@@ -488,7 +472,7 @@
 	Color.regex.RGB = /^\s*rgb\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\)\s*$/i;
 	Color.regex.RGBA = /^\s*rgba\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\,\s*(\d+)\s*\)\s*$/i;
 	Color.regex.HSL = /^\s*hsl\(\s*(\d+)\s*,\s*(\d+)%\s*,\s*(\d+)%\s*\)\s*$/i;
-	Color.regex.all = /(#[a-f0-9]{3,6}|rgb\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\)|rgba\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\,\s*(\d+)\s*\)|hsl\(\s*(\d+)\s*,\s*(\d+)%\s*,\s*(\d+)%\s*\))/g;
+	Color.regex.all = /(#[a-f0-9]{3,6}|rgb\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\)|rgba\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\,\s*(\d+)\s*\)|hsl\(\s*(\d+)\s*,\s*(\d+)%\s*,\s*(\d+)%\s*\))/gi;
 
 	Color.getType = function (color) {
 		if (isString(color)) {
@@ -1466,7 +1450,7 @@
 	/**
 	* Basic adjustment of the lightness of a color
 	*/
-	$.adjustLightness = function (color, multiplier, adjustment) {
+	function adjustLightness(color, multiplier, adjustment) {
 		var type = Color.getType(color);
 
 		if (type && isNumber(multiplier) && ['darken', 'lighten'].contains(adjustment)) {
@@ -1490,7 +1474,7 @@
 				return Color.toType(color, type);
 			}
 		}
-	};
+	}
 
 	/**
 	* Darkens a color by a multiplier value, e.g. 0.25 darkens by 25%
@@ -1632,14 +1616,13 @@
 		}
 	};
 
-	$.expressionMatch = function (match, contents, offset, s) {
+	function expressionMatch(match, contents, offset, s) {
 		return contents * emSize;
-	};
+	}
 
 	$.calculate = function (expression) {
 		if (isNumber(emSize)) {
-			var result = eval(expression.replace(/([0-9]+(\.[0-9]+)?)em/gi,
-				expressionMatch).replace(/([0-9]+(\.[0-9]+)?)px/gi, '$1'));
+			var result = eval(expression.replace(/([0-9]+(\.[0-9]+)?)em/gi, expressionMatch).replace(/([0-9]+(\.[0-9]+)?)px/gi, '$1'));
 
 			if (isNumber(result)) {
 				return Math.round(result) + 'px';
@@ -1654,6 +1637,17 @@
 		return calculate(expression);
 	};
 
+	function getProperty(property, value) {
+		var out = {};
+		var len = Properties[property].length;
+
+		for (var i = 0; i < len; ++i) {
+			out[Properties[property][i]] = value;
+		}
+
+		return out;
+	}
+
 	$.borderRadius = function (topLeft, bottomLeft, bottomRight, topRight) {
 		if (topLeft && (!bottomLeft && !bottomRight && !topRight)) {
 			var len = Properties.borderRadius.length;
@@ -1665,33 +1659,22 @@
 
 			return out;
 		} else if (topLeft || bottomLeft || bottomRight || topRight) {
-			var func = function (property, value) {
-				var out = {};
-				var len = Properties[property].length;
-
-				for (var i = 0; i < len; ++i) {
-					out[Properties[property][i]] = value;
-				}
-
-				return out;
-			};
-
 			var out = {};
 
 			if (topLeft) {
-				out.extend(func('borderTopLeft', topLeft));
+				out.extend(getProperty('borderTopLeft', topLeft));
 			}
 
 			if (bottomLeft) {
-				out.extend(func('borderBottomLeft', bottomLeft));
+				out.extend(getProperty('borderBottomLeft', bottomLeft));
 			}
 
 			if (bottomRight) {
-				out.extend(func('borderBottomRight', bottomRight));
+				out.extend(getProperty('borderBottomRight', bottomRight));
 			}
 
 			if (topRight) {
-				out.extend(func('borderTopRight', topRight));
+				out.extend(getProperty('borderTopRight', topRight));
 			}
 
 			return out;
@@ -1719,9 +1702,7 @@
 		var type = Color.types[i];
 
 		if (isString(type)) {
-			var func = 'to' + type;
-
-			$[func] = new Function('color', 'return toColorSpace(color, \'' + type + '\');');
+			$['to' + type] = new Function('color', 'return toColorSpace(color, \'' + type + '\');');
 		}
 	}
 
@@ -1857,7 +1838,7 @@
 	 * Functionality to extract CSS color values from strings and convert them as desired
 	 */
 	String.prototype.toColorSpace = function (space) {
-		return this.replace(Color.regex.all, function (match, contents, offset, s) {
+		return this.replace(Color.regex.all, function (undefined, contents) {
 			return $['to' + space](contents);
 		});
 	};
@@ -1866,11 +1847,10 @@
 	 * Dynamically add String.prototype.'toSpace' methods
 	 */
 	for (i in CSSColorTypes) {
-		type = CSSColorTypes[i];
+		var type = CSSColorTypes[i];
 
 		if (isString(type)) {
-			func = 'to' + type;
-			String.prototype[func] = new Function('return this.toColorSpace(\'' + type + '\');');
+			String.prototype['to' + type] = new Function('return this.toColorSpace(\'' + type + '\');');
 		}
 	}
 
