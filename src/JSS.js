@@ -28,8 +28,8 @@
 	};
 
 	/**
-     * Type checking functionality
-     */
+	* Type checking functionality
+	*/
 	function isString(value) {
 		return typeof value === 'string';
 	}
@@ -55,8 +55,8 @@
 	}
 
 	/**
-    * Number Prototypes
-    */
+	* Number Prototypes
+	*/
 	Number.prototype.between = function (min, max) {
 		return this >= min && this <= max;
 	};
@@ -68,8 +68,8 @@
 	};
 
 	/**
-    * String Prototypes
-    */
+	* String Prototypes
+	*/
 	String.prototype.toStyle = function () {
 		Styles.push(this);
 	};
@@ -111,8 +111,8 @@
 	};
 
 	/**
-    * Array Prototypes
-    */
+	* Array Prototypes
+	*/
 	Array.prototype.unique = function () {
 		var assoc = {}, out = [], len = this.length;
 
@@ -172,8 +172,8 @@
 	};
 
 	/**
-    * Object Prototypes
-    */
+	* Object Prototypes
+	*/
 	Object.prototype.extend = function (obj, override) {
 		if (obj) {
 			var property;
@@ -221,15 +221,15 @@
 	};
 
 	/**
-    * Retain the JSS object, but disable in CSS output
-    */
+	* Retain the JSS object, but disable in CSS output
+	*/
 	Object.prototype.disable = function () {
 		return null;
 	};
 
 	/**
-    * Wraps object in Style class
-    */
+	* Wraps object in Style class
+	*/
 	Object.prototype.toStyle = function () {
 		return new Style(this);
 	};
@@ -274,10 +274,30 @@
 		}
 	}
 
-	function Colors() {
+	$.Color = {};
+	Color.NAMED = 'Named';
+	Color.HEX = 'Hex';
+	Color.RGB = 'RGB';
+	Color.RGBA = 'RGBA';
+	Color.HSL = 'HSL';
+	Color.HSV = 'HSV';
+	Color.XYZ = 'XYZ';
+	Color.CIELAB = 'CIELab';
+	Color.types = [];
+
+	for (var i in Color) {
+		if (isString(Color[i])) {
+			Color.types.push(Color[i]);
+		}
 	}
 
-	Colors.webSafe = {
+	Color.regex = {};
+	Color.regex.hex = /^\s*#[a-f0-9]{3,6}\s*$/i;
+	Color.regex.RGB = /^\s*rgb\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\)\s*$/i;
+	Color.regex.RGBA = /^\s*rgba\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\,\s*(\d+)\s*\)\s*$/i;
+	Color.regex.HSL = /^\s*hsl\(\s*(\d+)\s*,\s*(\d+)%\s*,\s*(\d+)%\s*\)\s*$/i;
+	Color.regex.all = /(#[a-f0-9]{3,6}|rgb\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\)|rgba\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\,\s*(\d+)\s*\)|hsl\(\s*(\d+)\s*,\s*(\d+)%\s*,\s*(\d+)%\s*\))/gi;
+	Color.webSafe = {
 		'ffffff': 'white',
 		'c0c0c0': 'silver',
 		'808080': 'gray',
@@ -296,7 +316,7 @@
 		'800080': 'purple'
 	};
 
-	Colors.list = {
+	Color.list = {
 		'f0f8ff': 'aliceblue',
 		'faebd7': 'antiquewhite',
 		'7fffd4': 'aquamarine',
@@ -419,9 +439,9 @@
 		'f5deb3': 'wheat',
 		'f5f5f5': 'whitesmoke',
 		'9acd32': 'yellowgreen'
-	}.extend(Colors.webSafe);
+	}.extend(Color.webSafe);
 
-	Colors.getNamedList = function (websafe) {
+	Color.getNamedList = function (websafe) {
 		var list = !websafe ? this.list : this.webSafe;
 		var out = {};
 		var i = 0
@@ -442,42 +462,13 @@
 		return out;
 	};
 
-	Colors.listNamed = Colors.getNamedList();
-	Colors.webSafeNamed = Colors.getNamedList(true);
-
-	// Expose globally
-	$.Colors = Colors;
-
-	function Color() {
-	}
-
-	Color.NAMED = 'Named';
-	Color.HEX = 'Hex';
-	Color.RGB = 'RGB';
-	Color.RGBA = 'RGBA';
-	Color.HSL = 'HSL';
-	Color.HSV = 'HSV';
-	Color.XYZ = 'XYZ';
-	Color.CIELAB = 'CIELab';
-	Color.types = [];
-
-	for (var i in Color) {
-		if (isString(Color[i])) {
-			Color.types.push(Color[i]);
-		}
-	}
-
-	Color.regex = {};
-	Color.regex.hex = /^\s*#[a-f0-9]{3,6}\s*$/i;
-	Color.regex.RGB = /^\s*rgb\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\)\s*$/i;
-	Color.regex.RGBA = /^\s*rgba\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\,\s*(\d+)\s*\)\s*$/i;
-	Color.regex.HSL = /^\s*hsl\(\s*(\d+)\s*,\s*(\d+)%\s*,\s*(\d+)%\s*\)\s*$/i;
-	Color.regex.all = /(#[a-f0-9]{3,6}|rgb\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\)|rgba\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\,\s*(\d+)\s*\)|hsl\(\s*(\d+)\s*,\s*(\d+)%\s*,\s*(\d+)%\s*\))/gi;
+	Color.listNamed = Color.getNamedList();
+	Color.webSafeNamed = Color.getNamedList(true);
 
 	Color.getType = function (color) {
 		if (isString(color)) {
 			switch (true) {
-				case !empty(Colors.listNamed[color.toLowerCase()]):
+				case !empty(Color.listNamed[color.toLowerCase()]):
 					return this.NAMED;
 
 				case this.regex.hex.test(color):
@@ -506,7 +497,7 @@
 			case Color.NAMED:
 				value = value.toLowerCase().substr(1);
 
-				return !empty(Colors.list[value]) ? Colors.list[value] : undefined;
+				return !empty(Color.list[value]) ? Color.list[value] : undefined;
 
 			case Color.HEX:
 			case Color.RGB:
@@ -528,11 +519,9 @@
 		}
 	};
 
-	$.Color = Color;
-
 	/**
-     * Global toCSS function to "compile" global Styles to CSS
-     */
+	* Global toCSS function to "compile" global Styles to CSS
+	*/
 	$.toCSS = function () {
 		var len = Styles.length, CSS = '';
 
@@ -550,7 +539,7 @@
 	/**
 	* Style class
 	*/
-	function Style(obj) {
+	$.Style = function (obj) {
 		if (this === undefined) {
 			return new Style(obj);
 		}
@@ -680,8 +669,6 @@
 		return this.toCSS();
 	};
 
-	$.Style = Style;
-
 	function Property(obj) {
 		if (this === undefined) {
 			return new Property(obj);
@@ -716,9 +703,9 @@
 
 	$.Property = Property;
 
-	$.isProperty = function (value) {
+	function isProperty(value) {
 		return value instanceof Property;
-	};
+	}
 
 	/**
 	* RGB color functionality
@@ -884,8 +871,8 @@
 		if (hex) {
 			hex = hex.toLowerCase();
 
-			if (Colors.listNamed[hex]) {
-				this.value = Colors.listNamed[hex];
+			if (Color.listNamed[hex]) {
+				this.value = Color.listNamed[hex];
 			} else if (Hex.isValid(hex)) {
 				if (hex.charAt(0) === '#') {
 					hex = hex.substring(1);
@@ -1720,11 +1707,11 @@
 				color = new Hex(color);
 			}
 
-			if (Colors.webSafe[color.value]) {
+			if (Color.webSafe[color.value]) {
 				return color;
 			} else {
-				for (var hex in Colors.webSafe) {
-					if (isString(Colors.webSafe[hex])) {
+				for (var hex in Color.webSafe) {
+					if (isString(Color.webSafe[hex])) {
 						hex = '#' + hex;
 						current = distance(color, hex, disableBias);
 
@@ -1752,8 +1739,8 @@
 			var hex
 
 			if (approximate !== true) {
-				for (hex in Colors.list) {
-					current = Colors.list[hex];
+				for (hex in Color.list) {
+					current = Color.list[hex];
 
 					if (isArray(current)) {
 						current = current[0];
@@ -1767,8 +1754,8 @@
 				var dist = 0;
 				var out = undefined, last = null;
 
-				for (hex in Colors.list) {
-					current = Colors.list[hex];
+				for (hex in Color.list) {
+					current = Color.list[hex];
 
 					if (isArray(current)) {
 						current = current[0];
