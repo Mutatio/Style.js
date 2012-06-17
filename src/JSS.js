@@ -16,9 +16,29 @@
 (function ($, undefined) {
 	'use strict';
 
+	/**
+	 * Array of Style objects
+	 * @type {Array.<Style>}
+	 */
 	var Styles = [];
+
+	/**
+	 * Default EM dimension in pixels
+	 * @type {Number}
+	 */
 	var emSize = 16;
+
+	/**
+	 * Color values which have CSS representations, e.g. rgb(12, 34, 56)
+	 * @constant
+	 * @type {Array.<String>}
+	 */
 	var CSSColorTypes = ['Hex', 'RGB', 'HSL'];
+
+	/**
+	 * CSS properties list
+	 * @type {Object.<String, Array.<String>}
+	 */
 	var Properties = {
 		borderRadius: ['-webkit-border-radius', '-moz-border-radius', 'border-radius'],
 		borderTopLeft: ['-webkit-border-top-left-radius', '-moz-border-radius-topleft', 'border-top-left-radius'],
@@ -28,39 +48,81 @@
 	};
 
 	/**
-	* Type checking functionality
-	*/
+	 * Checks if value is string type
+	 * @private
+	 * @param {mixed} value
+	 * @returns {Boolean}
+	 */
 	function isString(value) {
 		return typeof value === 'string';
 	}
 
+	/**
+	 * Checks if value is number type
+	 * @private
+	 * @param {mixed} value
+	 * @param {Boolean} disableTypesafe If true do numerical comparison using "=="
+	 * @returns {Boolean}
+	 */
 	function isNumber(value, disableTypesafe) {
 		return typeof value === 'number' || (disableTypesafe === true && !isNaN(value));
 	}
 
+	/**
+	 * Checks if value is object type
+	 * @private
+	 * @param {mixed} value
+	 * @returns {Boolean}
+	 */
 	function isObject(value) {
 		return value instanceof Object;
 	}
 
+	/**
+	 * Checks if value is array type
+	 * @private
+	 * @param {mixed} value
+	 * @returns {Boolean}
+	 */
 	function isArray(value) {
 		return value instanceof Array;
 	}
 
+	/**
+	 * Checks if value is function type
+	 * @private
+	 * @param {mixed} value
+	 * @returns {Boolean}
+	 */
 	function isFunction(value) {
 		return typeof value === 'function';
 	}
 
+	/**
+	 * Checks if value is empty
+	 * @private
+	 * @param {mixed} value
+	 * @returns {Boolean}
+	 */
 	function empty(value) {
 		return (value === undefined || value === null) || (isString(value) && value === '') || (isArray(value) && value.length === 0);
 	}
 
 	/**
-	* Number Prototypes
-	*/
+	 * Check if a number is between two numbers
+	 * @param {Number} min Minium value
+	 * @param {Number} max Maxium value
+	 * @returns {Boolean}
+	 */
 	Number.prototype.between = function (min, max) {
 		return this >= min && this <= max;
 	};
 
+	/**
+	 * Round a number to a given number of decimal places
+	 * @param {Number} decimalPlaces Number of decimal places
+	 * @returns {Number} Rounded number
+	 */
 	Number.prototype.round = function (decimalPlaces) {
 		var multiplier = parseInt('1'.padRight('0', decimalPlaces + 1), 10);
 
@@ -68,16 +130,27 @@
 	};
 
 	/**
-	* String Prototypes
-	*/
+	 * Push string value to Styles array
+	 */
 	String.prototype.toStyle = function () {
 		Styles.push(this);
 	};
 
+	/**
+	 * Trim white space from the string
+	 * @returns {String}
+	 */
 	String.prototype.trim = function () {
 		return this.replace(/^[\s]+|[\s]+$/, '');
 	};
 
+	/**
+	 * Pad a string with a given character
+	 * @param {String} character Character used to pad
+	 * @param {Number} length Desired length of string to return
+	 * @param {String} direction The end to pad: left (prepend) or right (append)
+	 * @returns {String}
+	 */
 	String.prototype.pad = function (character, length, direction) {
 		var out = this;
 
@@ -98,21 +171,38 @@
 		return out;
 	};
 
+	/**
+	 * Right pad a string with a given character
+	 * @param {String} character Character used to pad
+	 * @param {Number} length Desired length of string to return
+	 * @returns {String}
+	 */
 	String.prototype.padRight = function (character, length) {
 		return this.pad(character, length, 'right');
 	};
 
+	/**
+	 * Left pad a string with a given character
+	 * @param {String} character Character used to pad
+	 * @param {Number} length Desired length of string to return
+	 * @returns {String}
+	 */
 	String.prototype.padLeft = function (character, length) {
 		return this.pad(character, length, 'left');
 	};
 
+	/**
+	 * Check if string is a hexidecimal value
+	 * @returns {Boolean}
+	 */
 	String.prototype.isHex = function () {
-		return /^([0-9a-f]+)$/i.test(this);
+		return (/^([0-9a-f]+)$/i).test(this);
 	};
 
 	/**
-	* Array Prototypes
-	*/
+	 * Return array containing only unique values
+	 * @returns {Array}
+	 */
 	Array.prototype.unique = function () {
 		var assoc = {}, out = [], len = this.length;
 
@@ -129,14 +219,27 @@
 		return out;
 	};
 
+	/**
+	 * Return to maximum numerical value in the array
+	 * @returns {Number}
+	 */
 	Array.prototype.max = function () {
 		return Math.max.apply(Math, this);
 	};
 
+	/**
+	 * Return to minimum numerical value in the array
+	 * @returns {Number}
+	 */
 	Array.prototype.min = function () {
 		return Math.min.apply(Math, this);
 	};
 
+	/**
+	 * Return the sum total of numeric values in the array
+	 * @param {Boolean} disableTypeSafe If true do numerical comparison using "=="
+	 * @returns {Number}
+	 */
 	Array.prototype.sum = function (disableTypeSafe) {
 		var total = 0;
 
@@ -151,6 +254,12 @@
 		return total;
 	};
 
+	/**
+	 * Check if the array contains the value provided
+	 * @param {mixed} value
+	 * @param {Boolean} disableTypeSafe If true do numerical comparison using "=="
+	 * @returns {Boolean}
+	 */
 	Array.prototype.contains = function (value, disableTypeSafe) {
 		var i = this.length;
 
@@ -172,8 +281,11 @@
 	};
 
 	/**
-	* Object Prototypes
-	*/
+	 * Add values from an object to the current object
+	 * @param {Object} obj
+	 * @param {Boolean} override If true replace values in the original object if there's a collision
+	 * @returns {Object}
+	 */
 	Object.prototype.extend = function (obj, override) {
 		if (obj) {
 			var property;
@@ -206,6 +318,11 @@
 		return this;
 	};
 
+	/**
+	 * Return the sum total of numeric values in the Object
+	 * @param {Boolean} multidimensional If true process the child objects
+	 * @returns {Object}
+	 */
 	Object.prototype.sum = function (multidimensional) {
 		var total = 0;
 
@@ -213,7 +330,7 @@
 			if (isNumber(this[i])) {
 				total += this[i];
 			} else if (isArray(this[i]) || (multidimensional === true && isObject(this[i]))) {
-				total += this[i].sum();
+				total += this[i].sum(multidimensional);
 			}
 		}
 
@@ -221,19 +338,26 @@
 	};
 
 	/**
-	* Retain the JSS object, but disable in CSS output
-	*/
+	 * Set object value to null
+	 * @returns {null}
+	 */
 	Object.prototype.disable = function () {
 		return null;
 	};
 
 	/**
-	* Wraps object in Style class
-	*/
+	 * Attempt to transform object value to Style
+	 * @param {Boolean} multidimensional If true process the child objects
+	 * @returns {Style}
+	 */
 	Object.prototype.toStyle = function () {
 		return new Style(this);
 	};
 
+	/**
+	 * Debug functionality for the basic testing of object contents
+	 * @returns {String}
+	 */
 	Object.prototype.stringify = function () {
 		var out = [];
 
@@ -250,6 +374,10 @@
 		return '';
 	};
 
+	/**
+	 * Gets the object's type if there's a constructor function
+	 * @returns {String} The object's type
+	 */
 	Object.prototype.getType = function () {
 		var result = /function (.+)\(/.exec(this.constructor);
 
@@ -258,6 +386,13 @@
 		}
 	};
 
+	/**
+	 * Gets the type of a given value
+	 * @private
+	 * @param {mixed} value
+	 * @param {Boolean} disableTypesafe Compare numbers with == if true
+	 * @returns {String} Object type
+	 */
 	function getType(value, disableTypesafe) {
 		if (value !== undefined && value !== null) {
 			if (isNumber(value, disableTypesafe)) {
@@ -274,15 +409,63 @@
 		}
 	}
 
+	/**
+	 * Generic Color class for shared color functionality
+	 * @class
+	 */
 	$.Color = {};
+
+	/**
+	 * @static
+	 * @constant
+	 */
 	Color.NAMED = 'Named';
+
+	/**
+	 * @static
+	 * @constant
+	 */
 	Color.HEX = 'Hex';
+
+	/**
+	 * @static
+	 * @constant
+	 */
 	Color.RGB = 'RGB';
+
+	/**
+	 * @static
+	 * @constant
+	 */
 	Color.RGBA = 'RGBA';
+
+	/**
+	 * @static
+	 * @constant
+	 */
 	Color.HSL = 'HSL';
+
+	/**
+	 * @static
+	 * @constant
+	 */
 	Color.HSV = 'HSV';
+
+	/**
+	 * @static
+	 * @constant
+	 */
 	Color.XYZ = 'XYZ';
+
+	/**
+	 * @static
+	 * @constant
+	 */
 	Color.CIELAB = 'CIELab';
+
+	/**
+	 * @type {Array.<string>}
+	 */
 	Color.types = [];
 
 	for (var i in Color) {
@@ -291,12 +474,51 @@
 		}
 	}
 
+	/**
+	 * @static
+	 * @constant
+	 * @type {Object}
+	 */
 	Color.regex = {};
+
+	/**
+	 * @static
+	 * @constant
+	 * @type {Object}
+	 */
 	Color.regex.hex = /^\s*#[a-f0-9]{3,6}\s*$/i;
+
+	/**
+	 * @type {RegExp}
+	 */
 	Color.regex.RGB = /^\s*rgb\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\)\s*$/i;
+
+	/**
+	 * @static
+	 * @constant
+	 * @type {Object}
+	 */
 	Color.regex.RGBA = /^\s*rgba\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\,\s*(\d+)\s*\)\s*$/i;
+
+	/**
+	 * @static
+	 * @constant
+	 * @type {Object}
+	 */
 	Color.regex.HSL = /^\s*hsl\(\s*(\d+)\s*,\s*(\d+)%\s*,\s*(\d+)%\s*\)\s*$/i;
+
+	/**
+	 * @static
+	 * @constant
+	 * @type {Object}
+	 */
 	Color.regex.all = /(#[a-f0-9]{3,6}|rgb\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\)|rgba\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\,\s*(\d+)\s*\)|hsl\(\s*(\d+)\s*,\s*(\d+)%\s*,\s*(\d+)%\s*\))/gi;
+
+	/**
+	 * @static
+	 * @constant
+	 * @type {Object.<String, String>}
+	 */
 	Color.webSafe = {
 		'ffffff': 'white',
 		'c0c0c0': 'silver',
@@ -316,6 +538,11 @@
 		'800080': 'purple'
 	};
 
+	/**
+	 * @static
+	 * @constant
+	 * @type {Object.<String, String|Array>}
+	 */
 	Color.list = {
 		'f0f8ff': 'aliceblue',
 		'faebd7': 'antiquewhite',
@@ -441,6 +668,12 @@
 		'9acd32': 'yellowgreen'
 	}.extend(Color.webSafe);
 
+	/**
+	 * Get a list of colors with the HTML name as the key and hex as value
+	 * @static
+	 * @param {Boolean} websafe If true only use web safe colors
+	 * @returns {Object.<String, String>}
+	 */
 	Color.getNamedList = function (websafe) {
 		var list = !websafe ? this.list : this.webSafe;
 		var out = {};
@@ -462,9 +695,28 @@
 		return out;
 	};
 
+	/**
+	 * List of hex colors and their name equivalent
+	 * @static
+	 * @constant
+	 * @type {Object.<String, String>}
+	 */
 	Color.listNamed = Color.getNamedList();
+
+	/**
+	 * List of web safe hex colors and their name equivalent
+	 * @static
+	 * @constant
+	 * @type {Object.<String, String>}
+	 */
 	Color.webSafeNamed = Color.getNamedList(true);
 
+	/**
+	 * Attempts to get the color's type
+	 * @static
+	 * @param {Object|String} color
+	 * @returns {String}
+	 */
 	Color.getType = function (color) {
 		if (isString(color)) {
 			switch (true) {
@@ -492,12 +744,19 @@
 		}
 	};
 
-	Color.toType = function (value, type) {
+	/**
+	 * Attempts to convert the color to a given type
+	 * @static
+	 * @param {Object|String} color
+	 * @param {String} type The color type to return
+	 * @returns {Object|String}
+	 */
+	Color.toType = function (color, type) {
 		switch (type) {
 			case Color.NAMED:
-				value = value.toLowerCase().substr(1);
+				color = color.toLowerCase().substr(1);
 
-				return !empty(Color.list[value]) ? Color.list[value] : undefined;
+				return !empty(Color.list[color]) ? Color.list[color] : undefined;
 
 			case Color.HEX:
 			case Color.RGB:
@@ -506,22 +765,14 @@
 			case Color.HSV:
 			case Color.XYZ:
 			case Color.CIELAB:
-				return $['to' + type](value);
-		}
-	};
-
-	Color.equals = function (color1, color2) {
-		color1 = toHex(color1);
-		color2 = toHex(color2);
-
-		if (color1 !== undefined && color2 !== undefined && color1.isSet() && color2.isSet()) {
-			return color1.value === color2.value;
+				return $['to' + type](color);
 		}
 	};
 
 	/**
-	* Global toCSS function to "compile" global Styles to CSS
-	*/
+	 * Global toCSS function to "compile" global Styles to CSS
+	 * @returns {String}
+	 */
 	$.toCSS = function () {
 		var len = Styles.length, CSS = '';
 
@@ -537,8 +788,11 @@
 	};
 
 	/**
-	* Style class
-	*/
+	 * Style class / wrapper, populates Styles array
+	 * @constructor
+	 * @param {Object|String} obj Style object / string
+	 * @returns {Style}
+	 */
 	$.Style = function (obj) {
 		if (this === undefined) {
 			return new Style(obj);
@@ -549,6 +803,14 @@
 		Styles.push(this);
 	}
 
+	/**
+	 * Compile to a object with a single dimension of CSS properties
+	 * @param {Object} obj Object to reduce to CSS properties
+	 * @param {Object} output The current working output
+	 * @param {String} parent Parent selector
+	 * @param {String} child Child selector
+	 * @returns {Object}
+	 */
 	Style.prototype.compile = function (obj, output, parent, child) {
 		if (isString(this.self)) {
 			return this.self;
@@ -578,6 +840,13 @@
 		return output;
 	};
 
+	/**
+	 * Compile to a object with a single dimension of CSS properties
+	 * @param {Object} obj Object to reduce to CSS properties
+	 * @param {Object} output The current working output
+	 * @param {String} parent Parent selector
+	 * @param {String} child Child selector
+	 */
 	Style.prototype.compileObject = function (obj, output, parent, child) {
 		var compile = false;
 
@@ -640,8 +909,9 @@
 	};
 
 	/**
-	* Convert this style object to CSS
-	*/
+	 * Convert this Style object to CSS
+	 * @returns {String}
+	 */
 	Style.prototype.toCSS = function () {
 		var CSS = '';
 
@@ -665,10 +935,20 @@
 		}
 	};
 
+	/**
+	 * Convert to CSS when cast to string
+	 * @returns {String}
+	 */
 	Style.prototype.toString = function () {
 		return this.toCSS();
 	};
 
+	/**
+	 * Property class / wrapper
+	 * @constructor
+	 * @param {Object|String} obj Property object
+	 * @returns {Property}
+	 */
 	function Property(obj) {
 		if (this === undefined) {
 			return new Property(obj);
@@ -677,6 +957,11 @@
 		this.self = obj;
 	}
 
+	/**
+	 * Returns the property as a CSS value
+	 * @param {String} name Name of property
+	 * @returns {Array.<String>}
+	 */
 	Property.prototype.compile = function (name) {
 		var type;
 		var out = [];
@@ -703,13 +988,23 @@
 
 	$.Property = Property;
 
+	/**
+	 * Checks if value is Poperty type
+	 * @private
+	 * @param {mixed} value
+	 * @returns {Boolean}
+	 */
 	function isProperty(value) {
 		return value instanceof Property;
 	}
 
 	/**
-	* RGB color functionality
-	*/
+	 * RGB color class
+	 * @constructor
+	 * @param {Number} red
+	 * @param {Number} green
+	 * @param {Number} blue
+	 */
 	function RGB(red, green, blue) {
 		this.red = null;
 		this.green = null;
@@ -740,22 +1035,38 @@
 		}
 	}
 
+	/**
+	 * Check whether the RGB object values are set
+	 * @returns {Boolean}
+	 */
 	RGB.prototype.isSet = function () {
 		return isNumber(this.red) && isNumber(this.green) && isNumber(this.blue);
 	};
 
+	/**
+	 * Convert to Hex color
+	 * @returns {Hex}
+	 */
 	RGB.prototype.toHex = function () {
 		if (this.isSet()) {
 			return new Hex('#' + (1 << 24 | this.red << 16 | this.green << 8 | this.blue).toString(16).substr(1));
 		}
 	};
 
+	/**
+	 * Convert to RGBA color
+	 * @returns {RGBA}
+	 */
 	RGB.prototype.toRGBA = function () {
 		if (this.isSet()) {
 			return new RGBA(this.red, this.green, this.blue, 1);
 		}
 	};
 
+	/**
+	 * Convert to HSL color
+	 * @returns {HSL}
+	 */
 	RGB.prototype.toHSL = function () {
 		if (this.isSet()) {
 			var red = this.red / 255;
@@ -794,6 +1105,10 @@
 		}
 	};
 
+	/**
+	 * Convert to HSV color
+	 * @returns {HSV}
+	 */
 	RGB.prototype.toHSV = function () {
 		if (this.isSet()) {
 			var hue = null, saturation = null;
@@ -820,6 +1135,10 @@
 		}
 	};
 
+	/**
+	 * Convert to XYZ color
+	 * @returns {XYZ}
+	 */
 	RGB.prototype.toXYZ = function () {
 		if (this.isSet()) {
 			var X = this.red / 255;
@@ -834,16 +1153,29 @@
 		}
 	};
 
+	/**
+	 * Convert to CSS string
+	 * @returns {String}
+	 */
 	RGB.prototype.toCSS = function () {
 		if (this.isSet()) {
 			return 'rgb(' + Math.round(this.red) + ', ' + Math.round(this.green) + ', ' + Math.round(this.blue) + ')';
 		}
 	};
 
+	/**
+	 * Convert to CSS string
+	 * @returns {String}
+	 */
 	RGB.prototype.toString = function () {
 		return this.toCSS();
 	};
 
+	/**
+	 * Get a random RGB color
+	 * @static
+	 * @returns {RGB}
+	 */
 	RGB.random = function () {
 		return new RGB(Math.floor(Math.random() * 255), Math.floor(Math.random() * 255), Math.floor(Math.random() * 255));
 	};
@@ -851,8 +1183,9 @@
 	$.RGB = RGB;
 
 	/**
-	* Hex color functionality
-	*/
+	 * Hex color functionality
+	 * @constructor
+	 */
 	function Hex(hex) {
 		this.value = null;
 
@@ -863,10 +1196,18 @@
 		}
 	}
 
+	/**
+	 * Check whether the Hex object value is set
+	 * @returns {Boolean}
+	 */
 	Hex.prototype.isSet = function () {
 		return !empty(this.value);
 	};
 
+	/**
+	 * Set the Hex value
+	 * @param {String} hex
+	 */
 	Hex.prototype.setValue = function (hex) {
 		if (hex) {
 			hex = hex.toLowerCase();
@@ -883,34 +1224,60 @@
 		}
 	};
 
+	/**
+	 * Convert to RGB color
+	 * @returns {RGB}
+	 */
 	Hex.prototype.toRGB = function () {
 		if (this.value) {
 			return new RGB(parseInt(this.value.substring(0, 2), 16), parseInt(this.value.substring(2, 4), 16), parseInt(this.value.substring(4, 6), 16));
 		}
 	};
 
+	/**
+	 * Convert to HSL color
+	 * @returns {HSL}
+	 */
 	Hex.prototype.toHSL = function () {
 		if (this.value) {
 			return this.toRGB().toHSL();
 		}
 	};
 
+	/**
+	 * Convert to HSV color
+	 * @returns {HSV}
+	 */
 	Hex.prototype.toHSV = function () {
 		if (this.value) {
 			return this.toRGB().toHSV();
 		}
 	};
 
+	/**
+	 * Convert to CSS string
+	 * @returns {String}
+	 */
 	Hex.prototype.toCSS = function () {
 		if (!empty(this.value)) {
 			return '#' + this.value;
 		}
 	};
 
+	/**
+	 * Convert to CSS string
+	 * @returns {String}
+	 */
 	Hex.prototype.toString = function () {
 		return this.toCSS();
 	};
 
+	/**
+	 * Validate Hex color value
+	 * @static
+	 * @param {String} hex
+	 * @returns {Boolean}
+	 */
 	Hex.isValid = function (hex) {
 		if (hex) {
 			if (hex.charAt(0) === '#') {
@@ -923,10 +1290,22 @@
 		return false;
 	};
 
+	/**
+	 * Check if Hex value is triplet
+	 * @static
+	 * @param {String} hex
+	 * @returns {Boolean}
+	 */
 	Hex.isTriplet = function (hex) {
 		return hex && hex.length === 3;
 	};
 
+	/**
+	 * Expand triplet value to 6 character value
+	 * @static
+	 * @param {String} hex
+	 * @returns {String}
+	 */
 	Hex.expand = function (hex) {
 		if (Hex.isTriplet(hex)) {
 			var c = hex.split('');
@@ -937,12 +1316,21 @@
 		return hex;
 	};
 
+	/**
+	 * Get a random Hex color
+	 * @static
+	 * @returns {Hex}
+	 */
 	Hex.random = function () {
 		return RGB.random().toHex();
 	};
 
 	$.Hex = Hex;
 
+	/**
+	 * Hex color functionality
+	 * @constructor
+	 */
 	function HSL(hue, saturation, lightness) {
 		this.hue = null;
 		this.saturation = null;
@@ -963,10 +1351,18 @@
 		}
 	}
 
+	/**
+	 * Check whether the HSL object values are set
+	 * @returns {Boolean}
+	 */
 	HSL.prototype.isSet = function () {
 		return isNumber(this.hue) && isNumber(this.saturation) && isNumber(this.lightness);
 	};
 
+	/**
+	 * Convert to RGB color
+	 * @returns {RGB}
+	 */
 	HSL.prototype.toRGB = function () {
 		if (this.isSet()) {
 			var red, green, blue;
@@ -990,34 +1386,59 @@
 		}
 	};
 
+	/**
+	 * Convert to Hex color
+	 * @returns {Hex}
+	 */
 	HSL.prototype.toHex = function () {
 		if (this.isSet()) {
 			return this.toRGB().toHex();
 		}
 	};
 
+	/**
+	 * Convert to HSV color
+	 * @returns {HSV}
+	 */
 	HSL.prototype.toHSV = function () {
 		if (this.isSet()) {
 			return this.toRGB().toHSV();
 		}
 	};
 
+	/**
+	 * Convert to CSS string
+	 * @returns {String}
+	 */
 	HSL.prototype.toCSS = function () {
 		if (this.isSet()) {
 			return 'hsl(' + Math.round(this.hue) + ', ' + Math.round(this.saturation) + '%, ' + Math.round(this.lightness) + '%)';
 		}
 	};
 
+	/**
+	 * Convert to CSS string
+	 * @returns {String}
+	 */
 	HSL.prototype.toString = function () {
 		return this.toCSS();
 	};
 
+	/**
+	 * Get a random HSL color
+	 * @static
+	 * @returns {HSL}
+	 */
 	HSL.random = function () {
 		return RGB.random().toHSL();
 	};
 
 	$.HSL = HSL;
 
+	/**
+	 * HSV color functionality
+	 * @constructor
+	 */
 	function HSV(hue, saturation, value) {
 		this.hue = null;
 		this.saturation = null;
@@ -1038,10 +1459,18 @@
 		}
 	}
 
+	/**
+	 * Check whether the HSV object values are set
+	 * @returns {Boolean}
+	 */
 	HSV.prototype.isSet = function () {
 		return isNumber(this.hue) && isNumber(this.saturation) && isNumber(this.value);
 	};
 
+	/**
+	 * Convert to RGB color
+	 * @returns {RGB}
+	 */
 	HSV.prototype.toRGB = function () {
 		if (this.isSet()) {
 			var hue = this.hue;
@@ -1113,24 +1542,41 @@
 		}
 	};
 
+	/**
+	 * Convert to Hex color
+	 * @returns {Hex}
+	 */
 	HSV.prototype.toHex = function () {
 		if (this.isSet()) {
 			return this.toRGB().toHex();
 		}
 	};
 
+	/**
+	 * Convert to HSL color
+	 * @returns {HSL}
+	 */
 	HSV.prototype.toHSL = function () {
 		if (this.isSet()) {
 			return this.toRGB().toHSL();
 		}
 	};
 
+	/**
+	 * Get a random HSV color
+	 * @static
+	 * @returns {HSV}
+	 */
 	HSV.random = function () {
 		return RGB.random().toHSV();
 	};
 
 	$.HSV = HSV;
 
+	/**
+	 * XYZ color functionality
+	 * @constructor
+	 */
 	function XYZ(X, Y, Z) {
 		this.X = null;
 		this.Y = null;
@@ -1151,10 +1597,18 @@
 		}
 	}
 
+	/**
+	 * Check whether the XYZ object values are set
+	 * @returns {Boolean}
+	 */
 	XYZ.prototype.isSet = function () {
 		return isNumber(this.X) && isNumber(this.Y) && isNumber(this.Z);
 	};
 
+	/**
+	 * Convert to RGB color
+	 * @returns {RGB}
+	 */
 	XYZ.prototype.toRGB = function () {
 		if (this.isSet()) {
 			var X = this.X / 100;
@@ -1172,12 +1626,20 @@
 		}
 	};
 
+	/**
+	 * Convert to Hex color
+	 * @returns {Hex}
+	 */
 	XYZ.prototype.toHex = function () {
 		if (this.isSet()) {
 			return this.toRGB().toHex();
 		}
 	};
 
+	/**
+	 * Convert to CIELab color
+	 * @returns {CIELab}
+	 */
 	XYZ.prototype.toCIELab = function () {
 		if (this.isSet()) {
 			var X = this.X / 95.047;
@@ -1198,6 +1660,10 @@
 
 	$.XYZ = XYZ;
 
+	/**
+	 * CIELab color functionality
+	 * @constructor
+	 */
 	function CIELab(L, a, b) {
 		this.L = null;
 		this.a = null;
@@ -1218,22 +1684,38 @@
 		}
 	}
 
+	/**
+	 * Check whether the CIELab object values are set
+	 * @returns {Boolean}
+	 */
 	CIELab.prototype.isSet = function () {
 		return isNumber(this.L) && isNumber(this.a) && isNumber(this.b);
 	};
 
+	/**
+	 * Convert to RGB color
+	 * @returns {RGB}
+	 */
 	CIELab.prototype.toRBG = function () {
 		if (this.isSet()) {
 			return this.toXYZ().toRBG();
 		}
 	};
 
+	/**
+	 * Convert to Hex color
+	 * @returns {Hex}
+	 */
 	CIELab.prototype.toHex = function () {
 		if (this.isSet()) {
 			return this.toXYZ().toRBG().toHex();
 		}
 	};
 
+	/**
+	 * Convert to XYZ color
+	 * @returns {XYZ}
+	 */
 	CIELab.prototype.toXYZ = function () {
 		var Y = (this.L + 16) / 116;
 		var X = this.a / 500 + Y;
@@ -1251,9 +1733,21 @@
 
 	$.CIELab = CIELab;
 
+	/**
+	 * Hue color functionality
+	 * @constructor
+	 */
 	$.Hue = function () {
 	}
 
+	/**
+	 * Convert hue to RGB value
+	 * @static
+	 * @param {Number} p
+	 * @param {Number} q
+	 * @param {Number} t
+	 * @returns {Number}
+	 */
 	Hue.toRGB = function (p, q, t) {
 		if (t < 0) {
 			t += 1;
@@ -1278,6 +1772,13 @@
 		return p;
 	};
 
+	/**
+	 * Shift hue value by number of degrees
+	 * @static
+	 * @param {Number} hue
+	 * @param {Number} angle
+	 * @returns {Number}
+	 */
 	Hue.shift = function (hue, angle) {
 		hue += angle;
 
@@ -1293,8 +1794,12 @@
 	};
 
 	/**
-	* Calculate Euclidean distance between two colors
-	*/
+	 * Calculate Euclidean distance between two colors
+	 * @param {Object|String} color1
+	 * @param {Object|String} color2
+	 * @param {Boolean} disableBias If false include eye sensitivity bias
+	 * @return {Number} Euclidean distance between the colors
+	 */
 	$.distance = function (color1, color2, disableBias) {
 		color1 = toRGB(color1);
 		color2 = toRGB(color2);
@@ -1314,6 +1819,10 @@
 		}
 	};
 
+	/**
+	 * Basic color mix functionality
+	 * @returns {Object} Mixed color result
+	 */
 	$.mix = function () {
 		var len = arguments.length;
 
@@ -1355,6 +1864,12 @@
 		}
 	};
 
+	/**
+	 * Randomly mutate a color
+	 * @param {Object|String} color Color to mutate
+	 * @param {Number} change Rate of change
+	 * @returns {Object}
+	 */
 	$.mutate = function (color, change) {
 		var type = Color.getType(color);
 
@@ -1395,7 +1910,15 @@
 		}
 	};
 
-	$.adjustSaturation = function (color, multiplier, adjustment) {
+	/**
+	 * Adjust the saturation of a color
+	 * @private
+	 * @param {Object|String} color
+	 * @param {Number} multiplier
+	 * @param {String} adjustment Option to either saturate or desaturate
+	 * @returns {Object}
+	 */
+	function adjustSaturation(color, multiplier, adjustment) {
 		var type = Color.getType(color);
 
 		if (type && isNumber(multiplier) && ['saturate', 'desaturate'].contains(adjustment)) {
@@ -1421,23 +1944,45 @@
 				return Color.toType(color, type);
 			}
 		}
-	};
+	}
 
+	/**
+	 * Saturate a color
+	 * @param {Object|String} color
+	 * @param {Number} multiplier
+	 * @returns {Object}
+	 */
 	$.saturate = function (color, multiplier) {
 		return adjustSaturation(color, multiplier, 'saturate');
 	};
 
+	/**
+	 * Desaturate a color
+	 * @param {Object|String} color
+	 * @param {Number} multiplier
+	 * @returns {Object}
+	 */
 	$.desaturate = function (color, multiplier) {
 		return adjustSaturation(color, multiplier, 'desaturate');
 	};
 
+	/**
+	 * Get the grayscale version of a color (fully desaturate)
+	 * @param {Object|String} color
+	 * @returns {Object}
+	 */
 	$.grayscale = function (color) {
 		return adjustSaturation(color, 1, 'desaturate');
 	};
 
 	/**
-	* Basic adjustment of the lightness of a color
-	*/
+	 * Basic adjustment of the lightness of a color
+	 * @private
+	 * @param {Object|String} color
+	 * @param {Number} multiplier
+	 * @param {String} adjustment Option to either darken or lighten
+	 * @returns {Object}
+	 */
 	function adjustLightness(color, multiplier, adjustment) {
 		var type = Color.getType(color);
 
@@ -1465,19 +2010,29 @@
 	}
 
 	/**
-	* Darkens a color by a multiplier value, e.g. 0.25 darkens by 25%
-	*/
+	 * Darkens a color by a multiplier value, e.g. 0.25 darkens by 25%
+	 * @param {Object|String} color
+	 * @param {Number} multiplier
+	 * @returns {Object}
+	 */
 	$.darken = function (color, multiplier) {
 		return adjustLightness(color, multiplier, 'darken');
 	};
 
 	/**
-	* Lightens a color by a multiplier value, e.g. 0.25 lightens by 25%
-	*/
+	 * Lightens a color by a multiplier value, e.g. 0.25 lightens by 25%
+	 * @param {Object|String} color
+	 * @param {Number} multiplier
+	 * @returns {Object}
+	 */
 	$.lighten = function (color, multiplier) {
 		return adjustLightness(color, multiplier, 'lighten');
 	};
 
+	/**
+	 * Produce a gradient between 2 or more colors. If the last argument is a number it is assumed to be the number of steps between colors.
+	 * @returns {Array.<Object>} Gradient colors in a array
+	 */
 	$.gradient = function () {
 		var len = arguments.length;
 
@@ -1543,6 +2098,10 @@
 		}
 	};
 
+	/**
+	 * Shift the color's hue by a give number of degrees
+	 * @returns {Object}
+	 */
 	$.shiftHue = function () {
 		var len = arguments.length;
 
@@ -1570,6 +2129,11 @@
 		}
 	};
 
+	/**
+	 * Return the complement of the given color
+	 * @param {Object|String} color
+	 * @returns {Object} complementary color
+	 */
 	$.complement = function (color) {
 		color = shiftHue(color, 180);
 
@@ -1578,33 +2142,58 @@
 		}
 	};
 
+	/**
+	 * Return the analogous colors of the given color
+	 * @param {Object|String} color
+	 * @returns {Array.<Object>}
+	 */
 	$.analogous = function (color) {
 		return shiftHue(color, -30, 60);
 	};
 
+	/**
+	 * Return the split colors of the given color
+	 * @param {Object|String} color
+	 * @returns {Array.<Object>}
+	 */
 	$.split = function (color) {
 		return shiftHue(color, -150, 300);
 	};
 
+	/**
+	 * Return the triad colors of the given color
+	 * @param {Object|String} color
+	 * @returns {Array.<Object>}
+	 */
 	$.triad = function (color) {
 		return shiftHue(color, -120, 240);
 	};
 
+	/**
+	 * Return the square colors of the given color
+	 * @param {Object|String} color
+	 * @returns {Array.<Object>}
+	 */
 	$.square = function (color) {
 		return shiftHue(color, 90, 90, 90);
 	};
 
+	/**
+	 * Return the tetradic colors of the given color
+	 * @param {Object|String} color
+	 * @returns {Array.<Object>}
+	 */
 	$.tetradic = function (color) {
 		return shiftHue(color, 60, 120, 60);
 	};
 
 	/**
-	* Perceieved brightness, if value is greater than 125 chose black foreground text, otherwise white
-	* @see http://www.w3.org/WAI/ER/WD-AERT/#color-contrast
-	* @param {Object|String} color1 Color object / value
-	* @param {Object|String} color2 Color object / value
-	* @returns {Number} Range between 0-500
-	*/
+	 * Perceieved brightness, if value is greater than 125 chose black foreground text, otherwise white
+	 * @see http://www.w3.org/WAI/ER/WD-AERT/#color-contrast
+	 * @param {Object|String} color1 Color object / value
+	 * @param {Object|String} color2 Color object / value
+	 * @returns {Number} Range between 0-500
+	 */
 	$.brightness = function (color) {
 		color = toRGB(color);
 
@@ -1614,12 +2203,12 @@
 	}
 
 	/**
-	* Perceieved brightness between two colors
-	* @see http://www.w3.org/WAI/ER/WD-AERT/#color-contrast
-	* @param {Object|String} color1 Color object / value
-	* @param {Object|String} color2 Color object / value
-	* @returns {Number} Range between 0-500
-	*/
+	 * Perceieved brightness between two colors
+	 * @see http://www.w3.org/WAI/ER/WD-AERT/#color-contrast
+	 * @param {Object|String} color1 Color object / value
+	 * @param {Object|String} color2 Color object / value
+	 * @returns {Number} Range between 0-500
+	 */
 	$.brightnessDifference = function (color1, color2) {
 		color1 = toRGB(color1);
 		color2 = toRGB(color2);
@@ -1630,11 +2219,11 @@
 	};
 
 	/**
-	* Select a readable foreground color for the supplied background
-	* @param {Object|String} background Color object / value
-	* @param {Object|String} foreground Color object / value - optional, if not supplied a color complementary to the background will be used
-	* @returns {Object|String} Foreground color with high readability
-	*/
+	 * Select a readable foreground color for the supplied background
+	 * @param {Object|String} background Color object / value
+	 * @param {Object|String} foreground Color object / value - optional, if not supplied a color complementary to the background will be used
+	 * @returns {Object|String} Foreground color with high readability
+	 */
 	$.selectForeground = function (background, foreground, difference) {
 		var type = Color.getType(background);
 
@@ -1664,16 +2253,31 @@
 		}
 	};
 
+	/**
+	 * Set the default EM dimension (in pixels)
+	 * @param {Number} value Dimension in pixels
+	 */
 	$.setEmSize = function (value) {
 		if (isNumber(value)) {
 			emSize = value;
 		}
 	};
 
-	function expressionMatch(match, contents, offset, s) {
+	/**
+	 * Calculate the result of a calculate() expression match
+	 * @param {undefined} undefined
+	 * @param {Number} contents
+	 * @returns {Number}
+	 */
+	function expressionMatch(undefined, contents) {
 		return contents * emSize;
 	}
 
+	/**
+	 * CSS3-like calc() long form
+	 * @param {String} expression
+	 * @returns {String} Result of the given expression
+	 */
 	$.calculate = function (expression) {
 		if (isNumber(emSize)) {
 			var result = eval(expression.replace(/([0-9]+(\.[0-9]+)?)em/gi, expressionMatch).replace(/([0-9]+(\.[0-9]+)?)px/gi, '$1'));
@@ -1685,12 +2289,20 @@
 	};
 
 	/**
-	* CSS3-like calc()
-	*/
+	 * CSS3-like calc()
+	 * @param {String} expression
+	 * @returns {String} Result of the given expression
+	 */
 	$.calc = function (expression) {
 		return calculate(expression);
 	};
 
+	/**
+	 * Return the named property with the supplied value
+	 * @param {String} property Property name
+	 * @param {String|Number} property Property value
+	 * @returns {Object}
+	 */
 	function getProperty(property, value) {
 		var out = {};
 		var len = Properties[property].length;
@@ -1702,6 +2314,14 @@
 		return out;
 	}
 
+	/**
+	 * Returns cross browser border properties
+	 * @param {String|Number} topLeft
+	 * @param {String|Number} bottomLeft
+	 * @param {String|Number} bottomRight
+	 * @param {String|Number} topRight
+	 * @returns {Object}
+	 */
 	$.borderRadius = function (topLeft, bottomLeft, bottomRight, topRight) {
 		if (topLeft && (!bottomLeft && !bottomRight && !topRight)) {
 			var len = Properties.borderRadius.length;
@@ -1735,6 +2355,12 @@
 		}
 	};
 
+	/**
+	 * Convert a color to a given color space
+	 * @param {Object|String} color
+	 * @param {String} space
+	 * @returns {Object}
+	 */
 	$.toColorSpace = function (color, space) {
 		var type = Color.getType(color);
 
@@ -1761,8 +2387,11 @@
 	}
 
 	/**
-	* Convert color to its nearest web safe equivalent
-	*/
+	 * Convert color to its nearest web safe equivalent
+	 * @param {Object|String} color
+	 * @param {Boolean} disableBias If false include eye sensitivity bias
+	 * @returns {String}
+	 */
 	$.toWebSafe = function (color, disableBias) {
 		var type = Color.getType(color);
 
@@ -1794,8 +2423,12 @@
 	};
 
 	/**
-	* Convert color to its exact or nearest named equivalent
-	*/
+	 * Convert color to its exact or nearest named equivalent
+	 * @param {Object|String} color
+	 * @param {Boolean} approximate If true return closest named color
+	 * @param {Boolean} disableBias If false include eye sensitivity bias
+	 * @returns {String}
+	 */
 	$.toNamed = function (color, approximate, disableBias) {
 		color = toHex(color);
 
@@ -1847,7 +2480,9 @@
 	};
 
 	/**
-	 * Functionality to extract CSS color values from strings / arrays / objects and convert them as desired
+	 * Convert the matched colors in a string to the given color space
+	 * @param {String} space
+	 * @returns {Object}
 	 */
 	String.prototype.toColorSpace = function (space) {
 		return this.replace(Color.regex.all, function (undefined, contents) {
@@ -1855,6 +2490,11 @@
 		});
 	};
 
+	/**
+	 * Convert the matched colors in the object's values to the given color space
+	 * @param {String} space
+	 * @returns {Object}
+	 */
 	Object.prototype.toColorSpace = function (space) {
 		var out = {};
 		var func = 'to' + space;
@@ -1866,6 +2506,11 @@
 		return out;
 	};
 
+	/**
+	 * Convert values in the array to the given color space
+	 * @param {String} space
+	 * @returns {Array}
+	 */
 	Array.prototype.toColorSpace = function (space) {
 		var out = [];
 		var func = 'to' + space;
@@ -1894,9 +2539,9 @@
 	}
 
 	/**
-	* TODO: IMPROVE
-	* Very basic CSS "parsing", very easy to break...
-	*/
+	 * Very basic CSS "parsing", very easy to break...
+	 * @returns {Object}
+	 */
 	String.prototype.toObject = function () {
 		var out = {};
 		// Remove comments
