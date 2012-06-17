@@ -1598,6 +1598,72 @@
 		return shiftHue(color, 60, 120, 60);
 	};
 
+	/**
+	* Perceieved brightness, if value is greater than 125 chose black foreground text, otherwise white
+	* @see http://www.w3.org/WAI/ER/WD-AERT/#color-contrast
+	* @param {Object|String} color1 Color object / value
+	* @param {Object|String} color2 Color object / value
+	* @returns {Number} Range between 0-500
+	*/
+	$.brightness = function (color) {
+		color = toRGB(color);
+
+		if (color !== undefined && color.isSet()) {
+			return  ((color.red * 299) + (color.green * 587) + (color.blue * 114)) / 1000;
+		}
+	}
+
+	/**
+	* Perceieved brightness between two colors
+	* @see http://www.w3.org/WAI/ER/WD-AERT/#color-contrast
+	* @param {Object|String} color1 Color object / value
+	* @param {Object|String} color2 Color object / value
+	* @returns {Number} Range between 0-500
+	*/
+	$.brightnessDifference = function (color1, color2) {
+		color1 = toRGB(color1);
+		color2 = toRGB(color2);
+
+		if (color1 !== undefined && color2 !== undefined && color1.isSet() && color2.isSet()) {
+			return (Math.max(color1.red, color2.red) - Math.min(color1.red, color2.red)) + (Math.max(color1.green, color2.green) - Math.min(color1.green, color2.green)) + (Math.max(color1.blue, color2.blue) - Math.min(color1.blue, color2.blue))
+		}
+	};
+
+	/**
+	* Select a readable foreground color for the supplied background
+	* @param {Object|String} background Color object / value
+	* @param {Object|String} foreground Color object / value - optional, if not supplied a color complementary to the background will be used
+	* @returns {Object|String} Foreground color with high readability
+	*/
+	$.selectForeground = function (background, foreground, difference) {
+		var type = Color.getType(background);
+
+		if (type) {
+			if (!foreground) {
+				foreground = complement(background);
+			}
+
+			if (!difference) {
+				difference = 40;
+			}
+
+			background = toHSL(background);
+			foreground = toHSL(foreground);
+
+			if (background !== undefined && foreground !== undefined && background.isSet() && foreground.isSet()) {
+				foreground.lightness += background.lightness < 50 ? difference : -difference;
+
+				if (foreground.lightness < 0) {
+					foreground.lightness = 0;
+				} else if (foreground.lightness > 100) {
+					foreground.lightness = 100;
+				}
+
+				return Color.toType(foreground, type);
+			}
+		}
+	};
+
 	$.setEmSize = function (value) {
 		if (isNumber(value)) {
 			emSize = value;
