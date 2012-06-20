@@ -1,3 +1,10 @@
 # Ignore tmp dir
 tmp/*
 
+# Ignore binaries
+src/jssc
+src/JSS.js.o
+
+# Ignore demo CSS output
+src/tmp.css
+
