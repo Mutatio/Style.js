@@ -2,6 +2,6 @@
 
 ld -r -b binary -o JSS.js.o JSS.js
 
-g++ -O3 --std=c++0x jss.cpp jssc.cpp JSS.js.o -o jssc /home/martin/Downloads/v8/libv8.a -lpthread
+g++ -O3 --std=c++0x jss.cpp jssc.cpp JSS.js.o -o jssc /home/martin/Downloads/v8/libv8.a -lpthread && strip jssc && ./jssc -v
 
 ./jssc -o tmp.css example.css.js
