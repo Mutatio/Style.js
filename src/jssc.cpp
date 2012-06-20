@@ -17,7 +17,7 @@ int main(int argc, char* argv[]) {
 		string contents;
 		string JSS;
 
-		while ((c = getopt(argc, argv, "o:j:p")) != -1) {
+		while ((c = getopt(argc, argv, "o:j:phv")) != -1) {
 			switch (c) {
 				case 'o':
 					if (optarg != NULL) {
@@ -50,8 +50,6 @@ int main(int argc, char* argv[]) {
 							break;
 						} else {
 							cout << "ERROR: Empty external JSS file supplied!\n";
-
-
 						}
 					}
 
@@ -63,9 +61,18 @@ int main(int argc, char* argv[]) {
 
 					break;
 
+				case 'v':
+					cout << jss::getVersionString() << "\n\nCompiled " << __DATE__ << " at " << __TIME__ << "\n";
+
+					return 0;
 
 				case 'h':
-					// Help information
+					cout << "Usage: jssc [options] file...\n"
+							"Options:\n"
+							"  -j <file>                Override embedded JSS with the contents of <file>\n"
+							"  -o <file>                Place CSS output into <file>\n"
+							"  -p                       Print CSS output to screen\n"
+							"  -v                       Display JSS and JSSC versions\n";
 
 					return 0;
 			}
@@ -100,7 +107,7 @@ int main(int argc, char* argv[]) {
 				if (printOutput) {
 					cout << JSS << "\n";
 				} else {
-					cout << "Compiled CSS output (" << JSS.length() << " bytes) saved to: " << CSSFilename << "\n";
+					cout << "CSS output (" << JSS.length() << " bytes) saved to: " << CSSFilename << "\n";
 				}
 			} else {
 				cout << JSS << "\n";
