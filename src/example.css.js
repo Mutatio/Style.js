@@ -36,7 +36,7 @@ Style({
 		text_decoration: 'none',
 		$hover: {
 			text_decoration: 'underline'
-		}.extend(CSS['#myTestCSS'])
+		}.extend(borderRadius('2.5em'))
 	}
 });
 
@@ -45,17 +45,18 @@ var bgProp = Property({
 	image: 'url(myPicture.png)'
 });
 
+var font = Property({
+	weight: 'bold',
+	family: "'Helvetica Neue', Helvetica, Arial, sans-serif",
+	size: '12px/14px'
+});
+
 /**
  * Base
  */
 Style({
 	body: {
-		font: Property({
-			weight: 'bold',
-			family: "'Helvetica Neue', Helvetica, Arial, sans-serif",
-			size: '12px/14px'
-		}),
-
+		font: font,
 		cursor: "default",
 		margin: 0,
 		padding: 0,
@@ -63,12 +64,7 @@ Style({
 		background: bgProp,
 
 		a: {
-			font: new Property({
-				weight: 'bold',
-				family: "'Helvetica Neue', Helvetica, Arial, sans-serif",
-				size: '12px/14px'
-			}),
-
+			font: font,
 			color: 'red',
 
 			$hover: {
@@ -142,7 +138,7 @@ Style({
 			display: "inline-block",
 			padding: "3px 0 4px 0",
 			margin_right: "5px",
-			height: calculate('2em + 2px')
+			height: calc('2em + 2px')
 		}.extend(backgroundsTest).toRGB()
 	}.extend(backgroundsTest)
 });
