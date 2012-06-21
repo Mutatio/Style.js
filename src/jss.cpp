@@ -12,7 +12,7 @@ Compiler::~Compiler() {
 }
 
 /**
- *
+ * Attempt to transform JavaScript style string to CSS
  * @param javascript
  * @return
  */
@@ -25,14 +25,10 @@ string Compiler::compile(string javascript) {
 	// Create a string containing the JavaScript source code.
 	javascriptString = v8::String::New(jss::String::toChar(javascript));
 
-
-
 	// Compile the JavaScript string
 	script = Script::Compile(javascriptString);
 	// Run the script to get the result
 	result = script->Run();
-
-
 
 	// Clean up
 	script.Clear();
