@@ -6,29 +6,26 @@
 
 using namespace jss;
 
-Compiler::~Compiler() {
-	delete *context;
-	delete *javascriptString;
-}
-
 /**
  * Attempt to transform JavaScript style string to CSS
  * @param javascript
  * @return
  */
 string Compiler::compile(string javascript) {
-	context = Context::New();
+	HandleScope handle_scope;
+
+	Persistent<Context> context = Context::New();
 
 	// Enter the created context for compiling
 	Context::Scope context_scope(context);
 
 	// Create a string containing the JavaScript source code.
-	javascriptString = v8::String::New(jss::String::toChar(javascript));
+	Handle<v8::String> javascriptString = v8::String::New(jss::String::toChar(javascript));
 
 	// Compile the JavaScript string
-	script = Script::Compile(javascriptString);
+	Handle<Script> script = Script::Compile(javascriptString);
 	// Run the script to get the result
-	result = script->Run();
+	Handle<Value> result = script->Run();
 
 	// Clean up
 	script.Clear();
@@ -48,7 +45,7 @@ ifstream fileStream;
  * @param filename path to file
  * @return file contents
  */
-string File::getContents(char* filename) {
+string File::getContents(string filename) {
 	string out;
 	string line;
 
