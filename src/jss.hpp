@@ -70,25 +70,17 @@ namespace jss {
 	 * @return Formatted string output of JSS, JSSC and Google V8 versions
 	 */
 	static string getVersionString() {
-		return "-------------------\nComponent | Version\n-------------------\nJSS       | " + getJSSVersion() + "\nJSSC      | " + getJSSCVersion() + "\nGoogle V8 | " + v8::V8::GetVersion();
+		return "-------------------\nComponent | Version\n-------------------\nJSS       | " + getJSSVersion() + "\nJSSC      | " + getJSSCVersion() + "\nGoogle V8 | " + V8::GetVersion();
 	}
 
 	class Compiler {
-	private:
-		HandleScope handle_scope;
-		Persistent<Context> context; // Create a new context.
-		Handle<v8::String> javascriptString;
-		Handle<Script> script;
-		Handle<Value> result;
-
 	public:
-		~Compiler();
-		string compile(string);
+		static string compile(string);
 	};
 
 	class File {
 	public:
-		static string getContents(char*);
+		static string getContents(string);
 	};
 
 	class String {
