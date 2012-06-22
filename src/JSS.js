@@ -2388,6 +2388,36 @@
 
 	$.borderRadius = borderRadius;
 
+	function textShadow(horizontalLength, verticalLength, blurRadius, color) {
+		var type = Color.getType(color);
+
+		if (type) {
+			if (!horizontalLength) {
+				horizontalLength = 0;
+			} else if (isNumber(horizontalLength)) {
+				horizontalLength += 'px';
+			}
+
+			if (!verticalLength) {
+				verticalLength = 0;
+			} else if (isNumber(verticalLength)) {
+				verticalLength += 'px';
+			}
+
+			if (!blurRadius) {
+				blurRadius = 0;
+			} else if (isNumber(blurRadius)) {
+				blurRadius += 'px';
+			}
+
+			return {
+				text_shadow: horizontalLength + ' ' + verticalLength + ' ' + blurRadius + ' ' + color
+			};
+		}
+	}
+
+	$.textShadow = textShadow;
+
 	/**
 	 * Convert color to a given color space
 	 * @private
