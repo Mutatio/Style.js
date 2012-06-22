@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Mutatio - JSS</title>
+
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+		<script src="../src/JSS.js" type="text/javascript"></script>
+		<script src="style.css.js" type="text/javascript"></script>
+
+		<style id="style" type="text/css"></style>
+
+		<script type="text/javascript">
+			var CSS = toCSS();
+
+			document.getElementById('style').innerHTML = CSS;
+		</script>
+	</head>
+
+	<body>
+		<header>
+			<h1>JSS</h1>
+
+			<p></p>
+		</header>
+
+
+		<div>
+			<div id="code">
+				<ul>
+					<li id="JSS"></li>
+					<li id="CSS"></li>
+				</ul>
+			</div>
+		</div>
+
+		<footer></footer>
+
+		<script type="text/javascript">
+			document.getElementById('JSS').innerHTML = pageStyle.toString();
+			document.getElementById('CSS').innerHTML = CSS;
+		</script>
+	</body>
+</html>
