@@ -4,9 +4,10 @@ var pageStyle = (function () {
 	bg.lightness = 35;
 
 	var bgHex = bg.toHex();
+	var bgDark = darken(bgHex, .2).toString();
 	var colors = square(bgHex);
 	var bgComp = complement(bgHex);
-	var border = borderRadius('5px');
+	var border = CSS.borderRadius('5px');
 	var center = {
 		margin: '0 auto',
 		width: '900px'
@@ -25,8 +26,8 @@ var pageStyle = (function () {
 				margin: '10px 0',
 				font_size: '40px',
 				color: 'white',
-				background_color: darken(bg, .5).toString()
-			}.extend(textShadow(2, 2, 1, darken(bg, .9))).extend(border)
+				background_color: bgDark
+			}.extend([CSS.textShadow(2, 2, 1, darken(bg, .9)), border, CSS.radialGradient('top', '#fff', bgDark)])
 		}.extend(center)
 	});
 
@@ -63,6 +64,7 @@ var pageStyle = (function () {
 		}.extend(border),
 
 		body: {
+			color: bgDark,
 			background_color: bg.toString(),
 
 			font: Property({
@@ -72,7 +74,10 @@ var pageStyle = (function () {
 			}),
 
 			'> div': {
-
+				'> h2': {
+					margin: '10px 0 5px 0',
+					font_size: '14px'
+				}
 			}.extend(center)
 		}
 	});
