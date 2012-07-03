@@ -11,6 +11,10 @@
 		<style id="style" type="text/css"></style>
 
 		<script type="text/javascript">
+			String.prototype.HTMLEntities = function () {
+				return this.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+			};
+
 			var CSS = toCSS();
 
 			document.getElementById('style').innerHTML = CSS;
@@ -20,12 +24,10 @@
 	<body>
 		<header>
 			<h1>JSS</h1>
-
-			<p></p>
 		</header>
 
-
 		<div>
+			<h2>JSS &gt; CSS</h2>
 			<div id="code">
 				<ul>
 					<li id="JSS"></li>
@@ -37,8 +39,8 @@
 		<footer></footer>
 
 		<script type="text/javascript">
-			document.getElementById('JSS').innerHTML = pageStyle.toString();
-			document.getElementById('CSS').innerHTML = CSS;
+			document.getElementById('JSS').innerHTML = pageStyle.toString().HTMLEntities();
+			document.getElementById('CSS').innerHTML = CSS.HTMLEntities();
 		</script>
 	</body>
 </html>
