@@ -41,10 +41,13 @@
 	 */
 	var Properties = {
 		borderRadius: ['-webkit-border-radius', '-moz-border-radius', 'border-radius'],
-		borderTopLeft: ['-webkit-border-top-left-radius', '-moz-border-radius-topleft', 'border-top-left-radius'],
-		borderBottomLeft: ['-webkit-border-bottom-left-radius', '-moz-border-radius-bottomleft', 'border-bottom-left-radius'],
-		borderBottomRight: ['-webkit-border-bottom-right-radius', '-moz-border-radius-bottomright', 'border-bottom-right-radius'],
-		borderTopRight: ['-webkit-border-top-right-radius', '-moz-border-radius-topright', 'border-top-right-radius']
+		borderRadiusTopLeft: ['-webkit-border-top-left-radius', '-moz-border-radius-topleft', 'border-top-left-radius'],
+		borderRadiusBottomLeft: ['-webkit-border-bottom-left-radius', '-moz-border-radius-bottomleft', 'border-bottom-left-radius'],
+		borderRadiusBottomRight: ['-webkit-border-bottom-right-radius', '-moz-border-radius-bottomright', 'border-bottom-right-radius'],
+		borderRadiusTopRight: ['-webkit-border-top-right-radius', '-moz-border-radius-topright', 'border-top-right-radius'],
+		gradientLinear: ['-moz-linear-gradient', '-webkit-linear-gradient', '-o-linear-gradient', '-ms-linear-gradient', 'linear-gradient'],
+		gradientRadial: ['-moz-radial-gradient', '-webkit-radial-gradient', '-o-radial-gradient', '-ms-radial-gradient', 'radial-gradient'],
+		boxShadow: ['-moz-box-shadow', '-webkit-box-shadow', 'box-shadow']
 	};
 
 	/**
@@ -69,13 +72,13 @@
 	}
 
 	/**
-	 * Checks if value is object type
+	 * Checks if value is scalar value
 	 * @private
 	 * @param {mixed} value
 	 * @returns {Boolean}
 	 */
-	function isObject(value) {
-		return value instanceof Object;
+	function isScalar(value) {
+		return isString(value) || isNumber(value);
 	}
 
 	/**
@@ -86,6 +89,16 @@
 	 */
 	function isArray(value) {
 		return value instanceof Array;
+	}
+
+	/**
+	 * Checks if value is object type
+	 * @private
+	 * @param {mixed} value
+	 * @returns {Boolean}
+	 */
+	function isObject(value) {
+		return value instanceof Object && !isArray(value);
 	}
 
 	/**
@@ -134,6 +147,14 @@
 	 */
 	String.prototype.toStyle = function () {
 		Styles.push(this);
+	};
+
+	/**
+	 * Upper case the first character of the string
+	 * @returns {String}
+	 */
+	String.prototype.upperCaseFirst = function () {
+		return this.charAt(0).toUpperCase() + this.slice(1);
 	};
 
 	/**
@@ -283,10 +304,11 @@
 	 * Add values from an object to the current object
 	 * @param {Object} obj
 	 * @param {Boolean} override If true replace values in the original object if there's a collision
+	 * @todo Add support for unlimited arguments
 	 * @returns {Object}
 	 */
 	Object.prototype.extend = function (obj, override) {
-		if (obj) {
+		if (isObject(obj)) {
 			var property;
 
 			if (override) {
@@ -312,9 +334,62 @@
 					}
 				}
 			}
+		} else if (isArray(obj)) {
+			for (var i = 0; i < obj.length; ++i) {
+				if (isObject(obj[i])) {
+					this.extend(obj[i], override);
+				}
+			}
 		}
 
 		return this;
+	};
+
+	/**
+	 * Object implementation of Array.unshift
+	 * @returns {Object}
+	 */
+	Object.prototype.unshift = function () {
+		var len = arguments.length;
+		var out = {};
+
+		if (len > 0) {
+			var counter = 0;
+
+			for (var i = 0; i < len; ++i) {
+				out[i] = arguments[i];
+
+				++counter;
+			}
+
+			if (this.length > 0) {
+				for (var x in this) {
+					out[counter] = this[x];
+
+					++counter;
+				}
+			}
+
+			return out;
+		}
+
+		return this;
+	}
+
+	/**
+	 * Convert Object to Array
+	 * @returns {Array}
+	 */
+	Object.prototype.toArray = function () {
+		var out = [];
+
+		if (this.length > 0) {
+			for (var i in this) {
+				out.push(this[i]);
+			}
+		}
+
+		return out;
 	};
 
 	/**
@@ -2345,6 +2420,10 @@
 		return out;
 	}
 
+	function CSS() {}
+
+	$.CSS = CSS;
+
 	/**
 	 * Returns cross browser border properties
 	 * @param {String|Number} topLeft
@@ -2353,10 +2432,14 @@
 	 * @param {String|Number} topRight
 	 * @returns {Object}
 	 */
-	function borderRadius(topLeft, bottomLeft, bottomRight, topRight) {
+	CSS.borderRadius = function (topLeft, bottomLeft, bottomRight, topRight) {
 		if (topLeft && (!bottomLeft && !bottomRight && !topRight)) {
 			var len = Properties.borderRadius.length;
 			var out = {};
+
+			if (isNumber(topLeft)) {
+				topLeft += 'px';
+			}
 
 			for (var i = 0; i < len; ++i) {
 				out[Properties.borderRadius[i]] = topLeft;
@@ -2367,28 +2450,118 @@
 			var out = {};
 
 			if (topLeft) {
-				out.extend(getProperty('borderTopLeft', topLeft));
+				if (isNumber(topLeft)) {
+					topLeft += 'px';
+				}
+
+				out.extend(getProperty('borderRadiusTopLeft', topLeft));
 			}
 
 			if (bottomLeft) {
-				out.extend(getProperty('borderBottomLeft', bottomLeft));
+				if (isNumber(bottomLeft)) {
+					bottomLeft += 'px';
+				}
+
+				out.extend(getProperty('borderRadiusBottomLeft', bottomLeft));
 			}
 
 			if (bottomRight) {
-				out.extend(getProperty('borderBottomRight', bottomRight));
+				if (isNumber(bottomRight)) {
+					bottomRight += 'px';
+				}
+
+				out.extend(getProperty('borderRadiusBottomRight', bottomRight));
 			}
 
 			if (topRight) {
-				out.extend(getProperty('borderTopRight', topRight));
+				if (isNumber(topRight)) {
+					topRight += 'px';
+				}
+
+				out.extend(getProperty('borderRadiusTopRight', topRight));
 			}
 
 			return out;
 		}
-	}
+	};
 
-	$.borderRadius = borderRadius;
+	/**
+	 * Get CSS gradient for specified argument values
+	 * @returns {Object}
+	 */
+	CSS.gradient = function () {
+		var len = arguments.length;
 
-	function textShadow(horizontalLength, verticalLength, blurRadius, color) {
+		alert(arguments.stringify());
+
+		if (len > 2) {
+			var orientation = arguments[0].toLowerCase();
+
+			if (orientation === 'linear' || orientation === 'radial') {
+				var properties = Properties['gradient' + orientation.upperCaseFirst()];
+				var propertyValue = '';
+				var position = arguments[1];
+				var out = [];
+				var i;
+
+				if (orientation === 'linear') {
+					for (i = 2; i < arguments.length; ++i) {
+						if (isScalar(arguments[i])) {
+							propertyValue += ', ' + arguments[i];
+						}
+					}
+
+					for (i = 0; i < properties.length; ++i) {
+						out.push(properties[i] + '(' + position + propertyValue + ')');
+					}
+				} else {
+					var shape = arguments[2];
+
+					for (i = 3; i < arguments.length; ++i) {
+						if (isScalar(arguments[i])) {
+							propertyValue += ', ' + arguments[i];
+						}
+					}
+
+					for (i = 0; i < properties.length; ++i) {
+						out.push(properties[i] + '(' + position + ', ' + shape + propertyValue + ')');
+					}
+				}
+
+				if (!empty(out)) {
+					return {
+						background: out
+					};
+				}
+			}
+		}
+	};
+
+	/**
+	 * Get CSS linear gradient for specified argument values
+	 * @returns {Object}
+	 */
+	CSS.linearGradient = function () {
+		return CSS.gradient.apply(null, ['linear'].concat(arguments.toArray()));
+	};
+
+	/**
+	 * Get CSS radial gradient for specified argument values
+	 * @returns {Object}
+	 */
+	CSS.radialGradient = function () {
+		return CSS.gradient.apply(null, ['radial'].concat(arguments.toArray()));
+	};
+
+	/**
+	 * Get CSS text shadow for specified argument values
+	 * @param {String|Number} horizontalLength
+	 * @param {String|Number} verticalLength
+	 * @param {String|Number} blurRadius
+	 * @param {String|Object} color
+	 * @returns {Object}
+	 */
+	CSS.textShadow = function (horizontalLength, verticalLength, blurRadius, color) {
 		var type = Color.getType(color);
 
 		if (type) {
@@ -2414,9 +2587,24 @@
 				text_shadow: horizontalLength + ' ' + verticalLength + ' ' + blurRadius + ' ' + color
 			};
 		}
-	}
+	};
 
-	$.textShadow = textShadow;
+	/**
+	 * Get CSS box shadow for specified argument values
+	 * @param {String|Number} value
+	 * @returns {Object}
+	 */
+	CSS.boxShadow = function (value) {
+		if (!empty(value)) {
+			var out = {};
+
+			for (var i = 0; i < Properties.boxShadow.length; ++i) {
+				out[Properties.boxShadow[i]] = value;
+			}
+
+			return out;
+		}
+	};
 
 	/**
 	 * Convert color to a given color space
