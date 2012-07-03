@@ -2492,8 +2492,6 @@
 	CSS.gradient = function () {
 		var len = arguments.length;
 
-		alert(arguments.stringify());
-
 		if (len > 2) {
 			var orientation = arguments[0].toLowerCase();
 
