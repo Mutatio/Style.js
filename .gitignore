@@ -2,8 +2,8 @@
 tmp/*
 
 # Ignore binaries
-src/jssc
-src/JSS.js.o
+#src/stylec
+#src/Style.js.o
 
 # Ignore demo CSS output
 src/tmp.css
