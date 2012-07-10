@@ -102,6 +102,26 @@
 	}
 
 	/**
+	 * Checks if value is Image type
+	 * @private
+	 * @param {mixed} value
+	 * @returns {Boolean}
+	 */
+	function isImage(value) {
+		return value instanceof Image;
+	}
+
+	/**
+	 * Checks if value is HTMLElement type
+	 * @private
+	 * @param {mixed} value
+	 * @returns {Boolean}
+	 */
+	function isElement(value) {
+		return value instanceof HTMLElement;
+	}
+
+	/**
 	 * Checks if value is function type
 	 * @private
 	 * @param {mixed} value
@@ -2947,6 +2967,8 @@
 							if (!empty(properties[x])) {
 								property = properties[x].split(/\s*:\s*/m);
 
+								//alert(properties[x].match(/([^:]+)\s*:\s*(.+)/gi));
+
 								if (property.length === 2 && !empty(property[0]) && !empty(property[1])) {
 									if (out[parts[1]] === undefined) {
 										out[parts[1]] = {};
@@ -2962,5 +2984,61 @@
 		}
 
 		return out;
+	};
+
+	Image.prototype.toCanvas = function (obj) {
+		if (obj && obj.nodeName == 'CANVAS') {
+			obj.width = this.width;
+			obj.height = this.height;
+
+			var context = obj.getContext('2d');
+
+			context.drawImage(this, 0, 0, this.width, this.height);
+		}
+	};
+
+	function toCanvas(obj, canvas) {
+		if (isElement(canvas) && canvas.nodeName == 'CANVAS') {
+			if (isString(obj)) {
+				var src = obj;
+
+				obj = new Image();
+				obj.src = src;
+			}
+
+			if (isImage(obj)) {
+				obj.onload = function () {
+					obj.toCanvas(canvas);
+				};
+			}
+		}
+	}
+
+	$.toCanvas = toCanvas;
+
+	function Canvas() {}
+
+	$.Canvas = Canvas;
+
+	Canvas.getColors = function (canvas, type) {
+		if (!type) {
+			type = Color.HEX;
+		}
+
+		if (isElement(canvas) && canvas.nodeName == 'CANVAS') {
+			var context = canvas.getContext('2d');
+			var image = context.getImageData(0, 0, canvas.width, canvas.height);
+			var imageData = image.data;
+			var len = canvas.width * canvas.height;
+			var tmp;
+
+			while (--len) {
+				tmp = new RGB(imageData[4 * len], imageData[4 * len + 1], imageData[4 * len + 2]);
+
+				alert(tmp);
+
+				break;
+			}
+		}
 	};
 })(this);

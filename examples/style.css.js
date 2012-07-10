@@ -26,9 +26,14 @@ var pageStyle = (function () {
 				margin: '10px 0',
 				font_size: '40px',
 				color: 'white',
-				background_color: bgDark
-			}.extend([CSS.textShadow(2, 2, 1, darken(bg, .9)), border, CSS.radialGradient('top', '#fff', bgDark)])
-		}.extend(center)
+				background_color: bgDark,
+				border: bgDark + ' 1px solid'
+			}.extend([
+				CSS.textShadow(-2, 2, 1, darken(bg, .9)),
+				border,
+				CSS.radialGradient('top', lighten(bgDark, 2).toString(), bgDark)
+			])
+		}.extend([center])
 	});
 
 	/**

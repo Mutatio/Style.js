@@ -2,9 +2,9 @@
  * @author Martin Gallagher <martin@martinpaulgallagher.com>
  */
 
-#include "jss.hpp"
+#include "stylejs.hpp"
 
-using namespace jss;
+using namespace stylejs;
 
 /**
  * Attempt to transform JavaScript style string to CSS
@@ -20,7 +20,7 @@ string Compiler::compile(string javascript) {
 	Context::Scope context_scope(context);
 
 	// Create a string containing the JavaScript source code.
-	Handle<v8::String> javascriptString = v8::String::New(jss::String::toChar(javascript));
+	Handle<v8::String> javascriptString = v8::String::New(stylejs::String::toChar(javascript));
 
 	// Compile the JavaScript string
 	Handle<Script> script = Script::Compile(javascriptString);
@@ -49,7 +49,7 @@ string File::getContents(string filename) {
 	string out;
 	string line;
 
-	fileStream.open(filename);
+	fileStream.open(stylejs::String::toChar(filename));
 
 	if (fileStream.is_open()) {
 		while (fileStream.good()) {
@@ -69,7 +69,7 @@ string File::getContents(string filename) {
  * @param str string to be converted
  * @return char sequence
  */
-char* jss::String::toChar(string str) {
+char* stylejs::String::toChar(string str) {
 	unsigned int len = str.size();
 	char* c = new char[len + 1];
 	c[len] = 0;

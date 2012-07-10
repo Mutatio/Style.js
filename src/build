@@ -1,7 +1,7 @@
 #!/bin/bash
 
-ld -r -b binary -o JSS.js.o JSS.js
+ld -r -b binary -o Style.js.o Style.js
 
-g++ -O3 -Werror --std=c++0x jss.cpp jssc.cpp JSS.js.o -o jssc /projects/Software/v8/libv8.a -lpthread && strip jssc && ./jssc -v
+g++ -O3 -Werror stylejs.cpp stylec.cpp Style.js.o -o stylec /projects/Software/v8/libv8.a -lpthread && strip stylec && ./stylec -v
 
-./jssc -o tmp.css example.css.js
+./stylec -o tmp.css example.css.js

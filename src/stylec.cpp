@@ -4,7 +4,7 @@
 
 #include <dirent.h>
 #include <vector>
-#include "jss.hpp"
+#include "stylejs.hpp"
 
 int main(int argc, char* argv[]) {
 	if (argc > 1) {
@@ -12,14 +12,14 @@ int main(int argc, char* argv[]) {
 		bool processDirectory = false;
 		bool printOutput = false;
 		bool saveOutput = false;
-		bool useExternalJSSFile = false;
+		bool useExternalStyle = false;
 		char c;
 		unsigned short i;
 		unsigned short directoryFilesCount;
 		char* CSSFilename;
 		ofstream CSSFile;
 		string contents;
-		string JSS;
+		string StyleJS;
 		vector<string> directoryFiles;
 
 		while ((c = getopt(argc, argv, "o:j:d:phv")) != -1) {
@@ -78,7 +78,7 @@ int main(int argc, char* argv[]) {
 										in >> filename;
 										in.clear();
 
-										// Push filename for suspected JSS compatible file
+										// Push filename for suspected Style.js compatible file
 										directoryFiles.push_back(filename);
 									}
 								}
@@ -100,18 +100,18 @@ int main(int argc, char* argv[]) {
 
 					break;
 
-				case 'j':
+				case 's':
 					if (optarg != NULL) {
-						// Override embedded JSS JavaScript with external file
-						contents = jss::File::getContents(optarg);
+						// Override embedded Style.js JavaScript with external file
+						contents = stylejs::File::getContents(optarg);
 
 						if (!contents.empty()) {
-							JSS = contents + JSS;
-							useExternalJSSFile = true;
+							StyleJS = contents + StyleJS;
+							useExternalStyle = true;
 
 							break;
 						} else {
-							cout << "ERROR: Empty external JSS file supplied!\n";
+							cout << "ERROR: Empty external Style.js file supplied!\n";
 						}
 					}
 
@@ -124,17 +124,17 @@ int main(int argc, char* argv[]) {
 					break;
 
 				case 'v':
-					cout << jss::getVersionString() << "\n\nCompiled " << __DATE__ << " at " << __TIME__ << "\n";
+					cout << stylejs::getVersionString() << "\n\nCompiled " << __DATE__ << " at " << __TIME__ << "\n";
 
 					return 0;
 
 				case 'h':
-					cout << "Usage: jssc [options] file...\n"
+					cout << "Usage: stylec [options] file...\n"
 							"Options:\n"
-							"  -j <file>                Override embedded JSS with the contents of <file>\n"
+							"  -s <file>                Override embedded Style.js with the contents of <file>\n"
 							"  -o <file>                Place CSS output into <file>\n"
 							"  -p                       Print CSS output to screen\n"
-							"  -v                       Display JSS and JSSC versions\n";
+							"  -v                       Display Style.js and stylec versions\n";
 
 					return 0;
 			}
@@ -142,10 +142,10 @@ int main(int argc, char* argv[]) {
 
 		if (!processDirectory) {
 			for (i = optind; i < argc; ++i) {
-				contents = jss::File::getContents(argv[i]);
+				contents = stylejs::File::getContents(argv[i]);
 
 				if (!contents.empty()) {
-					JSS += contents;
+					StyleJS += contents;
 
 					if (!compile) {
 						compile = true;
@@ -155,42 +155,42 @@ int main(int argc, char* argv[]) {
 		}
 
 		if (compile || processDirectory) {
-			// Compile CSS, reuse JSS variable
-			if (!useExternalJSSFile) {
-				JSS = jss::getJS() + "\n\n" + JSS;
+			// Compile CSS, reuse StyleJS variable
+			if (!useExternalStyle) {
+				StyleJS = stylejs::getJS() + "\n\n" + StyleJS;
 			}
 
 			// Initiate "compiler"
-			jss::Compiler JSSCompiler;
+			stylejs::Compiler StyleCompiler;
 
 			if (!processDirectory) {
-				JSS = JSSCompiler.compile(JSS + "\ntoCSS();");
+				StyleJS = StyleCompiler.compile(StyleJS + "\ntoCSS();");
 
 				if (saveOutput) {
-					CSSFile << JSS;
+					CSSFile << StyleJS;
 
 					if (printOutput) {
-						cout << JSS << "\n";
+						cout << StyleJS << "\n";
 					} else {
-						cout << "CSS output (" << JSS.length() << " bytes) saved to: " << CSSFilename << "\n";
+						cout << "CSS output (" << StyleJS.length() << " bytes) saved to: " << CSSFilename << "\n";
 					}
 				} else {
-					cout << JSS << "\n";
+					cout << StyleJS << "\n";
 				}
 			} else {
 				unsigned short count = 0;
 
 				for (i = 0; i < directoryFilesCount; ++i) {
-					contents = jss::File::getContents(directoryFiles[i]);
+					contents = stylejs::File::getContents(directoryFiles[i]);
 
 					if (!contents.empty()) {
-						JSS = JSSCompiler.compile(JSS + "\n" + contents + "\ntoCSS();");
+						StyleJS = StyleCompiler.compile(StyleJS + "\n" + contents + "\ntoCSS();");
 
-						if (!JSS.empty()) {
-							CSSFile.open(jss::String::toChar(directoryFiles[i] + ".css"), ios::out | ios::trunc);
+						if (!StyleJS.empty()) {
+							CSSFile.open(stylejs::String::toChar(directoryFiles[i] + ".css"), ios::out | ios::trunc);
 
 							if (CSSFile.is_open()) {
-								CSSFile << JSS;
+								CSSFile << StyleJS;
 
 								++count;
 							}
