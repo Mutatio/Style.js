@@ -28,12 +28,12 @@ var pageStyle = (function () {
 				color: 'white',
 				background_color: bgDark,
 				border: bgDark + ' 1px solid'
-			}.extend([
+			}.extend(
 				CSS.textShadow(-2, 2, 1, darken(bg, .9)),
 				border,
 				CSS.radialGradient('top', lighten(bgDark, 2).toString(), bgDark)
-			])
-		}.extend([center])
+			)
+		}.extend(center)
 	});
 
 	/**
