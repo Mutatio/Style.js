@@ -1380,6 +1380,8 @@
 			} else {
 				return toHSL(hue);
 			}
+		} else {
+			return toHSL(hue);
 		}
 	}
 
