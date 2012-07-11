@@ -20,7 +20,10 @@ class StyleJS {
 		if (!empty($StyleFile) && class_exists('V8js')) {
 			if (is_readable($StyleFile)) {
 				$this->StyleJS = file_get_contents($StyleFile);
-				$this->V8 = new V8js();
+
+				if (!empty($this->StyleJS)) {
+					$this->V8 = new V8js;
+				}
 			}
 		}
 	}
