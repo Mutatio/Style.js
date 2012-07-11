@@ -2733,10 +2733,10 @@
 	CSS.getProperty = function (property, value) {
 		var out = {};
 
-		var len = this.properties[property].length;
+		var len = CSS.properties[property].length;
 
 		for (var i = 0; i < len; ++i) {
-			out[this.properties[property][i]] = value;
+			out[CSS.properties[property][i]] = value;
 		}
 
 		return out;
@@ -2752,7 +2752,7 @@
 	 */
 	CSS.borderRadius = function (topLeft, bottomLeft, bottomRight, topRight) {
 		if (topLeft && (!bottomLeft && !bottomRight && !topRight)) {
-			var len = this.properties.borderRadius.length;
+			var len = CSS.properties.borderRadius.length;
 			var out = {};
 
 			if (isNumber(topLeft)) {
@@ -2760,7 +2760,7 @@
 			}
 
 			for (var i = 0; i < len; ++i) {
-				out[this.properties.borderRadius[i]] = topLeft;
+				out[CSS.properties.borderRadius[i]] = topLeft;
 			}
 
 			return out;
@@ -2772,7 +2772,7 @@
 					topLeft += 'px';
 				}
 
-				out.extend(this.getProperty('borderRadiusTopLeft', topLeft));
+				out.extend(CSS.getProperty('borderRadiusTopLeft', topLeft));
 			}
 
 			if (bottomLeft) {
@@ -2780,7 +2780,7 @@
 					bottomLeft += 'px';
 				}
 
-				out.extend(this.getProperty('borderRadiusBottomLeft', bottomLeft));
+				out.extend(CSS.getProperty('borderRadiusBottomLeft', bottomLeft));
 			}
 
 			if (bottomRight) {
@@ -2788,7 +2788,7 @@
 					bottomRight += 'px';
 				}
 
-				out.extend(this.getProperty('borderRadiusBottomRight', bottomRight));
+				out.extend(CSS.getProperty('borderRadiusBottomRight', bottomRight));
 			}
 
 			if (topRight) {
@@ -2796,7 +2796,7 @@
 					topRight += 'px';
 				}
 
-				out.extend(this.getProperty('borderRadiusTopRight', topRight));
+				out.extend(CSS.getProperty('borderRadiusTopRight', topRight));
 			}
 
 			return out;
@@ -2814,7 +2814,7 @@
 			var orientation = arguments[0].toLowerCase();
 
 			if (orientation === 'linear' || orientation === 'radial') {
-				var properties = this.properties['gradient' + orientation.upperCaseFirst()];
+				var properties = CSS.properties['gradient' + orientation.upperCaseFirst()];
 				var propertyValue = '';
 				var position = arguments[1];
 				var out = [];
@@ -2914,8 +2914,8 @@
 		if (!empty(value)) {
 			var out = {};
 
-			for (var i = 0; i < this.properties.boxShadow.length; ++i) {
-				out[this.properties.boxShadow[i]] = value;
+			for (var i = 0; i < CSS.properties.boxShadow.length; ++i) {
+				out[CSS.properties.boxShadow[i]] = value;
 			}
 
 			return out;
