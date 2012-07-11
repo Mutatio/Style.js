@@ -301,41 +301,19 @@
 	/**
 	 * Add values from an object to the current object
 	 * @param {Object} obj
-	 * @param {Boolean} override If true replace values in the original object if there's a collision
-	 * @todo Add support for unlimited arguments
 	 * @returns {Object}
 	 */
-	Object.prototype.extend = function (obj, override) {
-		if (isObject(obj)) {
-			var property;
+	Object.prototype.extend = function () {
+		var len = arguments.length;
 
-			if (override) {
-				for (property in obj) {
-					this[property] = obj[property];
-				}
-			} else {
-				for (property in obj) {
-					if (this[property]) {
-						if (isArray(this[property])) {
-							this[property].push(obj[property]);
+		if (len > 0) {
+			for (var i = 0; i < len; ++i) {
+				if (isObject(arguments[i])) {
+					var property;
 
-							this[property] = this[property].unique();
-						} else {
-							if (isArray(obj[property])) {
-								this[property] = [this[property]].concat(obj[property]).unique();
-							} else {
-								this[property] = obj[property];
-							}
-						}
-					} else {
-						this[property] = obj[property];
+					for (property in arguments[i]) {
+						this[property] = arguments[i][property];
 					}
-				}
-			}
-		} else if (isArray(obj)) {
-			for (var i = 0; i < obj.length; ++i) {
-				if (isObject(obj[i])) {
-					this.extend(obj[i], override);
 				}
 			}
 		}
