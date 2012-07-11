@@ -1222,11 +1222,13 @@
 	 * Hex color functionality
 	 * @constructor
 	 */
-	function Hex(hex) {
-		if (isString(hex)) {
-			this.setValue(hex);
-		} else if (getType(hex) === 'Hex') {
-			this.setValue(hex.value);
+	function Hex(value) {
+		if (isString(value)) {
+			this.setValue(value);
+		} else if (getType(value) === 'Hex') {
+			this.setValue(value.value);
+		} else {
+			return toHex(value);
 		}
 	}
 
