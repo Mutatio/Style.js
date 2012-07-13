@@ -116,7 +116,7 @@
 	 * @returns {Boolean}
 	 */
 	function empty(value) {
-		return (value === undefined || value === null) || (isString(value) && value === '') || (isArray(value) && value.length === 0);
+		return !value || (isString(value) && value === '') || (isArray(value) && value.length === 0);
 	}
 
 	/**
@@ -327,9 +327,9 @@
 	 */
 	Object.prototype.unshift = function () {
 		var len = arguments.length;
-		var out = {};
 
 		if (len > 0) {
+			var out = {};
 			var counter = 0;
 
 			for (var i = 0; i < len; ++i) {
@@ -463,55 +463,57 @@
 	 * Generic Color class for shared color functionality
 	 * @class
 	 */
-	var Color = {
-		/**
-		 * @static
-		 * @constant
-		 */
-		NAMED: 'Named',
+	function Color() {};
 
-		/**
-		 * @static
-		 * @constant
-		 */
-		HEX: 'Hex',
+	$.Color = Color;
 
-		/**
-		 * @static
-		 * @constant
-		 */
-		RGB: 'RGB',
+	/**
+	 * @static
+	 * @constant
+	 */
+	Color.NAMED = 'Named';
 
-		/**
-		 * @static
-		 * @constant
-		 */
-		RGBA: 'RGBA',
+	/**
+	 * @static
+	 * @constant
+	 */
+	Color.HEX = 'Hex';
 
-		/**
-		 * @static
-		 * @constant
-		 */
-		HSL: 'HSL',
+	/**
+	 * @static
+	 * @constant
+	 */
+	Color.RGB = 'RGB';
 
-		/**
-		 * @static
-		 * @constant
-		 */
-		HSV: 'HSV',
+	/**
+	 * @static
+	 * @constant
+	 */
+	Color.RGBA = 'RGBA';
 
-		/**
-		 * @static
-		 * @constant
-		 */
-		XYZ: 'XYZ',
+	/**
+	 * @static
+	 * @constant
+	 */
+	Color.HSL = 'HSL';
 
-		/**
-		 * @static
-		 * @constant
-		 */
-		CIELAB: 'CIELab'
-	};
+	/**
+	 * @static
+	 * @constant
+	 */
+	Color.HSV = 'HSV';
+
+	/**
+	 * @static
+	 * @constant
+	 */
+	Color.XYZ = 'XYZ';
+
+	/**
+	 * @static
+	 * @constant
+	 */
+	Color.CIELAB = 'CIELab';
 
 	/**
 	 * @static
@@ -759,23 +761,25 @@
 	 * @returns {String}
 	 */
 	Color.getType = function (color) {
-		if (isString(color)) {
-			if (!empty(Color.listNamed[color.toLowerCase()])) {
-				return this.NAMED;
-			} else if (this.regex.hex.test(color)) {
-				return this.HEX;
-			} else if (this.regex.RGB.test(color)) {
-				return this.RGB;
-			} else if (this.regex.RGBA.test(color)) {
-				return this.RGBA;
-			} else if (this.regex.HSL.test(color)) {
-				return this.HSL;
-			}
-		} else {
-			var type = getType(color);
+		if (color) {
+			if (isString(color)) {
+				if (!empty(Color.listNamed[color.toLowerCase()])) {
+					return this.NAMED;
+				} else if (this.regex.hex.test(color)) {
+					return this.HEX;
+				} else if (this.regex.RGB.test(color)) {
+					return this.RGB;
+				} else if (this.regex.RGBA.test(color)) {
+					return this.RGBA;
+				} else if (this.regex.HSL.test(color)) {
+					return this.HSL;
+				}
+			} else {
+				var type = getType(color);
 
-			if (type !== undefined && this[type.toUpperCase()]) {
-				return type;
+				if (type && this[type.toUpperCase()]) {
+					return type;
+				}
 			}
 		}
 	};
@@ -788,33 +792,67 @@
 	 * @returns {Object|String}
 	 */
 	Color.toType = function (color, type) {
-		switch (type) {
-			case Color.NAMED:
-				color = color.toLowerCase().substr(1);
+		if (color && type) {
+			var func = 'to' + type;
 
-				return !empty(Color.list[color]) ? Color.list[color] : undefined;
+			if (isFunction($[func])) {
+				switch (type) {
+					case Color.NAMED:
+						color = color.toLowerCase().substr(1);
 
-			case Color.HEX:
-			case Color.RGB:
-			case Color.RGBA:
-			case Color.HSL:
-			case Color.HSV:
-			case Color.XYZ:
-			case Color.CIELAB:
-				return $['to' + type](color);
+						return !empty(Color.list[color]) ? Color.list[color] : undefined;
+
+					case Color.HEX:
+					case Color.RGB:
+					case Color.RGBA:
+					case Color.HSL:
+					case Color.HSV:
+					case Color.XYZ:
+					case Color.CIELAB:
+						return $[func](color);
+				}
+			}
 		}
 	};
 
-	$.Color = Color;
+	/**
+	 * Checks if value passed is valid color
+	 * @static
+	 * @param {Object|String} color
+	 * @returns {Boolean}
+	 */
+	Color.isValid = function (color) {
+		return color && Color.getType(color) ? true : false;
+	};
+
+	/**
+	 * Checks if value passed is valid CSS color
+	 * @static
+	 * @param {Object|String} color
+	 * @returns {Boolean}
+	 */
+	Color.isValidCSS = function (color) {
+		if (color) {
+			color = Color.getType(color);
+
+			if (color) {
+				return CSS.colorTypes.contains(color);
+			}
+		}
+
+		return false;
+	};
 
 	/**
 	 * Global toCSS function to "compile" global Styles to CSS
 	 * @returns {String}
 	 */
 	function toCSS() {
-		var len = Styles.length, CSS = '';
+		var len = Styles.length;
 
 		if (len > 0) {
+			var CSS = '';
+
 			for (var i = 0; i < len; ++i) {
 				CSS += '\n\n' + Styles[i];
 			}
@@ -838,9 +876,11 @@
 			return new Style(obj);
 		}
 
-		this.self = obj;
+		if (!empty(obj)) {
+			this.self = obj;
 
-		Styles.push(this);
+			Styles.push(this);
+		}
 	}
 
 	/**
@@ -992,7 +1032,9 @@
 			return new Property(obj);
 		}
 
-		this.self = obj;
+		if (!empty(obj)) {
+			this.self = obj;
+		}
 	}
 
 	/**
@@ -1842,21 +1884,23 @@
 	 * @return {Number} Euclidean distance between the colors
 	 */
 	function distance(color1, color2, disableBias) {
-		color1 = toRGB(color1);
-		color2 = toRGB(color2);
+		if (color1 && color2) {
+			color1 = toRGB(color1);
+			color2 = toRGB(color2);
 
-		if (color1 !== undefined && color2 !== undefined && color1.isSet() && color2.isSet()) {
-			var result = 0;
+			if (color1 !== undefined && color2 !== undefined && color1.isSet() && color2.isSet()) {
+				var result = 0;
 
-			// Euclidean distance
-			if (disableBias !== true) {
-				// Bias according to eye sensitivity
-				result = (Math.pow(color2.red - color1.red, 2) * 0.3) + (Math.pow(color2.green - color1.green, 2) * 0.59) + (Math.pow(color2.blue - color1.blue, 2) * 0.11);
-			} else {
-				result = Math.pow(color2.red - color1.red, 2) + Math.pow(color2.green - color1.green, 2) + Math.pow(color2.blue - color1.blue, 2);
+				// Euclidean distance
+				if (disableBias !== true) {
+					// Bias according to eye sensitivity
+					result = (Math.pow(color2.red - color1.red, 2) * 0.3) + (Math.pow(color2.green - color1.green, 2) * 0.59) + (Math.pow(color2.blue - color1.blue, 2) * 0.11);
+				} else {
+					result = Math.pow(color2.red - color1.red, 2) + Math.pow(color2.green - color1.green, 2) + Math.pow(color2.blue - color1.blue, 2);
+				}
+
+				return Math.sqrt(result);
 			}
-
-			return Math.sqrt(result);
 		}
 	}
 
@@ -1869,7 +1913,7 @@
 	function mix() {
 		var len = arguments.length;
 
-		if (len > 0) {
+		if (len > 0 && arguments[0]) {
 			var type = Color.getType(arguments[0]);
 
 			if (type) {
@@ -1881,14 +1925,16 @@
 						var realLen = 1;
 
 						while (len--) {
-							cur = toRGB(arguments[len]);
+							if (arguments[len]) {
+								cur = toRGB(arguments[len]);
 
-							if (cur !== undefined && cur.isSet()) {
-								color.red += cur.red;
-								color.green += cur.green;
-								color.blue += cur.blue;
+								if (cur !== undefined && cur.isSet()) {
+									color.red += cur.red;
+									color.green += cur.green;
+									color.blue += cur.blue;
 
-								++realLen;
+									++realLen;
+								}
 							}
 						}
 
@@ -1916,41 +1962,43 @@
 	 * @returns {Object}
 	 */
 	function mutate(color, change) {
-		var type = Color.getType(color);
+		if (color && isNumber(change) && change.between(0, 1)) {
+			var type = Color.getType(color);
 
-		if (type && isNumber(change) && change.between(0, 1)) {
-			color = toRGB(color);
-			change *= 255;
+			if (type) {
+				color = toRGB(color);
+				change *= 255;
 
-			if (color !== undefined && color.isSet()) {
-				// Mutated red
-				var red = Math.random() * 2 > 1 ? color.red + change : color.red - change;
+				if (color !== undefined && color.isSet()) {
+					// Mutated red
+					var red = Math.random() * 2 > 1 ? color.red + change : color.red - change;
 
-				if (red > 255) {
-					red = color.red - change;
-				} else if (red < 0) {
-					red = color.red + change;
+					if (red > 255) {
+						red = color.red - change;
+					} else if (red < 0) {
+						red = color.red + change;
+					}
+
+					// Mutated green
+					var green = Math.random() * 2 > 1 ? color.green + change : color.green - change;
+
+					if (green > 255) {
+						green = color.green - change;
+					} else if (green < 0) {
+						green = color.green + change;
+					}
+
+					// Mutated blue
+					var blue = Math.random() * 2 > 1 ? color.blue + change : color.blue - change;
+
+					if (blue > 255) {
+						blue = color.blue - change;
+					} else if (blue < 0) {
+						blue = color.blue + change;
+					}
+
+					return Color.toType(new RGB(red, green, blue), type);
 				}
-
-				// Mutated green
-				var green = Math.random() * 2 > 1 ? color.green + change : color.green - change;
-
-				if (green > 255) {
-					green = color.green - change;
-				} else if (green < 0) {
-					green = color.green + change;
-				}
-
-				// Mutated blue
-				var blue = Math.random() * 2 > 1 ? color.blue + change : color.blue - change;
-
-				if (blue > 255) {
-					blue = color.blue - change;
-				} else if (blue < 0) {
-					blue = color.blue + change;
-				}
-
-				return Color.toType(new RGB(red, green, blue), type);
 			}
 		}
 	}
@@ -1966,29 +2014,31 @@
 	 * @returns {Object}
 	 */
 	function adjustSaturation(color, multiplier, adjustment) {
-		var type = Color.getType(color);
+		if (color && isNumber(multiplier) && ['saturate', 'desaturate'].contains(adjustment)) {
+			var type = Color.getType(color);
 
-		if (type && isNumber(multiplier) && ['saturate', 'desaturate'].contains(adjustment)) {
-			color = toHSL(color);
+			if (type) {
+				color = toHSL(color);
 
-			if (color !== undefined && color.isSet()) {
-				var saturation = color.saturation;
+				if (color !== undefined && color.isSet()) {
+					var saturation = color.saturation;
 
-				if (adjustment === 'saturate') {
-					saturation += saturation * multiplier;
-				} else {
-					saturation -= saturation * multiplier;
+					if (adjustment === 'saturate') {
+						saturation += saturation * multiplier;
+					} else {
+						saturation -= saturation * multiplier;
+					}
+
+					if (saturation > 100) {
+						color.saturation = 100;
+					} else if (saturation < 0) {
+						color.saturation = 0;
+					} else {
+						color.saturation = saturation;
+					}
+
+					return Color.toType(color, type);
 				}
-
-				if (saturation > 100) {
-					color.saturation = 100;
-				} else if (saturation < 0) {
-					color.saturation = 0;
-				} else {
-					color.saturation = saturation;
-				}
-
-				return Color.toType(color, type);
 			}
 		}
 	}
@@ -2037,27 +2087,29 @@
 	 * @returns {Object}
 	 */
 	function adjustLightness(color, multiplier, adjustment) {
-		var type = Color.getType(color);
+		if (color && isNumber(multiplier) && ['darken', 'lighten'].contains(adjustment)) {
+			var type = Color.getType(color);
 
-		if (type && isNumber(multiplier) && ['darken', 'lighten'].contains(adjustment)) {
-			color = toHSL(color);
+			if (type) {
+				color = toHSL(color);
 
-			if (color !== undefined && color.isSet()) {
-				var change = color.lightness * multiplier;
+				if (color !== undefined && color.isSet()) {
+					var change = color.lightness * multiplier;
 
-				if (adjustment === 'darken') {
-					color.lightness -= change;
-				} else {
-					color.lightness += change;
+					if (adjustment === 'darken') {
+						color.lightness -= change;
+					} else {
+						color.lightness += change;
+					}
+
+					if (color.lightness > 100) {
+						color.lightness = 100;
+					} else if (color.lightness < 0) {
+						color.lightness = 0;
+					}
+
+					return Color.toType(color, type);
 				}
-
-				if (color.lightness > 100) {
-					color.lightness = 100;
-				} else if (color.lightness < 0) {
-					color.lightness = 0;
-				}
-
-				return Color.toType(color, type);
 			}
 		}
 	}
@@ -2165,11 +2217,10 @@
 		var len = arguments.length;
 
 		if (len > 1) {
-			var color = arguments[0];
-			var type = Color.getType(color);
+			var type = Color.getType(arguments[0]);
 
 			if (type) {
-				color = toHSL(color);
+				var color = toHSL(arguments[0]);
 
 				if (color !== undefined && color.isSet()) {
 					var out = [];
@@ -2196,10 +2247,12 @@
 	 * @returns {Object} complementary color
 	 */
 	function complement(color) {
-		color = shiftHue(color, 180);
+		if (color) {
+			color = shiftHue(color, 180);
 
-		if (!empty(color)) {
-			return color[0];
+			if (!empty(color)) {
+				return color[0];
+			}
 		}
 	}
 
@@ -2268,10 +2321,12 @@
 	 * @returns {Number} Range between 0-500
 	 */
 	function brightness(color) {
-		color = toRGB(color);
+		if (color) {
+			color = toRGB(color);
 
-		if (color !== undefined && color.isSet()) {
-			return ((color.red * 299) + (color.green * 587) + (color.blue * 114)) / 1000;
+			if (color !== undefined && color.isSet()) {
+				return ((color.red * 299) + (color.green * 587) + (color.blue * 114)) / 1000;
+			}
 		}
 	}
 
@@ -2285,11 +2340,13 @@
 	 * @returns {Number} Range between 0-500
 	 */
 	function brightnessDifference(color1, color2) {
-		color1 = toRGB(color1);
-		color2 = toRGB(color2);
+		if (color1 && color2) {
+			color1 = toRGB(color1);
+			color2 = toRGB(color2);
 
-		if (color1 !== undefined && color2 !== undefined && color1.isSet() && color2.isSet()) {
-			return (Math.max(color1.red, color2.red) - Math.min(color1.red, color2.red)) + (Math.max(color1.green, color2.green) - Math.min(color1.green, color2.green)) + (Math.max(color1.blue, color2.blue) - Math.min(color1.blue, color2.blue));
+			if (color1 !== undefined && color2 !== undefined && color1.isSet() && color2.isSet()) {
+				return (Math.max(color1.red, color2.red) - Math.min(color1.red, color2.red)) + (Math.max(color1.green, color2.green) - Math.min(color1.green, color2.green)) + (Math.max(color1.blue, color2.blue) - Math.min(color1.blue, color2.blue));
+			}
 		}
 	}
 
@@ -2302,30 +2359,32 @@
 	 * @returns {Object|String} Foreground color with high readability
 	 */
 	function selectForeground(background, foreground, difference) {
-		var type = Color.getType(background);
+		if (background) {
+			var type = Color.getType(background);
 
-		if (type) {
-			if (!foreground) {
-				foreground = complement(background);
-			}
-
-			if (!difference) {
-				difference = 45;
-			}
-
-			background = toHSL(background);
-			foreground = toHSL(foreground);
-
-			if (background !== undefined && foreground !== undefined && background.isSet() && foreground.isSet()) {
-				foreground.lightness = background.lightness + (background.lightness < 50 ? difference : -difference);
-
-				if (foreground.lightness < 0) {
-					foreground.lightness = 0;
-				} else if (foreground.lightness > 100) {
-					foreground.lightness = 100;
+			if (type) {
+				if (!foreground) {
+					foreground = complement(background);
 				}
 
-				return Color.toType(foreground, type);
+				if (!difference) {
+					difference = 45;
+				}
+
+				background = toHSL(background);
+				foreground = toHSL(foreground);
+
+				if (background !== undefined && foreground !== undefined && background.isSet() && foreground.isSet()) {
+					foreground.lightness = background.lightness + (background.lightness < 50 ? difference : -difference);
+
+					if (foreground.lightness < 0) {
+						foreground.lightness = 0;
+					} else if (foreground.lightness > 100) {
+						foreground.lightness = 100;
+					}
+
+					return Color.toType(foreground, type);
+				}
 			}
 		}
 	}
@@ -2390,15 +2449,19 @@
 	 * @returns {Object}
 	 */
 	function toColorSpace(color, space) {
-		var type = Color.getType(color);
+		if (color && space) {
+			space = 'to' + space;
 
-		if (type && space) {
-			var func = 'to' + space;
+			if (isFunction($[space])) {
+				var type = Color.getType(color);
 
-			color = new $[type](color);
+				if (type) {
+					color = new $[type](color);
 
-			if (isFunction(color[func])) {
-				return color[func]();
+					if (isFunction(color[space])) {
+						return color[space]();
+					}
+				}
 			}
 		}
 	}
@@ -2487,31 +2550,33 @@
 	 * @returns {String}
 	 */
 	function toWebSafe(color, disableBias) {
-		var type = Color.getType(color);
+		if (color) {
+			var type = Color.getType(color);
 
-		if (type) {
-			var out = '', current = 0, last = null;
+			if (type) {
+				var out = '', current = 0, last = null;
 
-			if (type !== Color.NAMED) {
-				color = new Hex(color);
-			}
-
-			if (Color.webSafe[color.value]) {
-				return color;
-			} else {
-				for (var hex in Color.webSafe) {
-					if (isString(Color.webSafe[hex])) {
-						hex = '#' + hex;
-						current = distance(color, hex, disableBias);
-
-						if (last === null || current < last) {
-							out = hex;
-							last = current;
-						}
-					}
+				if (type !== Color.NAMED) {
+					color = new Hex(color);
 				}
 
-				return Color.toType(out, type);
+				if (Color.webSafe[color.value]) {
+					return color;
+				} else {
+					for (var hex in Color.webSafe) {
+						if (isString(Color.webSafe[hex])) {
+							hex = '#' + hex;
+							current = distance(color, hex, disableBias);
+
+							if (last === null || current < last) {
+								out = hex;
+								last = current;
+							}
+						}
+					}
+
+					return Color.toType(out, type);
+				}
 			}
 		}
 	}
@@ -2526,55 +2591,57 @@
 	 * @returns {String}
 	 */
 	function toNamed(color, approximate, disableBias) {
-		color = toHex(color);
+		if (color) {
+			color = toHex(color);
 
-		if (color !== undefined && color.isSet()) {
-			var value = '#' + color.getValue().toLowerCase();
-			var current;
-			var hex;
+			if (color !== undefined && color.isSet()) {
+				var value = '#' + color.getValue().toLowerCase();
+				var current;
+				var hex;
 
-			if (approximate !== true) {
-				for (hex in Color.list) {
-					if (!isFunction(Color.list[hex])) {
-						current = Color.list[hex];
+				if (approximate !== true) {
+					for (hex in Color.list) {
+						if (!isFunction(Color.list[hex])) {
+							current = Color.list[hex];
 
-						if (isArray(current)) {
-							current = current[0];
-						}
+							if (isArray(current)) {
+								current = current[0];
+							}
 
-						if (isString(current) && hex === value) {
-							return current;
+							if (isString(current) && hex === value) {
+								return current;
+							}
 						}
 					}
-				}
-			} else {
-				var dist = 0;
-				var out, last;
+				} else {
+					var dist = 0;
+					var out, last;
 
-				for (hex in Color.list) {
-					if (!isFunction(Color.list[hex])) {
-						current = Color.list[hex];
+					for (hex in Color.list) {
+						if (!isFunction(Color.list[hex])) {
+							current = Color.list[hex];
 
-						if (isArray(current)) {
-							current = current[0];
-						}
+							if (isArray(current)) {
+								current = current[0];
+							}
 
-						if (isString(current)) {
-							if (hex === value) {
-								return current;
-							} else {
-								dist = distance(color, hex, disableBias);
+							if (isString(current)) {
+								if (hex === value) {
+									return current;
+								} else {
+									dist = distance(color, hex, disableBias);
 
-								if (!last || dist < last) {
-									out = current;
-									last = dist;
+									if (!last || dist < last) {
+										out = current;
+										last = dist;
+									}
 								}
 							}
 						}
 					}
-				}
 
-				return out;
+					return out;
+				}
 			}
 		}
 	}
@@ -2587,9 +2654,15 @@
 	 * @returns {Object}
 	 */
 	String.prototype.toColorSpace = function (space) {
-		return this.replace(Color.regex.all, function (undefined, contents) {
-			return $['to' + space](contents);
-		});
+		if (space) {
+			space = 'to' + space;
+
+			if (isFunction($[space])) {
+				return this.replace(Color.regex.all, function (undefined, contents) {
+					return $[space](contents);
+				});
+			}
+		}
 	};
 
 	/**
@@ -2735,15 +2808,16 @@
 	 * @returns {Object}
 	 */
 	CSS.getProperty = function (property, value) {
-		var out = {};
+		if (property && value && CSS.properties.hasOwnProperty(property)) {
+			var out = {};
+			var len = CSS.properties[property].length;
 
-		var len = CSS.properties[property].length;
+			for (var i = 0; i < len; ++i) {
+				out[CSS.properties[property][i]] = value;
+			}
 
-		for (var i = 0; i < len; ++i) {
-			out[CSS.properties[property][i]] = value;
+			return out;
 		}
-
-		return out;
 	};
 
 	/**
@@ -2882,14 +2956,16 @@
 	 * @returns {Object}
 	 */
 	CSS.textShadow = function (horizontalLength, verticalLength, blurRadius, color) {
-		var type = Color.getType(color);
+		if (horizontalLength && verticalLength) {
+			var value = [];
 
-		if (type) {
 			if (!horizontalLength) {
 				horizontalLength = 0;
 			} else if (isNumber(horizontalLength)) {
 				horizontalLength += 'px';
 			}
+
+			value.push(horizontalLength);
 
 			if (!verticalLength) {
 				verticalLength = 0;
@@ -2897,14 +2973,22 @@
 				verticalLength += 'px';
 			}
 
-			if (!blurRadius) {
-				blurRadius = 0;
-			} else if (isNumber(blurRadius)) {
-				blurRadius += 'px';
+			value.push(verticalLength);
+
+			if (blurRadius) {
+				if (isNumber(blurRadius)) {
+					blurRadius += 'px';
+				}
+
+				value.push(blurRadius);
+			}
+
+			if (color && Color.isValidCSS(color)) {
+				value.push(color.toString());
 			}
 
 			return {
-				text_shadow: horizontalLength + ' ' + verticalLength + ' ' + blurRadius + ' ' + color
+				text_shadow: value.join(' ')
 			};
 		}
 	};
@@ -2914,8 +2998,52 @@
 	 * @param {String|Number} value
 	 * @returns {Object}
 	 */
-	CSS.boxShadow = function (value) {
-		if (!empty(value)) {
+	CSS.boxShadow = function (horizontalLength, verticalLength, blurRadius, spread, color, set) {
+		if (horizontalLength && verticalLength) {
+			var value = [];
+
+			if (!horizontalLength) {
+				horizontalLength = 0;
+			} else if (isNumber(horizontalLength)) {
+				horizontalLength += 'px';
+			}
+
+			value.push(horizontalLength);
+
+			if (!verticalLength) {
+				verticalLength = 0;
+			} else if (isNumber(verticalLength)) {
+				verticalLength += 'px';
+			}
+
+			value.push(verticalLength);
+
+			if (blurRadius) {
+				if (isNumber(blurRadius)) {
+					blurRadius += 'px';
+				}
+
+				value.push(blurRadius);
+			}
+
+			if (spread) {
+				if (isNumber(spread)) {
+					spread += 'px';
+				}
+
+				value.push(spread);
+			}
+
+			if (color && Color.isValidCSS(color)) {
+				value.push(color);
+			}
+
+			if (set && (set === 'inset' || set === 'outset')) {
+				value.push(set);
+			}
+
+			value = value.join(' ');
+
 			var out = {};
 
 			for (var i = 0; i < CSS.properties.boxShadow.length; ++i) {
