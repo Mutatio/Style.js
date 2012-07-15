@@ -17,6 +17,30 @@
 	'use strict';
 
 	/**
+	 * Style.js major version
+	 * @private
+	 * @constant
+	 * @type {Number}
+	 */
+	var VERSION_MAJOR = 1;
+
+	/**
+	 * Style.js minor version
+	 * @private
+	 * @constant
+	 * @type {Number}
+	 */
+	var VERSION_MINOR = 0;
+
+	/**
+	 * Style.js patch version
+	 * @private
+	 * @constant
+	 * @type {Number}
+	 */
+	var VERSION_PATCH = 0;
+
+	/**
 	 * Array of Style objects
 	 * @type {Array.<Style>}
 	 */
@@ -28,85 +52,8 @@
 	 */
 	var emSize = 16;
 
-	/**
-	 * Checks if value is string type
-	 * @private
-	 * @param {mixed} value
-	 * @returns {Boolean}
-	 */
-	function isString(value) {
-		return typeof value === 'string';
-	}
-
-	/**
-	 * Checks if value is number type
-	 * @private
-	 * @param {mixed} value
-	 * @param {Boolean} disableTypesafe If true do numerical comparison using "=="
-	 * @returns {Boolean}
-	 */
-	function isNumber(value, disableTypesafe) {
-		return typeof value === 'number' || (disableTypesafe === true && !isNaN(value));
-	}
-
-	/**
-	 * Checks if value is scalar value
-	 * @private
-	 * @param {mixed} value
-	 * @returns {Boolean}
-	 */
-	function isScalar(value) {
-		return isString(value) || isNumber(value);
-	}
-
-	/**
-	 * Checks if value is array type
-	 * @private
-	 * @param {mixed} value
-	 * @returns {Boolean}
-	 */
-	function isArray(value) {
-		return value instanceof Array;
-	}
-
-	/**
-	 * Checks if value is object type
-	 * @private
-	 * @param {mixed} value
-	 * @returns {Boolean}
-	 */
-	function isObject(value) {
-		return value instanceof Object && !isArray(value);
-	}
-
-	/**
-	 * Checks if value is Image type
-	 * @private
-	 * @param {mixed} value
-	 * @returns {Boolean}
-	 */
-	function isImage(value) {
-		return value instanceof Image;
-	}
-
-	/**
-	 * Checks if value is HTMLElement type
-	 * @private
-	 * @param {mixed} value
-	 * @returns {Boolean}
-	 */
-	function isElement(value) {
-		return value instanceof HTMLElement;
-	}
-
-	/**
-	 * Checks if value is function type
-	 * @private
-	 * @param {mixed} value
-	 * @returns {Boolean}
-	 */
-	function isFunction(value) {
-		return typeof value === 'function';
+	function getVersion() {
+		return VERSION_MAJOR + '.' + VERSION_MINOR + '.' + VERSION_PATCH;
 	}
 
 	/**
@@ -116,186 +63,14 @@
 	 * @returns {Boolean}
 	 */
 	function empty(value) {
-		return !value || (isString(value) && value === '') || (isArray(value) && value.length === 0);
+		return !value || (Type.isString(value) && value === '') || (Type.isArray(value) && value.length === 0);
 	}
-
-	/**
-	 * Check if a number is between two numbers
-	 * @param {Number} min Minium value
-	 * @param {Number} max Maxium value
-	 * @returns {Boolean}
-	 */
-	Number.prototype.between = function (min, max) {
-		return this >= min && this <= max;
-	};
-
-	/**
-	 * Round a number to a given number of decimal places
-	 * @param {Number} decimalPlaces Number of decimal places
-	 * @returns {Number} Rounded number
-	 */
-	Number.prototype.round = function (decimalPlaces) {
-		var multiplier = parseInt('1'.padRight('0', decimalPlaces + 1), 10);
-
-		return Math.round(this * multiplier) / multiplier;
-	};
 
 	/**
 	 * Push string value to Styles array
 	 */
 	String.prototype.toStyle = function () {
 		Styles.push(this);
-	};
-
-	/**
-	 * Upper case the first character of the string
-	 * @returns {String}
-	 */
-	String.prototype.upperCaseFirst = function () {
-		return this.charAt(0).toUpperCase() + this.slice(1);
-	};
-
-	/**
-	 * Trim white space from the string
-	 * @returns {String}
-	 */
-	String.prototype.trim = function () {
-		return this.replace(/^[\s]+|[\s]+$/, '');
-	};
-
-	/**
-	 * Pad a string with a given character
-	 * @param {String} character Character used to pad
-	 * @param {Number} length Desired length of string to return
-	 * @param {String} direction The end to pad: left (prepend) or right (append)
-	 * @returns {String}
-	 */
-	String.prototype.pad = function (character, length, direction) {
-		var out = this;
-
-		if (this.length < length && character.length === 1 && (direction === undefined || direction === 'left' || direction === 'right')) {
-			var count = length - this.length;
-
-			if (!direction || direction === 'right') {
-				while (count--) {
-					out += character;
-				}
-			} else {
-				while (count--) {
-					out = character + out;
-				}
-			}
-		}
-
-		return out;
-	};
-
-	/**
-	 * Right pad a string with a given character
-	 * @param {String} character Character used to pad
-	 * @param {Number} length Desired length of string to return
-	 * @returns {String}
-	 */
-	String.prototype.padRight = function (character, length) {
-		return this.pad(character, length, 'right');
-	};
-
-	/**
-	 * Left pad a string with a given character
-	 * @param {String} character Character used to pad
-	 * @param {Number} length Desired length of string to return
-	 * @returns {String}
-	 */
-	String.prototype.padLeft = function (character, length) {
-		return this.pad(character, length, 'left');
-	};
-
-	/**
-	 * Check if string is a hexidecimal value
-	 * @returns {Boolean}
-	 */
-	String.prototype.isHex = function () {
-		return (/^([0-9a-f]+)$/i).test(this);
-	};
-
-	/**
-	 * Return array containing only unique values
-	 * @returns {Array}
-	 */
-	Array.prototype.unique = function () {
-		var assoc = {}, out = [], len = this.length;
-
-		for (var i = 0; i < len; ++i) {
-			if (!assoc.hasOwnProperty(this[i])) {
-				out.push(this[i]);
-
-				assoc[this[i]] = true;
-			}
-		}
-
-		return out;
-	};
-
-	/**
-	 * Return to maximum numerical value in the array
-	 * @returns {Number}
-	 */
-	Array.prototype.max = function () {
-		return Math.max.apply(Math, this);
-	};
-
-	/**
-	 * Return to minimum numerical value in the array
-	 * @returns {Number}
-	 */
-	Array.prototype.min = function () {
-		return Math.min.apply(Math, this);
-	};
-
-	/**
-	 * Return the sum total of numeric values in the array
-	 * @param {Boolean} disableTypeSafe If true do numerical comparison using "=="
-	 * @returns {Number}
-	 */
-	Array.prototype.sum = function (disableTypeSafe) {
-		var total = 0;
-		var len = this.length;
-
-		if (len > 0) {
-			for (var i = 0; i < len; ++i) {
-				if (isNumber(this[i], disableTypeSafe)) {
-					total += this[i];
-				}
-			}
-		}
-
-		return total;
-	};
-
-	/**
-	 * Check if the array contains the value provided
-	 * @param {mixed} value
-	 * @param {Boolean} disableTypeSafe If true do numerical comparison using "=="
-	 * @returns {Boolean}
-	 */
-	Array.prototype.contains = function (value, disableTypeSafe) {
-		var i = this.length;
-
-		if (disableTypeSafe !== true) {
-			while (i--) {
-				if (this[i] === value) {
-					return true;
-				}
-			}
-		} else {
-			while (i--) {
-				if (this[i] == value) {
-					return true;
-				}
-			}
-		}
-
-		return false;
 	};
 
 	/**
@@ -308,7 +83,7 @@
 
 		if (len > 0) {
 			for (var i = 0; i < len; ++i) {
-				if (isObject(arguments[i])) {
+				if (Type.isObject(arguments[i])) {
 					var property;
 
 					for (property in arguments[i]) {
@@ -319,72 +94,6 @@
 		}
 
 		return this;
-	};
-
-	/**
-	 * Object implementation of Array.unshift
-	 * @returns {Object}
-	 */
-	Object.prototype.unshift = function () {
-		var len = arguments.length;
-
-		if (len > 0) {
-			var out = {};
-			var counter = 0;
-
-			for (var i = 0; i < len; ++i) {
-				out[i] = arguments[i];
-
-				++counter;
-			}
-
-			if (this.length > 0) {
-				for (var x in this) {
-					out[counter] = this[x];
-
-					++counter;
-				}
-			}
-
-			return out;
-		}
-
-		return this;
-	}
-
-	/**
-	 * Convert Object to Array
-	 * @returns {Array}
-	 */
-	Object.prototype.toArray = function () {
-		var out = [];
-
-		if (this.length > 0) {
-			for (var i in this) {
-				out.push(this[i]);
-			}
-		}
-
-		return out;
-	};
-
-	/**
-	 * Return the sum total of numeric values in the Object
-	 * @param {Boolean} multidimensional If true process the child objects
-	 * @returns {Object}
-	 */
-	Object.prototype.sum = function (multidimensional) {
-		var total = 0;
-
-		for (var i in this) {
-			if (isNumber(this[i])) {
-				total += this[i];
-			} else if (isArray(this[i]) || (multidimensional === true && isObject(this[i]))) {
-				total += this[i].sum(multidimensional);
-			}
-		}
-
-		return total;
 	};
 
 	/**
@@ -403,61 +112,6 @@
 	Object.prototype.toStyle = function () {
 		return new Style(this);
 	};
-
-	/**
-	 * Debug functionality for the basic testing of object contents
-	 * @returns {String}
-	 */
-	Object.prototype.stringify = function () {
-		var out = [];
-
-		for (var i in this) {
-			if (!isFunction(this[i])) {
-				out.push(i + ': ' + this[i]);
-			}
-		}
-
-		if (out.length > 0) {
-			return out.join("\n");
-		}
-
-		return '';
-	};
-
-	/**
-	 * Gets the object's type if there's a constructor function
-	 * @returns {String} The object's type
-	 */
-	Object.prototype.getType = function () {
-		var result = /function (.+)\(/.exec(this.constructor);
-
-		if (result && result.length > 1) {
-			return result[1];
-		}
-	};
-
-	/**
-	 * Gets the type of a given value
-	 * @private
-	 * @param {mixed} value
-	 * @param {Boolean} disableTypesafe Compare numbers with == if true
-	 * @returns {String} Object type
-	 */
-	function getType(value, disableTypesafe) {
-		if (value !== undefined && value !== null) {
-			if (isNumber(value, disableTypesafe)) {
-				return 'number';
-			} else if (isString(value)) {
-				return 'string';
-			} else if (isArray(value)) {
-				return 'array';
-			} else if (isFunction(value)) {
-				return 'function';
-			} else if (typeof value === 'object') {
-				return value.getType() || 'object';
-			}
-		}
-	}
 
 	/**
 	 * Generic Color class for shared color functionality
@@ -724,9 +378,9 @@
 		var len;
 
 		for (var hex in list) {
-			if (isString(list[hex])) {
+			if (Type.isString(list[hex])) {
 				out[list[hex]] = hex;
-			} else if (isArray(list[hex])) {
+			} else if (Type.isArray(list[hex])) {
 				len = list[hex].length;
 
 				for (i = 0; i < len; ++i) {
@@ -762,7 +416,7 @@
 	 */
 	Color.getType = function (color) {
 		if (color) {
-			if (isString(color)) {
+			if (Type.isString(color)) {
 				if (!empty(Color.listNamed[color.toLowerCase()])) {
 					return this.NAMED;
 				} else if (this.regex.hex.test(color)) {
@@ -775,7 +429,7 @@
 					return this.HSL;
 				}
 			} else {
-				var type = getType(color);
+				var type = Type.getType(color);
 
 				if (type && this[type.toUpperCase()]) {
 					return type;
@@ -795,7 +449,7 @@
 		if (color && type) {
 			var func = 'to' + type;
 
-			if (isFunction($[func])) {
+			if (Type.isFunction($[func])) {
 				switch (type) {
 					case Color.NAMED:
 						color = color.toLowerCase().substr(1);
@@ -892,7 +546,7 @@
 	 * @returns {Object}
 	 */
 	Style.prototype.compile = function (obj, output, parent, child) {
-		if (isString(this.self)) {
+		if (Type.isString(this.self)) {
 			return this.self;
 		}
 
@@ -908,7 +562,7 @@
 		// Top level definition
 		if (parent === undefined) {
 			for (var i in obj) {
-				if (!isFunction(obj[i])) {
+				if (!Type.isFunction(obj[i])) {
 					this.compileObject(obj[i], output, i);
 				}
 			}
@@ -933,7 +587,7 @@
 		var compile = false;
 
 		if (child !== undefined) {
-			if (isString(child)) {
+			if (Type.isString(child)) {
 				var len = child.length - 1;
 				var firstChar = child.charAt(0);
 				var lastChar = child.charAt(len);
@@ -968,15 +622,15 @@
 
 					if (type === 'string' || type === 'number') {
 						output[parent].push(x.replace(/\_/g, '-') + ": " + obj[x]);
-					} else if (isArray(obj[x])) {
+					} else if (Type.isArray(obj[x])) {
 						for (var y in obj[x]) {
-							if (!isFunction(obj[x][y])) {
+							if (!Type.isFunction(obj[x][y])) {
 								output[parent].push(x.replace(/\_/g, '-') + ": " + obj[x][y]);
 							}
 						}
 					} else if (isProperty(obj[x])) {
 						output[parent] = output[parent].concat(obj[x].compile(x.replace(/\_/g, '-')));
-					} else if (isObject(obj[x])) {
+					} else if (Type.isObject(obj[x])) {
 						this.compile(obj[x], output, parent, x);
 					}
 				}
@@ -994,9 +648,9 @@
 		// Compile
 		var obj = this.compile();
 
-		if (isObject(obj)) {
+		if (Type.isObject(obj)) {
 			for (var definition in obj) {
-				if (!isFunction(obj[definition])) {
+				if (!Type.isFunction(obj[definition])) {
 					// Must contain properties
 					if (obj[definition].length > 0) {
 						// Convert simple object to string
@@ -1006,7 +660,7 @@
 			}
 
 			return CSS.length > 0 ? CSS.substr(2) : '';
-		} else if (isString(obj)) {
+		} else if (Type.isString(obj)) {
 			return obj;
 		}
 	};
@@ -1046,11 +700,11 @@
 		var type;
 		var out = [];
 
-		if (!empty(name) && isObject(this.self)) {
+		if (!empty(name) && Type.isObject(this.self)) {
 			for (var x in this.self) {
-				if (isString(this.self[x])) {
+				if (Type.isString(this.self[x])) {
 					out.push(name + '-' + x + ': ' + this.self[x]);
-				} else if (isArray(this.self[x])) {
+				} else if (Type.isArray(this.self[x])) {
 					for (var y in this.self[x]) {
 						if ((type = typeof this.self[x][y]) === 'string' || type === 'number') {
 							// Push CSS property
@@ -1084,13 +738,13 @@
 	 * @param {Number} blue
 	 */
 	function RGB(red, green, blue) {
-		if (red !== undefined && ((green === undefined && blue === undefined) || (isNumber(green) && isNumber(blue)))) {
+		if (red !== undefined && ((green === undefined && blue === undefined) || (Type.isNumber(green) && Type.isNumber(blue)))) {
 			if (green === undefined) {
-				if (isObject(red) && red instanceof this.constructor) {
+				if (Type.isObject(red) && red instanceof this.constructor) {
 					this.red = red.red;
 					this.green = red.green;
 					this.blue = red.blue;
-				} else if (isString(red)) {
+				} else if (Type.isString(red)) {
 					var parts = Color.regex.RGB.exec(red);
 
 					if (parts) {
@@ -1101,7 +755,7 @@
 				} else {
 					return toRGB(red);
 				}
-			} else if (isNumber(red)) {
+			} else if (Type.isNumber(red)) {
 				this.red = red;
 				this.green = green;
 				this.blue = blue;
@@ -1118,7 +772,7 @@
 	 * @returns {Boolean}
 	 */
 	RGB.prototype.isSet = function () {
-		return isNumber(this.red) && isNumber(this.green) && isNumber(this.blue);
+		return Type.isNumber(this.red) && Type.isNumber(this.green) && Type.isNumber(this.blue);
 	};
 
 	/**
@@ -1265,9 +919,9 @@
 	 * @constructor
 	 */
 	function Hex(value) {
-		if (isString(value)) {
+		if (Type.isString(value)) {
 			this.setValue(value);
-		} else if (getType(value) === 'Hex') {
+		} else if (Type.getType(value) === 'Hex') {
 			this.setValue(value.value);
 		} else {
 			return toHex(value);
@@ -1412,11 +1066,11 @@
 	 * @constructor
 	 */
 	function HSL(hue, saturation, lightness) {
-		if (isNumber(hue) && isNumber(saturation) && isNumber(lightness)) {
+		if (Type.isNumber(hue) && Type.isNumber(saturation) && Type.isNumber(lightness)) {
 			this.hue = hue;
 			this.saturation = saturation;
 			this.lightness = lightness;
-		} else if (isObject(hue)) {
+		} else if (Type.isObject(hue)) {
 			if (hue instanceof this.constructor) {
 				this.hue = hue.hue;
 				this.saturation = hue.saturation;
@@ -1438,7 +1092,7 @@
 	 * @returns {Boolean}
 	 */
 	HSL.prototype.isSet = function () {
-		return isNumber(this.hue) && isNumber(this.saturation) && isNumber(this.lightness);
+		return Type.isNumber(this.hue) && Type.isNumber(this.saturation) && Type.isNumber(this.lightness);
 	};
 
 	/**
@@ -1522,11 +1176,11 @@
 	 * @constructor
 	 */
 	function HSV(hue, saturation, value) {
-		if (isNumber(hue) && isNumber(saturation) && isNumber(value)) {
+		if (Type.isNumber(hue) && Type.isNumber(saturation) && Type.isNumber(value)) {
 			this.hue = hue;
 			this.saturation = saturation;
 			this.value = value;
-		} else if (isObject(hue)) {
+		} else if (Type.isObject(hue)) {
 			if (hue instanceof this.constructor) {
 				this.hue = hue.hue;
 				this.saturation = hue.saturation;
@@ -1546,7 +1200,7 @@
 	 * @returns {Boolean}
 	 */
 	HSV.prototype.isSet = function () {
-		return isNumber(this.hue) && isNumber(this.saturation) && isNumber(this.value);
+		return Type.isNumber(this.hue) && Type.isNumber(this.saturation) && Type.isNumber(this.value);
 	};
 
 	/**
@@ -1660,11 +1314,11 @@
 	 * @constructor
 	 */
 	function XYZ(X, Y, Z) {
-		if (isNumber(X) && isNumber(Y) && isNumber(Z)) {
+		if (Type.isNumber(X) && Type.isNumber(Y) && Type.isNumber(Z)) {
 			this.X = X;
 			this.Y = Y;
 			this.Z = Z;
-		} else if (isObject(X)) {
+		} else if (Type.isObject(X)) {
 			if (X instanceof this.constructor) {
 				this.X = X.X;
 				this.Y = X.Y;
@@ -1684,7 +1338,7 @@
 	 * @returns {Boolean}
 	 */
 	XYZ.prototype.isSet = function () {
-		return isNumber(this.X) && isNumber(this.Y) && isNumber(this.Z);
+		return Type.isNumber(this.X) && Type.isNumber(this.Y) && Type.isNumber(this.Z);
 	};
 
 	/**
@@ -1747,11 +1401,11 @@
 	 * @constructor
 	 */
 	function CIELab(L, a, b) {
-		if (isNumber(L) && isNumber(a) && isNumber(b)) {
+		if (Type.isNumber(L) && Type.isNumber(a) && Type.isNumber(b)) {
 			this.L = L;
 			this.a = a;
 			this.b = b;
-		} else if (isObject(L)) {
+		} else if (Type.isObject(L)) {
 			if (L instanceof this.constructor) {
 				this.L = L.L;
 				this.a = L.a;
@@ -1771,7 +1425,7 @@
 	 * @returns {Boolean}
 	 */
 	CIELab.prototype.isSet = function () {
-		return isNumber(this.L) && isNumber(this.a) && isNumber(this.b);
+		return Type.isNumber(this.L) && Type.isNumber(this.a) && Type.isNumber(this.b);
 	};
 
 	/**
@@ -1962,7 +1616,7 @@
 	 * @returns {Object}
 	 */
 	function mutate(color, change) {
-		if (color && isNumber(change) && change.between(0, 1)) {
+		if (color && Type.isNumber(change) && change.between(0, 1)) {
 			var type = Color.getType(color);
 
 			if (type) {
@@ -2014,7 +1668,7 @@
 	 * @returns {Object}
 	 */
 	function adjustSaturation(color, multiplier, adjustment) {
-		if (color && isNumber(multiplier) && ['saturate', 'desaturate'].contains(adjustment)) {
+		if (color && Type.isNumber(multiplier) && ['saturate', 'desaturate'].contains(adjustment)) {
 			var type = Color.getType(color);
 
 			if (type) {
@@ -2087,7 +1741,7 @@
 	 * @returns {Object}
 	 */
 	function adjustLightness(color, multiplier, adjustment) {
-		if (color && isNumber(multiplier) && ['darken', 'lighten'].contains(adjustment)) {
+		if (color && Type.isNumber(multiplier) && ['darken', 'lighten'].contains(adjustment)) {
 			var type = Color.getType(color);
 
 			if (type) {
@@ -2146,7 +1800,7 @@
 		var len = arguments.length;
 
 		if (len > 1) {
-			var fromArray = isArray(arguments[0]);
+			var fromArray = Type.isArray(arguments[0]);
 			var colors = fromArray ? arguments[0] : arguments;
 			var colorsLen = colors.length;
 
@@ -2157,7 +1811,7 @@
 					var steps = 4; // Original color + 4 = 5
 					var count = len - 1;
 
-					if (isNumber(arguments[count])) {
+					if (Type.isNumber(arguments[count])) {
 						if ((colorsLen + len) < 3) {
 							return undefined;
 						} else {
@@ -2226,7 +1880,7 @@
 					var out = [];
 
 					for (var i = 1; i < len; ++i) {
-						if (isNumber(arguments[i])) {
+						if (Type.isNumber(arguments[i])) {
 							color.hue = Hue.shift(color.hue, arguments[i]);
 
 							out.push(Color.toType(color, type));
@@ -2396,7 +2050,7 @@
 	 * @param {Number} value Dimension in pixels
 	 */
 	function setEmSize(value) {
-		if (isNumber(value)) {
+		if (Type.isNumber(value)) {
 			emSize = value;
 		}
 	}
@@ -2419,10 +2073,10 @@
 	 * @returns {String} Result of the given expression
 	 */
 	function calculate(expression) {
-		if (isNumber(emSize)) {
+		if (Type.isNumber(emSize)) {
 			var result = eval(expression.replace(/([0-9]+(\.[0-9]+)?)em/gi, expressionMatch).replace(/([0-9]+(\.[0-9]+)?)px/gi, '$1'));
 
-			if (isNumber(result)) {
+			if (Type.isNumber(result)) {
 				return Math.round(result) + 'px';
 			}
 		}
@@ -2452,13 +2106,13 @@
 		if (color && space) {
 			space = 'to' + space;
 
-			if (isFunction($[space])) {
+			if (Type.isFunction($[space])) {
 				var type = Color.getType(color);
 
 				if (type) {
 					color = new $[type](color);
 
-					if (isFunction(color[space])) {
+					if (Type.isFunction(color[space])) {
 						return color[space]();
 					}
 				}
@@ -2564,7 +2218,7 @@
 					return color;
 				} else {
 					for (var hex in Color.webSafe) {
-						if (isString(Color.webSafe[hex])) {
+						if (Type.isString(Color.webSafe[hex])) {
 							hex = '#' + hex;
 							current = distance(color, hex, disableBias);
 
@@ -2601,14 +2255,14 @@
 
 				if (approximate !== true) {
 					for (hex in Color.list) {
-						if (!isFunction(Color.list[hex])) {
+						if (!Type.isFunction(Color.list[hex])) {
 							current = Color.list[hex];
 
-							if (isArray(current)) {
+							if (Type.isArray(current)) {
 								current = current[0];
 							}
 
-							if (isString(current) && hex === value) {
+							if (Type.isString(current) && hex === value) {
 								return current;
 							}
 						}
@@ -2618,14 +2272,14 @@
 					var out, last;
 
 					for (hex in Color.list) {
-						if (!isFunction(Color.list[hex])) {
+						if (!Type.isFunction(Color.list[hex])) {
 							current = Color.list[hex];
 
-							if (isArray(current)) {
+							if (Type.isArray(current)) {
 								current = current[0];
 							}
 
-							if (isString(current)) {
+							if (Type.isString(current)) {
 								if (hex === value) {
 									return current;
 								} else {
@@ -2657,7 +2311,7 @@
 		if (space) {
 			space = 'to' + space;
 
-			if (isFunction($[space])) {
+			if (Type.isFunction($[space])) {
 				return this.replace(Color.regex.all, function (undefined, contents) {
 					return $[space](contents);
 				});
@@ -2699,7 +2353,7 @@
 		var func = 'to' + space;
 
 		for (var i in this) {
-			out[i] = isString(this[i]) || isArray(this[i]) ? this[i][func]() : this[i];
+			out[i] = Type.isString(this[i]) || Type.isArray(this[i]) ? this[i][func]() : this[i];
 		}
 
 		return out;
@@ -2740,7 +2394,7 @@
 		var len = this.length;
 
 		for (var i = 0; i < len; ++i) {
-			out.push(isString(this[i]) ? this[i][func]() : this[i]);
+			out.push(Type.isString(this[i]) ? this[i][func]() : this[i]);
 		}
 
 		return out;
@@ -2833,7 +2487,7 @@
 			var len = CSS.properties.borderRadius.length;
 			var out = {};
 
-			if (isNumber(topLeft)) {
+			if (Type.isNumber(topLeft)) {
 				topLeft += 'px';
 			}
 
@@ -2846,7 +2500,7 @@
 			var out = {};
 
 			if (topLeft) {
-				if (isNumber(topLeft)) {
+				if (Type.isNumber(topLeft)) {
 					topLeft += 'px';
 				}
 
@@ -2854,7 +2508,7 @@
 			}
 
 			if (bottomLeft) {
-				if (isNumber(bottomLeft)) {
+				if (Type.isNumber(bottomLeft)) {
 					bottomLeft += 'px';
 				}
 
@@ -2862,7 +2516,7 @@
 			}
 
 			if (bottomRight) {
-				if (isNumber(bottomRight)) {
+				if (Type.isNumber(bottomRight)) {
 					bottomRight += 'px';
 				}
 
@@ -2870,7 +2524,7 @@
 			}
 
 			if (topRight) {
-				if (isNumber(topRight)) {
+				if (Type.isNumber(topRight)) {
 					topRight += 'px';
 				}
 
@@ -2961,7 +2615,7 @@
 
 			if (!horizontalLength) {
 				horizontalLength = 0;
-			} else if (isNumber(horizontalLength)) {
+			} else if (Type.isNumber(horizontalLength)) {
 				horizontalLength += 'px';
 			}
 
@@ -2969,14 +2623,14 @@
 
 			if (!verticalLength) {
 				verticalLength = 0;
-			} else if (isNumber(verticalLength)) {
+			} else if (Type.isNumber(verticalLength)) {
 				verticalLength += 'px';
 			}
 
 			value.push(verticalLength);
 
 			if (blurRadius) {
-				if (isNumber(blurRadius)) {
+				if (Type.isNumber(blurRadius)) {
 					blurRadius += 'px';
 				}
 
@@ -3004,7 +2658,7 @@
 
 			if (!horizontalLength) {
 				horizontalLength = 0;
-			} else if (isNumber(horizontalLength)) {
+			} else if (Type.isNumber(horizontalLength)) {
 				horizontalLength += 'px';
 			}
 
@@ -3012,14 +2666,14 @@
 
 			if (!verticalLength) {
 				verticalLength = 0;
-			} else if (isNumber(verticalLength)) {
+			} else if (Type.isNumber(verticalLength)) {
 				verticalLength += 'px';
 			}
 
 			value.push(verticalLength);
 
 			if (blurRadius) {
-				if (isNumber(blurRadius)) {
+				if (Type.isNumber(blurRadius)) {
 					blurRadius += 'px';
 				}
 
@@ -3027,7 +2681,7 @@
 			}
 
 			if (spread) {
-				if (isNumber(spread)) {
+				if (Type.isNumber(spread)) {
 					spread += 'px';
 				}
 
@@ -3115,7 +2769,7 @@
 
 	function toCanvas(obj, canvas) {
 		if (isElement(canvas) && canvas.nodeName == 'CANVAS') {
-			if (isString(obj)) {
+			if (Type.isString(obj)) {
 				var src = obj;
 
 				obj = new Image();
