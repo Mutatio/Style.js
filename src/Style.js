@@ -2554,7 +2554,7 @@
 
 				if (orientation === 'linear') {
 					for (i = 2; i < arguments.length; ++i) {
-						if (isScalar(arguments[i])) {
+						if (Type.isScalar(arguments[i])) {
 							propertyValue += ', ' + arguments[i];
 						}
 					}
@@ -2566,7 +2566,7 @@
 					var shape = arguments[2];
 
 					for (i = 3; i < arguments.length; ++i) {
-						if (isScalar(arguments[i])) {
+						if (Type.isScalar(arguments[i])) {
 							propertyValue += ', ' + arguments[i];
 						}
 					}
