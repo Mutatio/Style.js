@@ -508,7 +508,7 @@
 			var CSS = '';
 
 			for (var i = 0; i < len; ++i) {
-				CSS += '\n\n' + Styles[i];
+				CSS += '\n\n' + Styles[i].toCSS();
 			}
 
 			return CSS.substr(2);
