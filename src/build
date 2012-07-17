@@ -1,7 +1,22 @@
 #!/bin/bash
 
+echo "... Copying dependancies (Type.js & Util.js) ..."
+
+cp ../../Type.js/src/Type.js .
+cp ../../Util.js/src/Util.js .
+
+echo "... Creating object files for JavaScript libraries ..."
+
+ld -r -b binary -o Type.js.o Type.js
+ld -r -b binary -o Util.js.o Util.js
 ld -r -b binary -o Style.js.o Style.js
 
-g++ -O3 -Werror stylejs.cpp stylec.cpp Style.js.o -o stylec /projects/Software/v8/libv8.a -lpthread && strip stylec && ./stylec -v
+echo "... Cleanup dependancy files ..."
+
+rm -f Type.js Util.js
+
+echo "... Compiling ..."
+
+g++ -O3 -Werror stylejs.cpp stylec.cpp Type.js.o Util.js.o Style.js.o -o stylec /projects/Software/v8/libv8.a -lpthread && strip stylec && ./stylec -v
 
 ./stylec -o tmp.css example.css.js
