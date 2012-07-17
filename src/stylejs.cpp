@@ -78,3 +78,9 @@ char* stylejs::String::toChar(string str) {
 
 	return c;
 }
+
+string About::getVersionString() {
+	Compiler StyleCompiler;
+
+	return StyleCompiler.compile(getEmbeddedJavaScript() + "\n\n'-------------------\\nComponent | Version\\n-------------------\\nType.js   | ' + Type.getVersion() + '\\nUtil.js   | ' + Util.getVersion() + '\\nStyle.js  | ' + Style.getVersion() + '\\nstylec    | " + getStyleCVersion() + "\\nGoogle V8 | " + V8::GetVersion() + "';");
+}
