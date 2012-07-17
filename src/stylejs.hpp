@@ -76,7 +76,7 @@ namespace stylejs {
 
 	class File {
 	public:
-		static string getContents(string);
+		static string getContents(char*);
 	};
 
 	class String {

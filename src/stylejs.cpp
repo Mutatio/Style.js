@@ -45,11 +45,11 @@ ifstream fileStream;
  * @param filename path to file
  * @return file contents
  */
-string File::getContents(string filename) {
+string File::getContents(char* filename) {
 	string out;
 	string line;
 
-	fileStream.open(stylejs::String::toChar(filename));
+	fileStream.open(filename);
 
 	if (fileStream.is_open()) {
 		while (fileStream.good()) {

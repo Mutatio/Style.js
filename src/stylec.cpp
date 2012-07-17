@@ -6,12 +6,10 @@
 
 int main(int argc, char* argv[]) {
 	if (argc > 1) {
-		bool compile = false;
 		bool printOutput = false;
 		bool saveOutput = false;
 		bool useExternalStyle = false;
 		char c;
-		unsigned short i;
 		char* CSSFilename;
 		ofstream CSSFile;
 		string contents;
@@ -46,7 +44,7 @@ int main(int argc, char* argv[]) {
 						contents = stylejs::File::getContents(optarg);
 
 						if (!contents.empty()) {
-							StyleJS = contents + StyleJS;
+							StyleJS = contents;
 							useExternalStyle = true;
 
 							break;
@@ -81,6 +79,9 @@ int main(int argc, char* argv[]) {
 					return 0;
 			}
 		}
+
+		bool compile = false;
+		unsigned short i;
 
 		for (i = optind; i < argc; ++i) {
 			contents = stylejs::File::getContents(argv[i]);
