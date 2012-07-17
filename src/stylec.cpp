@@ -8,14 +8,15 @@ int main(int argc, char* argv[]) {
 	if (argc > 1) {
 		bool printOutput = false;
 		bool saveOutput = false;
-		bool useExternalStyle = false;
 		char c;
 		char* CSSFilename;
 		ofstream CSSFile;
 		string contents;
 		string StyleJS;
+		string TypeJS;
+		string UtilJS;
 
-		while ((c = getopt(argc, argv, "o:j:d:phv")) != -1) {
+		while ((c = getopt(argc, argv, "o:s:t:u:phv")) != -1) {
 			switch (c) {
 				case 'o':
 					if (optarg != NULL) {
@@ -38,6 +39,40 @@ int main(int argc, char* argv[]) {
 
 					return 0;
 
+				case 't':
+					if (optarg != NULL) {
+						// Override embedded Style.js JavaScript with external file
+						contents = stylejs::File::getContents(optarg);
+
+						if (!contents.empty()) {
+							TypeJS = contents;
+							stylejs::useEmbeddedTypeJS = false;
+
+							break;
+						} else {
+							cerr << "Empty external Type.js file provided!\n";
+						}
+					}
+
+					return 0;
+
+				case 'u':
+					if (optarg != NULL) {
+						// Override embedded Style.js JavaScript with external file
+						contents = stylejs::File::getContents(optarg);
+
+						if (!contents.empty()) {
+							UtilJS = contents;
+							stylejs::useEmbeddedUtilJS = false;
+
+							break;
+						} else {
+							cerr << "Empty external Util.js file provided!\n";
+						}
+					}
+
+					return 0;
+
 				case 's':
 					if (optarg != NULL) {
 						// Override embedded Style.js JavaScript with external file
@@ -45,11 +80,11 @@ int main(int argc, char* argv[]) {
 
 						if (!contents.empty()) {
 							StyleJS = contents;
-							useExternalStyle = true;
+							stylejs::useEmbeddedStyleJS = false;
 
 							break;
 						} else {
-							cout << "ERROR: Empty external Style.js file supplied!\n";
+							cerr << "Empty external Style.js file provided!\n";
 						}
 					}
 
@@ -71,6 +106,8 @@ int main(int argc, char* argv[]) {
 				case 'h':
 					cout << "Usage: stylec [options] file...\n"
 							"Options:\n"
+							"  -t <file>                Override embedded Type.js with the contents of <file>\n"
+							"  -u <file>                Override embedded Util.js with the contents of <file>\n"
 							"  -s <file>                Override embedded Style.js with the contents of <file>\n"
 							"  -o <file>                Place CSS output into <file>\n"
 							"  -p                       Print CSS output to screen\n"
@@ -96,10 +133,8 @@ int main(int argc, char* argv[]) {
 		}
 
 		if (compile) {
-			// Compile CSS, reuse StyleJS variable
-			if (!useExternalStyle) {
-				StyleJS = stylejs::getEmbeddedJavaScript() + "\n\n" + StyleJS;
-			}
+			// Reuse StyleJS variable
+			StyleJS = stylejs::getEmbeddedJavaScript(TypeJS, UtilJS, StyleJS) + "\n\n" + StyleJS;
 
 			// Initiate "compiler"
 			stylejs::Compiler StyleCompiler;

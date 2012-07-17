@@ -29,37 +29,62 @@ namespace stylejs {
 	static const unsigned short MINOR_VERSION = 1;
 	static const unsigned short PATCH_VERSION = 0;
 
+	// Flags determining embedded JS use
+	static bool useEmbeddedTypeJS = true;
+	static bool useEmbeddedUtilJS = true;
+	static bool useEmbeddedStyleJS = true;
+
 	/**
 	 * @return Copy of embedded Style.js
 	 */
-	static string getEmbeddedJavaScript() {
+	static string getEmbeddedJavaScript(string TypeJS, string UtilJS, string StyleJS) {
 		char* c;
 
 		stringstream ss(stringstream::in | stringstream::out);
 
-		for (c = _binary_Type_js_start; c != _binary_Type_js_end; ++c) {
-			ss << *c;
+		if (useEmbeddedTypeJS) {
+			for (c = _binary_Type_js_start; c != _binary_Type_js_end; ++c) {
+				ss << *c;
+			}
+		} else {
+			ss << TypeJS;
 		}
 
 		ss << "\n\n";
 
-		for (c = _binary_Util_js_start; c != _binary_Util_js_end; ++c) {
-			ss << *c;
+		if (useEmbeddedUtilJS) {
+			for (c = _binary_Util_js_start; c != _binary_Util_js_end; ++c) {
+				ss << *c;
+			}
+		} else {
+			ss << UtilJS;
 		}
 
 		ss << "\n\n";
 
-		for (c = _binary_Style_js_start; c != _binary_Style_js_end; ++c) {
-			ss << *c;
+		if (useEmbeddedStyleJS) {
+			for (c = _binary_Style_js_start; c != _binary_Style_js_end; ++c) {
+				ss << *c;
+			}
+		} else {
+			ss << StyleJS;
 		}
 
 		return ss.str();
 	}
 
 	/**
+	 * Returns the embedded library contents
+	 * @return Copy of embedded Style.js
+	 */
+	static string getEmbeddedJavaScript() {
+		return getEmbeddedJavaScript("", "", "");
+	}
+
+	/**
 	 * @return Formatted string output of stylec version
 	 */
-	static string getStyleCVersion() {
+	static string getVersion() {
 		stringstream in;
 		string out;
 
