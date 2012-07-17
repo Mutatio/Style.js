@@ -2610,7 +2610,7 @@
 	 * @returns {Object}
 	 */
 	CSS.textShadow = function (horizontalLength, verticalLength, blurRadius, color) {
-		if (horizontalLength && verticalLength) {
+		if (horizontalLength !== undefined && verticalLength !== undefined) {
 			var value = [];
 
 			if (!horizontalLength) {
@@ -2653,7 +2653,7 @@
 	 * @returns {Object}
 	 */
 	CSS.boxShadow = function (horizontalLength, verticalLength, blurRadius, spread, color, set) {
-		if (horizontalLength && verticalLength) {
+		if (horizontalLength !== undefined && verticalLength !== undefined) {
 			var value = [];
 
 			if (!horizontalLength) {
