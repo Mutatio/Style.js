@@ -22,7 +22,7 @@
 	 * @constant
 	 * @type {Number}
 	 */
-	var VERSION_MAJOR = 1;
+	var VERSION_MAJOR = 0;
 
 	/**
 	 * Style.js minor version
@@ -38,7 +38,7 @@
 	 * @constant
 	 * @type {Number}
 	 */
-	var VERSION_PATCH = 0;
+	var VERSION_PATCH = 1;
 
 	/**
 	 * Array of Style objects
@@ -51,20 +51,6 @@
 	 * @type {Number}
 	 */
 	var emSize = 16;
-
-	function getVersion() {
-		return VERSION_MAJOR + '.' + VERSION_MINOR + '.' + VERSION_PATCH;
-	}
-
-	/**
-	 * Checks if value is empty
-	 * @private
-	 * @param {mixed} value
-	 * @returns {Boolean}
-	 */
-	function empty(value) {
-		return !value || (Type.isString(value) && value === '') || (Type.isArray(value) && value.length === 0);
-	}
 
 	/**
 	 * Push string value to Styles array
@@ -417,7 +403,7 @@
 	Color.getType = function (color) {
 		if (color) {
 			if (Type.isString(color)) {
-				if (!empty(Color.listNamed[color.toLowerCase()])) {
+				if (!Util.empty(Color.listNamed[color.toLowerCase()])) {
 					return this.NAMED;
 				} else if (this.regex.hex.test(color)) {
 					return this.HEX;
@@ -454,7 +440,7 @@
 					case Color.NAMED:
 						color = color.toLowerCase().substr(1);
 
-						return !empty(Color.list[color]) ? Color.list[color] : undefined;
+						return !Util.empty(Color.list[color]) ? Color.list[color] : undefined;
 
 					case Color.HEX:
 					case Color.RGB:
@@ -530,12 +516,23 @@
 			return new Style(obj);
 		}
 
-		if (!empty(obj)) {
+		if (!Util.empty(obj)) {
 			this.self = obj;
 
 			Styles.push(this);
 		}
 	}
+
+	$.Style = Style;
+
+	/**
+	 * Returns version of library
+	 * @static
+	 * @returns {String}
+	 */
+	Style.getVersion = function () {
+		return VERSION_MAJOR + '.' + VERSION_MINOR + '.' + VERSION_PATCH;
+	};
 
 	/**
 	 * Compile to a object with a single dimension of CSS properties
@@ -673,8 +670,6 @@
 		return this.toCSS();
 	};
 
-	$.Style = Style;
-
 	/**
 	 * Property class / wrapper
 	 * @constructor
@@ -686,10 +681,12 @@
 			return new Property(obj);
 		}
 
-		if (!empty(obj)) {
+		if (!Util.empty(obj)) {
 			this.self = obj;
 		}
 	}
+
+	$.Property = Property;
 
 	/**
 	 * Returns the property as a CSS value
@@ -700,7 +697,7 @@
 		var type;
 		var out = [];
 
-		if (!empty(name) && Type.isObject(this.self)) {
+		if (!Util.empty(name) && Type.isObject(this.self)) {
 			for (var x in this.self) {
 				if (Type.isString(this.self[x])) {
 					out.push(name + '-' + x + ': ' + this.self[x]);
@@ -717,8 +714,6 @@
 
 		return out;
 	};
-
-	$.Property = Property;
 
 	/**
 	 * Checks if value is Poperty type
@@ -762,6 +757,8 @@
 			}
 		}
 	}
+
+	$.RGB = RGB;
 
 	RGB.prototype.red = undefined;
 	RGB.prototype.green = undefined;
@@ -912,8 +909,6 @@
 		return new RGB(Math.floor(Math.random() * 255), Math.floor(Math.random() * 255), Math.floor(Math.random() * 255));
 	};
 
-	$.RGB = RGB;
-
 	/**
 	 * Hex color functionality
 	 * @constructor
@@ -928,6 +923,8 @@
 		}
 	}
 
+	$.Hex = Hex;
+
 	Hex.prototype.value = undefined;
 
 	/**
@@ -935,7 +932,7 @@
 	 * @returns {Boolean}
 	 */
 	Hex.prototype.isSet = function () {
-		return !empty(this.value);
+		return !Util.empty(this.value);
 	};
 
 	/**
@@ -993,7 +990,7 @@
 	 * @returns {String}
 	 */
 	Hex.prototype.toCSS = function () {
-		if (!empty(this.value)) {
+		if (!Util.empty(this.value)) {
 			return '#' + this.value;
 		}
 	};
@@ -1059,8 +1056,6 @@
 		return RGB.random().toHex();
 	};
 
-	$.Hex = Hex;
-
 	/**
 	 * Hex color functionality
 	 * @constructor
@@ -1082,6 +1077,8 @@
 			return toHSL(hue);
 		}
 	}
+
+	$.HSL = HSL;
 
 	HSL.prototype.hue = undefined;
 	HSL.prototype.saturation = undefined;
@@ -1169,8 +1166,6 @@
 		return RGB.random().toHSL();
 	};
 
-	$.HSL = HSL;
-
 	/**
 	 * HSV color functionality
 	 * @constructor
@@ -1190,6 +1185,8 @@
 			}
 		}
 	}
+
+	$.HSV = HSV;
 
 	HSV.prototype.hue = undefined;
 	HSV.prototype.saturation = undefined;
@@ -1307,8 +1304,6 @@
 		return RGB.random().toHSV();
 	};
 
-	$.HSV = HSV;
-
 	/**
 	 * XYZ color functionality
 	 * @constructor
@@ -1328,6 +1323,8 @@
 			}
 		}
 	}
+
+	$.XYZ = XYZ;
 
 	XYZ.prototype.X = undefined;
 	XYZ.prototype.Y = undefined;
@@ -1394,8 +1391,6 @@
 		}
 	};
 
-	$.XYZ = XYZ;
-
 	/**
 	 * CIELab color functionality
 	 * @constructor
@@ -1415,6 +1410,8 @@
 			}
 		}
 	}
+
+	$.CIELab = CIELab;
 
 	CIELab.prototype.L = undefined;
 	CIELab.prototype.a = undefined;
@@ -1467,13 +1464,13 @@
 		return new XYZ(X, Y, Z);
 	};
 
-	$.CIELab = CIELab;
-
 	/**
 	 * Hue color functionality
 	 * @constructor
 	 */
 	function Hue() {}
+
+	$.Hue = Hue;
 
 	/**
 	 * Convert hue to RGB value
@@ -1527,8 +1524,6 @@
 
 		return hue;
 	};
-
-	$.Hue = Hue;
 
 	/**
 	 * Calculate Euclidean distance between two colors
@@ -1904,7 +1899,7 @@
 		if (color) {
 			color = shiftHue(color, 180);
 
-			if (!empty(color)) {
+			if (!Util.empty(color)) {
 				return color[0];
 			}
 		}
@@ -2059,6 +2054,7 @@
 
 	/**
 	 * Calculate the result of a calculate() expression match
+	 * @private
 	 * @param {undefined} undefined
 	 * @param {Number} contents
 	 * @returns {Number}
@@ -2576,7 +2572,7 @@
 					}
 				}
 
-				if (!empty(out)) {
+				if (!Util.empty(out)) {
 					return {
 						background: out
 					};
@@ -2727,18 +2723,18 @@
 			for (var i = 0; i < len; ++i) {
 				parts = /\s*([^\{]*?)\s*\{\s*([^\{]+)\s*/gm.exec(definitions[i]);
 
-				if (parts !== null && !empty(parts[1]) && !empty(parts[2])) {
+				if (parts !== null && !Util.empty(parts[1]) && !Util.empty(parts[2])) {
 					properties = parts[2].split(/\s*;\s*/m);
 					propertiesLen = properties.length;
 
 					if (propertiesLen > 0) {
 						for (var x = 0; x < propertiesLen; ++x) {
-							if (!empty(properties[x])) {
+							if (!Util.empty(properties[x])) {
 								property = properties[x].split(/\s*:\s*/m);
 
 								//alert(properties[x].match(/([^:]+)\s*:\s*(.+)/gi));
 
-								if (property.length === 2 && !empty(property[0]) && !empty(property[1])) {
+								if (property.length === 2 && !Util.empty(property[0]) && !Util.empty(property[1])) {
 									if (out[parts[1]] === undefined) {
 										out[parts[1]] = {};
 									}
