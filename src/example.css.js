@@ -23,10 +23,6 @@ var CSS = '#myTestCSS {\n\
 	font-family: Arial\n\
 }'.toObject();
 
-'inlineCSS_example {\n\
-	display: none\n\
-}'.toStyle();
-
 /**
  * Links
  */
@@ -36,7 +32,7 @@ Style({
 		text_decoration: 'none',
 		$hover: {
 			text_decoration: 'underline'
-		}.extend(borderRadius('2.5em'))
+		}
 	}
 });
 

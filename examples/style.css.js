@@ -16,21 +16,55 @@ var pageStyle = (function () {
 	bg.lightness = 85;
 	bg = bg.toHex();
 
+	function button(backgroundColor, foregroundColor) {
+		backgroundColor = new Hex(backgroundColor);
+		foregroundColor = new Hex(foregroundColor);
+
+		var dark = darken(backgroundColor, .35).toString();
+
+		return {
+			font_size: '36px',
+			font_family: 'Sans',
+			background_color: backgroundColor,
+			//border: dark + ' 1px solid',
+			color: selectForeground(backgroundColor, foregroundColor, 45).toString(),
+			padding: '5px 10px 7px'
+		}.extend(
+			CSS.borderRadius('20px'),
+			CSS.radialGradient('top', dark, backgroundColor.toString()),
+			CSS.boxShadow(1, 1, 1, 2, darken(dark, .3)),
+			CSS.textShadow(2, 2, 1, darken(dark, .5))
+		);
+	}
+
+	var mutatioBlue = complement('#fa6900');
+	var white = new Hex('#fff');
+
+	Style({
+		'.aBtn': {
+		    'span': {
+				color: '#fa6900'
+		    }
+		}.extend(
+			button(mutatioBlue, white)
+		)
+	});
+
 	/**
 	 * Top header
 	 */
 	Style({
 		header: {
 			h1: {
-				padding: '10px',
-				margin: '10px 0',
+				padding: '5px 10px 10px',
+				margin: '5px 0',
 				font_size: '40px',
 				color: 'white',
-				background_color: bgDark,
-				border: bgDark + ' 1px solid'
+				background_color: bgDark
 			}.extend(
-				CSS.textShadow(-2, 2, 1, darken(bg, .9)),
 				border,
+				CSS.textShadow(-2, 2, 1, darken(bg, .9)),
+				CSS.boxShadow(1, 1, 1, 2, darken(bgDark, .3)),
 				CSS.radialGradient('top', lighten(bgDark, 2).toString(), bgDark)
 			)
 		}.extend(center)
