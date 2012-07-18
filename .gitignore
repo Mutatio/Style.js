@@ -3,8 +3,11 @@ tmp/*
 
 # Ignore binaries
 src/stylec
-src/Style.js.o
+src/*.js.o
+
+# Ignore Go dirs
+*/Go/bin
+*/Go/pkg
 
 # Ignore demo CSS output
 src/tmp.css
-
