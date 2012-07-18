@@ -40,51 +40,27 @@ int main(int argc, char* argv[]) {
 					return 0;
 
 				case 't':
-					if (optarg != NULL) {
-						// Override embedded Style.js JavaScript with external file
-						contents = stylejs::File::getContents(optarg);
-
-						if (!contents.empty()) {
-							TypeJS = contents;
-							stylejs::useEmbeddedTypeJS = false;
-
-							break;
-						} else {
-							cerr << "Empty external Type.js file provided!\n";
-						}
-					}
-
-					return 0;
-
 				case 'u':
-					if (optarg != NULL) {
-						// Override embedded Style.js JavaScript with external file
-						contents = stylejs::File::getContents(optarg);
-
-						if (!contents.empty()) {
-							UtilJS = contents;
-							stylejs::useEmbeddedUtilJS = false;
-
-							break;
-						} else {
-							cerr << "Empty external Util.js file provided!\n";
-						}
-					}
-
-					return 0;
-
 				case 's':
 					if (optarg != NULL) {
-						// Override embedded Style.js JavaScript with external file
+						// Override embedded JavaScript with external file
 						contents = stylejs::File::getContents(optarg);
 
 						if (!contents.empty()) {
-							StyleJS = contents;
-							stylejs::useEmbeddedStyleJS = false;
+							if (c == 's') {
+								StyleJS = contents;
+								stylejs::useEmbeddedStyleJS = false;
+							} else if (c == 't') {
+								TypeJS = contents;
+								stylejs::useEmbeddedTypeJS = false;
+							} else {
+								UtilJS = contents;
+								stylejs::useEmbeddedUtilJS = false;
+							}
 
 							break;
 						} else {
-							cerr << "Empty external Style.js file provided!\n";
+							cerr << "Empty external JavaScript file provided!\n";
 						}
 					}
 
