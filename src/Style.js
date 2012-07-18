@@ -53,6 +53,13 @@
 	var emSize = 16;
 
 	/**
+	 * Flag determines whether to output branding when creating CSS
+	 * @private
+	 * @type {Boolean}
+	 */
+	var branding = true;
+
+	/**
 	 * Push string value to Styles array
 	 */
 	String.prototype.toStyle = function () {
@@ -491,13 +498,13 @@
 		var len = Styles.length;
 
 		if (len > 0) {
-			var CSS = '';
+			var CSS = branding ? '/**\n * Created by Style.js ' + Style.getVersion() + ', ' + new Date() + '\n */\n' : '';
 
 			for (var i = 0; i < len; ++i) {
-				CSS += '\n\n' + Styles[i].toCSS();
+				CSS += Styles[i].toCSS() + '\n\n';
 			}
 
-			return CSS.substr(2);
+			return CSS.slice(0, -2);
 		}
 
 		return '';
@@ -532,6 +539,22 @@
 	 */
 	Style.getVersion = function () {
 		return VERSION_MAJOR + '.' + VERSION_MINOR + '.' + VERSION_PATCH;
+	};
+
+	/**
+	 * Disable Style.js branding
+	 * @static
+	 */
+	Style.disbaleBranding = function () {
+		branding = false;
+	};
+
+	/**
+	 * Enable Style.js branding
+	 * @static
+	 */
+	Style.enableBranding = function () {
+		branding = false;
 	};
 
 	/**
