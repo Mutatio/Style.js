@@ -1,6 +1,10 @@
 # Ignore tmp dir
 tmp/*
 
+# Ignore project files
+*.project
+*.pydevproject
+
 # Ignore binaries
 src/stylec
 src/*.js.o
