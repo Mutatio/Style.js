@@ -6,12 +6,12 @@ tmp/*
 *.pydevproject
 
 # Ignore binaries
-src/stylec
-src/*.js.o
+stylec
+*.js.o
 
-# Ignore Go dirs
-*/Go/bin
-*/Go/pkg
+# Ignore dirs
+*/bin/*
+*/pkg
 
 # Ignore demo CSS output
-src/tmp.css
+tmp.css

@@ -2,8 +2,9 @@
 
 echo "... Copying dependancies (Type.js & Util.js) ..."
 
-cp ../../Type.js/src/Type.js .
-cp ../../Util.js/src/Util.js .
+cp ../../../Type.js/src/Type.js .
+cp ../../../Util.js/src/Util.js .
+cp ../Style.js .
 
 echo "... Creating object files for JavaScript libraries ..."
 
@@ -13,10 +14,9 @@ ld -r -b binary -o Style.js.o Style.js
 
 echo "... Cleanup dependancy files ..."
 
-rm -f Type.js Util.js
-
+rm -f Type.js Util.js Style.js
+ 
 echo "... Compiling ..."
 
-g++ -O3 -Werror stylejs.cpp stylec.cpp Type.js.o Util.js.o Style.js.o -o stylec /projects/Software/v8/libv8.a -lpthread && strip stylec && ./stylec -v
+g++ -O3 -Werror stylejs.cpp stylec.cpp Type.js.o Util.js.o Style.js.o -o bin/stylec /projects/Software/v8/libv8.a -lpthread && strip bin/stylec && bin/stylec -v
 
-./stylec -o tmp.css example.css.js
