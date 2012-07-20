@@ -5,13 +5,17 @@ tmp/*
 *.project
 *.pydevproject
 
-# Ignore binaries
+# Ignore binaries / object files
 stylec
 *.js.o
 
 # Ignore dirs
-*/bin/*
-*/pkg
+*/Go/bin
+*/Go/pkg
+*/C++/bin
+
+# Ignore temp scripts
+*/bin/*.js
 
 # Ignore demo CSS output
 tmp.css
