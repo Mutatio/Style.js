@@ -440,24 +440,20 @@
 	 */
 	Color.toType = function (color, type) {
 		if (color && type) {
-			var func = 'to' + type;
+			switch (type) {
+				case Color.NAMED:
+					color = color.toLowerCase().substr(1);
 
-			if (Type.isFunction($[func])) {
-				switch (type) {
-					case Color.NAMED:
-						color = color.toLowerCase().substr(1);
+					return !Util.empty(Color.list[color]) ? Color.list[color] : undefined;
 
-						return !Util.empty(Color.list[color]) ? Color.list[color] : undefined;
-
-					case Color.HEX:
-					case Color.RGB:
-					case Color.RGBA:
-					case Color.HSL:
-					case Color.HSV:
-					case Color.XYZ:
-					case Color.CIELAB:
-						return $[func](color);
-				}
+				case Color.HEX:
+				case Color.RGB:
+				case Color.RGBA:
+				case Color.HSL:
+				case Color.HSV:
+				case Color.XYZ:
+				case Color.CIELAB:
+					return toColorSpace(color, type);
 			}
 		}
 	};
