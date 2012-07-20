@@ -187,7 +187,7 @@
 		 * @constant
 		 * @type {Object}
 		 */
-		RGBA: /^\s*rgba\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\,\s*(\d+)\s*\)\s*$/i,
+		RGBA: /^\s*rgba\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\,\s*(\.\d+|\d+(\.\d+)?)\s*\)\s*$/i,
 
 		/**
 		 * @static
@@ -201,7 +201,7 @@
 		 * @constant
 		 * @type {Object}
 		 */
-		all: /(#[a-f0-9]{3,6}|rgb\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\)|rgba\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\,\s*(\d+)\s*\)|hsl\(\s*(\d+)\s*,\s*(\d+)%\s*,\s*(\d+)%\s*\))/gi
+		all: /\s*(#[a-f0-9]{3,6}|rgb\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\)|rgba\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\,\s*(\.\d+|\d+(\.\d+)?)\s*\)|hsl\(\s*(\d+)\s*,\s*(\d+)%\s*,\s*(\d+)%\s*\))\s*/gi
 	};
 
 	/**
@@ -497,7 +497,7 @@
 			var CSS = branding ? '/**\n * Created by Style.js ' + Style.getVersion() + ', ' + new Date() + '\n */\n' : '';
 
 			for (var i = 0; i < len; ++i) {
-				CSS += Styles[i].toCSS() + '\n\n';
+				CSS += Styles[i] + '\n\n';
 			}
 
 			return CSS.slice(0, -2);
@@ -655,10 +655,10 @@
 	};
 
 	/**
-	 * Convert this Style object to CSS
+	 * Convert to CSS when cast to string
 	 * @returns {String}
 	 */
-	Style.prototype.toCSS = function () {
+	Style.prototype.toString = function () {
 		var CSS = '';
 
 		// Compile
@@ -679,14 +679,6 @@
 		} else if (Type.isString(obj)) {
 			return obj;
 		}
-	};
-
-	/**
-	 * Convert to CSS when cast to string
-	 * @returns {String}
-	 */
-	Style.prototype.toString = function () {
-		return this.toCSS();
 	};
 
 	/**
@@ -752,7 +744,7 @@
 	 * @param {Number} blue
 	 */
 	function RGB(red, green, blue) {
-		if (red !== undefined && ((green === undefined && blue === undefined) || (Type.isNumber(green) && Type.isNumber(blue)))) {
+		if (red !== undefined && ((green === undefined && blue === undefined) || (Type.isNumber(green) && Type.isNumber(blue) && green.between(0, 255) && blue.between(0, 255)))) {
 			if (green === undefined) {
 				if (Type.isObject(red) && red instanceof this.constructor) {
 					this.red = red.red;
@@ -762,14 +754,20 @@
 					var parts = Color.regex.RGB.exec(red);
 
 					if (parts) {
-						this.red = Math.round(parts[1]);
-						this.green = Math.round(parts[2]);
-						this.blue = Math.round(parts[3]);
+						parts[1] = Math.round(parts[1]);
+						parts[2] = Math.round(parts[2]);
+						parts[3] = Math.round(parts[3]);
+
+						if (parts[1].between(0, 255) && parts[2].between(0, 255) && parts[3].between(0, 255)) {
+							this.red = parts[1];
+							this.green = parts[2];
+							this.blue = parts[3];
+						}
 					}
 				} else {
 					return toRGB(red);
 				}
-			} else if (Type.isNumber(red)) {
+			} else if (Type.isNumber(red) && red.between(0, 255)) {
 				this.red = red;
 				this.green = green;
 				this.blue = blue;
@@ -792,22 +790,22 @@
 	};
 
 	/**
-	 * Convert to Hex color
-	 * @returns {Hex}
-	 */
-	RGB.prototype.toHex = function () {
-		if (this.isSet()) {
-			return new Hex('#' + (1 << 24 | this.red << 16 | this.green << 8 | this.blue).toString(16).substr(1));
-		}
-	};
-
-	/**
 	 * Convert to RGBA color
 	 * @returns {RGBA}
 	 */
 	RGB.prototype.toRGBA = function () {
 		if (this.isSet()) {
 			return new RGBA(this.red, this.green, this.blue, 1);
+		}
+	};
+
+	/**
+	 * Convert to Hex color
+	 * @returns {Hex}
+	 */
+	RGB.prototype.toHex = function () {
+		if (this.isSet()) {
+			return new Hex('#' + (1 << 24 | this.red << 16 | this.green << 8 | this.blue).toString(16).substr(1));
 		}
 	};
 
@@ -820,7 +818,6 @@
 			var red = this.red / 255;
 			var green = this.green / 255;
 			var blue = this.blue / 255;
-
 			var max = Math.max(red, green, blue), min = Math.min(red, green, blue);
 			var hue = 0, saturation, lightness = (max + min) / 2;
 
@@ -902,21 +899,13 @@
 	};
 
 	/**
-	 * Convert to CSS string
-	 * @returns {String}
-	 */
-	RGB.prototype.toCSS = function () {
-		if (this.isSet()) {
-			return 'rgb(' + Math.round(this.red) + ', ' + Math.round(this.green) + ', ' + Math.round(this.blue) + ')';
-		}
-	};
-
-	/**
-	 * Convert to CSS string
+	 * Convert to string
 	 * @returns {String}
 	 */
 	RGB.prototype.toString = function () {
-		return this.toCSS();
+		if (this.isSet()) {
+			return 'rgb(' + this.red + ', ' + this.green + ', ' + this.blue + ')';
+		}
 	};
 
 	/**
@@ -926,6 +915,104 @@
 	 */
 	RGB.random = function () {
 		return new RGB(Math.floor(Math.random() * 255), Math.floor(Math.random() * 255), Math.floor(Math.random() * 255));
+	};
+
+	/**
+	 * RGBA color class
+	 * @constructor
+	 * @param {Number} red
+	 * @param {Number} green
+	 * @param {Number} blue
+	 * @param {Number} alpha
+	 */
+	function RGBA(red, green, blue, alpha) {
+		if (red !== undefined && ((green === undefined && blue === undefined) || (Type.isNumber(green) && Type.isNumber(blue) && green.between(0, 255) && blue.between(0, 255)))) {
+			if (green === undefined) {
+				if (Type.isObject(red) && red instanceof this.constructor) {
+					this.red = red.red;
+					this.green = red.green;
+					this.blue = red.blue;
+					this.alpha = red.alpha;
+				} else if (Type.isString(red)) {
+					var parts = Color.regex.RGBA.exec(red);
+
+					if (parts) {
+						parts[1] = Math.round(parts[1]);
+						parts[2] = Math.round(parts[2]);
+						parts[3] = Math.round(parts[3]);
+						parts[4] = parseFloat(parts[4]);
+
+						if (parts[1].between(0, 255) && parts[2].between(0, 255) && parts[3].between(0, 255) && parts[4].between(0, 1)) {
+							this.red = parts[1];
+							this.green = parts[2];
+							this.blue = parts[3];
+							this.alpha = parts[4];
+						}
+					}
+				} else {
+					return toRGBA(red);
+				}
+			} else if (Type.isNumber(red) && red.between(0, 255)) {
+				this.red = red;
+				this.green = green;
+				this.blue = blue;
+				this.alpha = Type.isNumber(alpha) && alpha.between(0, 1) ? alpha : 1;
+			}
+		}
+	}
+
+	$.RGBA = RGBA;
+
+	RGBA.prototype.red = undefined;
+	RGBA.prototype.green = undefined;
+	RGBA.prototype.blue = undefined;
+	RGBA.prototype.alpha = undefined;
+
+	/**
+	 * Check whether the RGBA object values are set
+	 * @returns {Boolean}
+	 */
+	RGBA.prototype.isSet = function () {
+		return Type.isNumber(this.red) && Type.isNumber(this.green) && Type.isNumber(this.blue) && Type.isNumber(this.alpha);
+	};
+
+	/**
+	 * Convert to RGB color
+	 * @returns {RGB}
+	 */
+	RGBA.prototype.toRGB = function (background) {
+		if (this.isSet()) {
+			if (this.alpha === 1) {
+				return new RGB(this.red, this.green, this.blue);
+			} else {
+				// Must have a background color, assume white if none provided
+				if (!background) {
+					background = new RGB(255, 255, 255);
+				} else {
+					background = toRGB(background);
+
+					if (!background) {
+						background = new RGB(255, 255, 255);
+					}
+				}
+
+				var red = Math.round(((1 - this.alpha) * (this.red / 255) + (this.alpha * (background.red / 255))) * 255);
+				var green = Math.round(((1 - this.alpha) * (this.green / 255) + (this.alpha * (background.green / 255))) * 255);
+				var blue = Math.round(((1 - this.alpha) * (this.blue / 255) + (this.alpha * (background.blue / 255))) * 255);
+
+				return new RGB(red, green, blue);
+			}
+		}
+	};
+
+	/**
+	 * Convert to string
+	 * @returns {String}
+	 */
+	RGBA.prototype.toString = function () {
+		if (this.isSet()) {
+			return 'rgba(' + this.red + ', ' + this.green + ', ' + this.blue + ', ' + this.alpha + ')';
+		}
 	};
 
 	/**
@@ -1008,18 +1095,10 @@
 	 * Convert to CSS string
 	 * @returns {String}
 	 */
-	Hex.prototype.toCSS = function () {
+	Hex.prototype.toString = function () {
 		if (!Util.empty(this.value)) {
 			return '#' + this.value;
 		}
-	};
-
-	/**
-	 * Convert to CSS string
-	 * @returns {String}
-	 */
-	Hex.prototype.toString = function () {
-		return this.toCSS();
 	};
 
 	/**
@@ -1162,18 +1241,10 @@
 	 * Convert to CSS string
 	 * @returns {String}
 	 */
-	HSL.prototype.toCSS = function () {
+	HSL.prototype.toString = function () {
 		if (this.isSet()) {
 			return 'hsl(' + Math.round(this.hue) + ', ' + Math.round(this.saturation) + '%, ' + Math.round(this.lightness) + '%)';
 		}
-	};
-
-	/**
-	 * Convert to CSS string
-	 * @returns {String}
-	 */
-	HSL.prototype.toString = function () {
-		return this.toCSS();
 	};
 
 	/**
