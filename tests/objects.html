@@ -58,7 +58,7 @@
 								if (obj.isSet()) {
 									++countPass;
 
-									out += '<span class="ok">' + functions[i] + ' class success</span>\n';
+									out += '<span class="ok" style="font-weight: bold; font-size: 14px">' + functions[i] + ' creation success</span>\n';
 
 									for (var x = 0; x < len; ++x) {
 										if (functions[x] !== functions[i]) {
@@ -88,7 +88,7 @@
 								} else {
 									++countFail;
 
-									out += '<span class="er">' + functions[i] + ' class failure</span>\n\n';
+									out += '<span class="er" style="font-weight: bold; font-size: 14px">' + functions[i] + ' creation failure</span>\n';
 								}
 							}
 						} else {
