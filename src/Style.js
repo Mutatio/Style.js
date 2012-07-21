@@ -1509,6 +1509,16 @@
 	};
 
 	/**
+	 * Convert to RGBA color
+	 * @returns {RGBA}
+	 */
+	HSV.prototype.toRGBA = function () {
+		if (this.isSet()) {
+			return this.toRGB().toRGBA();
+		}
+	};
+
+	/**
 	 * Convert to Hex color
 	 * @returns {Hex}
 	 */
@@ -1525,6 +1535,26 @@
 	HSV.prototype.toHSL = function () {
 		if (this.isSet()) {
 			return this.toRGB().toHSL();
+		}
+	};
+
+	/**
+	 * Convert to XYZ color
+	 * @returns {XYZ}
+	 */
+	HSV.prototype.toXYZ = function () {
+		if (this.isSet()) {
+			return this.toRGB().toXYZ();
+		}
+	};
+
+	/**
+	 * Convert to CIELab color
+	 * @returns {CIELab}
+	 */
+	HSV.prototype.toCIELab = function () {
+		if (this.isSet()) {
+			return this.toRGB().toXYZ().toCIELab();
 		}
 	};
 
