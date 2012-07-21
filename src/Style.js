@@ -869,6 +869,16 @@
 	};
 
 	/**
+	 * Convert to HSLA color
+	 * @returns {HSLA}
+	 */
+	RGB.prototype.toHSLA = function () {
+		if (this.isSet()) {
+			return this.toHSL().toHSLA();
+		}
+	};
+
+	/**
 	 * Convert to HSV color
 	 * @returns {HSV}
 	 */
@@ -1059,6 +1069,17 @@
 	};
 
 	/**
+	 * Convert to HSLA color
+	 * @param {Object} background
+	 * @returns {HSLA}
+	 */
+	RGBA.prototype.toHSLA = function (background) {
+		if (this.isSet()) {
+			return this.toRGB(background).toHSLA();
+		}
+	};
+
+	/**
 	 * Convert to HSV color
 	 * @param {Object} background
 	 * @returns {HSV}
@@ -1113,7 +1134,7 @@
 	};
 
 	/**
-	 * Hex color functionality
+	 * Hex color class
 	 * @constructor
 	 */
 	function Hex(value) {
@@ -1189,6 +1210,16 @@
 	};
 
 	/**
+	 * Convert to HSLA color
+	 * @returns {HSLA}
+	 */
+	Hex.prototype.toHSLA = function () {
+		if (this.value) {
+			return this.toRGB().toHSLA();
+		}
+	};
+
+	/**
 	 * Convert to HSV color
 	 * @returns {HSV}
 	 */
@@ -1214,7 +1245,7 @@
 	 */
 	Hex.prototype.toCIELab = function () {
 		if (this.value) {
-			return this.toRGB().toCIELab()
+			return this.toRGB().toCIELab();
 		}
 	};
 
@@ -1282,7 +1313,7 @@
 	};
 
 	/**
-	 * Hex color functionality
+	 * HSL color class
 	 * @constructor
 	 */
 	function HSL(hue, saturation, lightness) {
@@ -1340,7 +1371,7 @@
 				blue = Hue.toRGB(p, q, hue - 1 / 3);
 			}
 
-			return new RGB(red * 255, green * 255, blue * 255);
+			return new RGB(Math.round(red * 255), Math.round(green * 255), Math.round(blue * 255));
 		}
 	};
 
@@ -1361,6 +1392,16 @@
 	HSL.prototype.toHex = function () {
 		if (this.isSet()) {
 			return this.toRGB().toHex();
+		}
+	};
+
+	/**
+	 * Convert to HSLA color
+	 * @returns {HSLA}
+	 */
+	HSL.prototype.toHSLA = function () {
+		if (this.isSet()) {
+			return new HSLA(this.hue, this.saturation, this.lightness, 1);
 		}
 	};
 
@@ -1390,7 +1431,7 @@
 	 */
 	HSL.prototype.toCIELab = function () {
 		if (this.isSet()) {
-			return this.toRGB().toXYZ().toCIELab();
+			return this.toRGB().toCIELab();
 		}
 	};
 
@@ -1414,7 +1455,150 @@
 	};
 
 	/**
-	 * HSV color functionality
+	 * HSLA color class
+	 * @constructor
+	 */
+	function HSLA(hue, saturation, lightness, alpha) {
+		if (Type.isNumber(hue) && Type.isNumber(saturation) && Type.isNumber(lightness)) {
+			this.hue = hue;
+			this.saturation = saturation;
+			this.lightness = lightness;
+			this.alpha = Type.isNumber(alpha) && alpha.between(0, 1) ? alpha : 1;
+		} else if (Type.isObject(hue)) {
+			if (hue instanceof this.constructor) {
+				this.hue = hue.hue;
+				this.saturation = hue.saturation;
+				this.lightness = hue.lightness;
+				this.alpha = hue.alpha;
+			} else {
+				return toHSLA(hue);
+			}
+		} else {
+			return toHSLA(hue);
+		}
+	}
+
+	$.HSLA = HSLA;
+
+	HSLA.prototype.hue = undefined;
+	HSLA.prototype.saturation = undefined;
+	HSLA.prototype.lightness = undefined;
+	HSLA.prototype.alpha = undefined;
+
+	/**
+	 * Check whether the HSLA object values are set
+	 * @returns {Boolean}
+	 */
+	HSLA.prototype.isSet = function () {
+		return Type.isNumber(this.hue) && Type.isNumber(this.saturation) && Type.isNumber(this.lightness) && Type.isNumber(this.alpha);
+	};
+
+	/**
+	 * Convert to RGB color
+	 * @param {Object} background
+	 * @returns {RGB}
+	 */
+	HSLA.prototype.toRGB = function (background) {
+		if (this.isSet()) {
+			return this.toRGBA(background).toRGB();
+		}
+	};
+
+	/**
+	 * Convert to RGBA color
+	 * @param {Object} background
+	 * @returns {RGBA}
+	 */
+	HSLA.prototype.toRGBA = function (background) {
+		if (this.isSet()) {
+			var out = new HSL(this.hue, this.saturation, this.lightness);
+
+			if (this.alpha === 1) {
+				return out.toRGBA();
+			} else {
+				// Assume HSL, convert to RGB (alpha = 1.0)
+				out = out.toRGBA();
+				// Copy true alpha of HSLA object
+				out.alpha = this.alpha;
+
+				return out;
+			}
+		}
+	};
+
+	/**
+	 * Convert to Hex color
+	 * @param {Object} background
+	 * @returns {Hex}
+	 */
+	HSLA.prototype.toHex = function (background) {
+		if (this.isSet()) {
+			return this.toRGBA(background).toHex();
+		}
+	};
+
+	/**
+	 * Convert to HSL color
+	 * @param {Object} background
+	 * @returns {HSL}
+	 */
+	HSLA.prototype.toHSL = function (background) {
+		if (this.isSet()) {
+			var out = new HSL(this.hue, this.saturation, this.lightness);
+
+			if (this.alpha === 1) {
+				return out;
+			} else {
+				return this.toRGBA(background);
+			}
+		}
+	};
+
+	/**
+	 * Convert to HSV color
+	 * @param {Object} background
+	 * @returns {HSV}
+	 */
+	HSLA.prototype.toHSV = function (background) {
+		if (this.isSet()) {
+			return this.toRGBA(background).toHSV();
+		}
+	};
+
+	/**
+	 * Convert to XYZ color
+	 * @param {Object} background
+	 * @returns {XYZ}
+	 */
+	HSLA.prototype.toXYZ = function (background) {
+		if (this.isSet()) {
+			return this.toRGBA(background).toXYZ();
+		}
+	};
+
+	/**
+	 * Convert to CIELab color
+	 * @param {Object} background
+	 * @returns {CIELab}
+	 */
+	HSLA.prototype.toCIELab = function (background) {
+		if (this.isSet()) {
+			return this.toRGBA(background).toCIELab();
+		}
+	};
+
+	/**
+	 * Convert to CSS string
+	 * @returns {String}
+	 */
+	HSLA.prototype.toString = function () {
+		if (this.isSet()) {
+			return 'hsla(' + Math.round(this.hue) + ', ' + Math.round(this.saturation) + '%, ' + Math.round(this.lightness) + '%, ' + this.alpha + ')';
+		}
+	};
+
+	/**
+	 * HSV color class
 	 * @constructor
 	 */
 	function HSV(hue, saturation, value) {
@@ -1555,6 +1739,16 @@
 	};
 
 	/**
+	 * Convert to HSLA color
+	 * @returns {HSLA}
+	 */
+	HSV.prototype.toHSLA = function () {
+		if (this.isSet()) {
+			return this.toRGB().toHSLA();
+		}
+	};
+
+	/**
 	 * Convert to XYZ color
 	 * @returns {XYZ}
 	 */
@@ -1570,7 +1764,7 @@
 	 */
 	HSV.prototype.toCIELab = function () {
 		if (this.isSet()) {
-			return this.toRGB().toXYZ().toCIELab();
+			return this.toRGB().toCIELab();
 		}
 	};
 
@@ -1584,7 +1778,7 @@
 	};
 
 	/**
-	 * XYZ color functionality
+	 * XYZ color class
 	 * @constructor
 	 */
 	function XYZ(X, Y, Z) {
@@ -1671,6 +1865,16 @@
 	};
 
 	/**
+	 * Convert to HSLA color
+	 * @returns {HSLA}
+	 */
+	XYZ.prototype.toHSLA = function () {
+		if (this.isSet()) {
+			return this.toRGB().toHSLA();
+		}
+	};
+
+	/**
 	 * Convert to HSV color
 	 * @returns {HSV}
 	 */
@@ -1712,7 +1916,7 @@
 	};
 
 	/**
-	 * CIELab color functionality
+	 * CIELab color class
 	 * @constructor
 	 */
 	function CIELab(L, a, b) {
@@ -1763,7 +1967,7 @@
 	 */
 	CIELab.prototype.toHex = function () {
 		if (this.isSet()) {
-			return this.toXYZ().toRBG().toHex();
+			return this.toXYZ().toHex();
 		}
 	};
 
@@ -1796,7 +2000,7 @@
 	};
 
 	/**
-	 * Hue color functionality
+	 * Hue color class
 	 * @constructor
 	 */
 	function Hue() {}
@@ -3189,5 +3393,5 @@
 			}
 		}
 	};
-*/
+	 */
 })(this);
