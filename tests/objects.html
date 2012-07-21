@@ -1,6 +1,6 @@
 <html>
     <head>
-		<title>Style.js Classes Test</title>
+		<title>Style.js - Object Creation and Conversion Tests</title>
 		<script type="text/javascript" src="../../Type.js/src/Type.js"></script>
 		<script type="text/javascript" src="../../Util.js/src/Util.js"></script>
 		<script type="text/javascript" src="../src/Style.js"></script>
@@ -103,7 +103,7 @@
 			var total = countPass + countFail;
 			benchmark = ((+(new Date()) - benchmark) / 1000).round(3);
 
-			document.write('<h1 ' + (countFail > 0 ? 'class="er">Failed' : 'class="ok">Passed') + ' Object Creation and Converstion Tests</h1><span class="ok" style="font-weight: bold">PASSED: ' + countPass + ' (' + ((countPass / total) * 100).round(2) + '%)</span>\n<span class="er" style="font-weight: bold">FAILED: ' + countFail + ' (' + ((countFail / total) * 100).round(2) + '%)</span>\n<strong>TIME:   ' + benchmark + 's</strong>\n' + out);
+			document.write('<h1 ' + (countFail > 0 ? 'class="er">Failed' : 'class="ok">Passed') + ' Object Creation and Conversion Tests</h1><span class="ok" style="font-weight: bold">PASSED: ' + countPass + ' (' + ((countPass / total) * 100).round(2) + '%)</span>\n<span class="er" style="font-weight: bold">FAILED: ' + countFail + ' (' + ((countFail / total) * 100).round(2) + '%)</span>\n<strong>TIME:   ' + benchmark + 's</strong>\n' + out);
 		</script></code></pre>
     </body>
 </html>
