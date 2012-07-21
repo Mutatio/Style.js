@@ -6,6 +6,10 @@
 		<script type="text/javascript" src="../src/Style.js"></script>
 
 		<style type="text/css">
+			h2 {
+				margin: 0
+			}
+
 			pre {
 				font-size: 12px
 			}
@@ -103,7 +107,7 @@
 			var total = countPass + countFail;
 			benchmark = ((+(new Date()) - benchmark) / 1000).round(3);
 
-			document.write('<h1 ' + (countFail > 0 ? 'class="er">Failed' : 'class="ok">Passed') + ' Object Creation and Conversion Tests</h1><span class="ok" style="font-weight: bold">PASSED: ' + countPass + ' (' + ((countPass / total) * 100).round(2) + '%)</span>\n<span class="er" style="font-weight: bold">FAILED: ' + countFail + ' (' + ((countFail / total) * 100).round(2) + '%)</span>\n<strong>TIME:   ' + benchmark + 's</strong>\n' + out);
+			document.write('<h1 ' + (countFail > 0 ? 'class="er">Failed' : 'class="ok">Passed') + ' Object Creation and Conversion Tests</h1><span class="ok" style="font-weight: bold">PASSED: ' + countPass + ' (' + ((countPass / total) * 100).round(2) + '%)</span>\n<span class="er" style="font-weight: bold">FAILED: ' + countFail + ' (' + ((countFail / total) * 100).round(2) + '%)</span>\n<strong>TIME:   ' + benchmark + 's</strong>\n\n' + out.slice(0, -2));
 		</script></code></pre>
     </body>
 </html>
