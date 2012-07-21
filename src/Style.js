@@ -1687,6 +1687,15 @@
 	};
 
 	/**
+	 * Get a random XYZ color
+	 * @static
+	 * @returns {XYZ}
+	 */
+	XYZ.random = function () {
+		return new RGB.random().toXYZ();
+	};
+
+	/**
 	 * CIELab color functionality
 	 * @constructor
 	 */
@@ -1759,6 +1768,15 @@
 		Z = (Z3 > 0.008856 ? Z3 : (Z - 16 / 116) / 7.787) * 108.883;
 
 		return new XYZ(X, Y, Z);
+	};
+
+	/**
+	 * Get a random CIELab color
+	 * @static
+	 * @returns {CIELab}
+	 */
+	CIELab.random = function () {
+		return new RGB.random().toCIELab();
 	};
 
 	/**
