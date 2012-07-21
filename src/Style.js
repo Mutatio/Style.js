@@ -1414,6 +1414,8 @@
 			} else {
 				return toHSV(hue);
 			}
+		} else {
+			return toHSV(hue);
 		}
 	}
 
