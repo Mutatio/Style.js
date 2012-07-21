@@ -909,15 +909,6 @@
 	};
 
 	/**
-	 * Get a random RGB color
-	 * @static
-	 * @returns {RGB}
-	 */
-	RGB.random = function () {
-		return new RGB(Math.floor(Math.random() * 255), Math.floor(Math.random() * 255), Math.floor(Math.random() * 255));
-	};
-
-	/**
 	 * Convert to string
 	 * @returns {String}
 	 */
@@ -925,6 +916,15 @@
 		if (this.isSet()) {
 			return 'rgb(' + this.red + ', ' + this.green + ', ' + this.blue + ')';
 		}
+	};
+
+	/**
+	 * Get a random RGB color
+	 * @static
+	 * @returns {RGB}
+	 */
+	RGB.random = function () {
+		return new RGB(Math.floor(Math.random() * 255), Math.floor(Math.random() * 255), Math.floor(Math.random() * 255));
 	};
 
 	/**
@@ -1082,6 +1082,16 @@
 	};
 
 	/**
+	 * Convert to RGBA color
+	 * @returns {RGBA}
+	 */
+	Hex.prototype.toRGBA = function () {
+		if (this.value) {
+			return new RGBA(parseInt(this.value.substring(0, 2), 16), parseInt(this.value.substring(2, 4), 16), parseInt(this.value.substring(4, 6), 16), 1);
+		}
+	};
+
+	/**
 	 * Convert to HSL color
 	 * @returns {HSL}
 	 */
@@ -1098,6 +1108,26 @@
 	Hex.prototype.toHSV = function () {
 		if (this.value) {
 			return this.toRGB().toHSV();
+		}
+	};
+
+	/**
+	 * Convert to XYZ color
+	 * @returns {XYZ}
+	 */
+	Hex.prototype.toXYZ = function () {
+		if (this.value) {
+			return this.toRGB().toXYZ();
+		}
+	};
+
+	/**
+	 * Convert to CIELab color
+	 * @returns {CIELab}
+	 */
+	Hex.prototype.toCIELab = function () {
+		if (this.value) {
+			return this.toRGB().toCIELab()
 		}
 	};
 
