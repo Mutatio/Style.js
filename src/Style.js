@@ -148,6 +148,12 @@
 	 * @static
 	 * @constant
 	 */
+	Color.HSLA = 'HSLA';
+
+	/**
+	 * @static
+	 * @constant
+	 */
 	Color.HSV = 'HSV';
 
 	/**
@@ -201,7 +207,14 @@
 		 * @constant
 		 * @type {Object}
 		 */
-		all: /\s*(#[a-f0-9]{3,6}|rgb\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\)|rgba\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\,\s*(\.\d+|\d+(\.\d+)?)\s*\)|hsl\(\s*(\d+)\s*,\s*(\d+)%\s*,\s*(\d+)%\s*\))\s*/gi
+		HSLA: /^\s*hsla\(\s*(\d+)\s*,\s*(\d+)%\s*,\s*(\d+)%\s*\,\s*(\.\d+|\d+(\.\d+)?)\s*\)\s*$/i,
+
+		/**
+		 * @static
+		 * @constant
+		 * @type {Object}
+		 */
+		all: /\s*(#[a-f0-9]{3,6}|rgb\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\)|rgba\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\,\s*(\.\d+|\d+(\.\d+)?)\s*\)|hsl\(\s*(\d+)\s*,\s*(\d+)%\s*,\s*(\d+)%\s*\)|hsla\(\s*(\d+)\s*,\s*(\d+)%\s*,\s*(\d+)%\s*\,\s*(\.\d+|\d+(\.\d+)?)\s*\))\s*/gi
 	};
 
 	/**
@@ -420,6 +433,8 @@
 					return this.RGBA;
 				} else if (this.regex.HSL.test(color)) {
 					return this.HSL;
+				} else if (this.regex.HSLA.test(color)) {
+					return this.HSLA;
 				}
 			} else {
 				var type = Type.getType(color);
@@ -450,6 +465,7 @@
 				case Color.RGB:
 				case Color.RGBA:
 				case Color.HSL:
+				case Color.HSLA:
 				case Color.HSV:
 				case Color.XYZ:
 				case Color.CIELAB:
@@ -1692,7 +1708,7 @@
 	 * @returns {XYZ}
 	 */
 	XYZ.random = function () {
-		return new RGB.random().toXYZ();
+		return RGB.random().toXYZ();
 	};
 
 	/**
@@ -1776,7 +1792,7 @@
 	 * @returns {CIELab}
 	 */
 	CIELab.random = function () {
-		return new RGB.random().toCIELab();
+		return XYZ.random().toCIELab();
 	};
 
 	/**
@@ -2434,7 +2450,7 @@
 	/**
 	 * Convert color to a Hex color
 	 * @param {Object|String} color
-	 * @returns {Object}
+	 * @returns {Hex}
 	 */
 	function toHex(color) {
 		return toColorSpace(color, Color.HEX);
@@ -2445,7 +2461,7 @@
 	/**
 	 * Convert color to RGB color space
 	 * @param {Object|String} color
-	 * @returns {Object}
+	 * @returns {RGB}
 	 */
 	function toRGB(color) {
 		return toColorSpace(color, Color.RGB);
@@ -2456,7 +2472,7 @@
 	/**
 	 * Convert color to RGBA color space
 	 * @param {Object|String} color
-	 * @returns {Object}
+	 * @returns {RGBA}
 	 */
 	function toRGBA(color) {
 		return toColorSpace(color, Color.RGBA);
@@ -2467,7 +2483,7 @@
 	/**
 	 * Convert color to HSL color space
 	 * @param {Object|String} color
-	 * @returns {Object}
+	 * @returns {HSL}
 	 */
 	function toHSL(color) {
 		return toColorSpace(color, Color.HSL);
@@ -2476,9 +2492,20 @@
 	$.toHSL = toHSL;
 
 	/**
+	 * Convert color to HSLA color space
+	 * @param {Object|String} color
+	 * @returns {HSLA}
+	 */
+	function toHSLA(color) {
+		return toColorSpace(color, Color.HSLA);
+	}
+
+	$.toHSLA = toHSLA;
+
+	/**
 	 * Convert color to HSV color space
 	 * @param {Object|String} color
-	 * @returns {Object}
+	 * @returns {HSV}
 	 */
 	function toHSV(color) {
 		return toColorSpace(color, Color.HSV);
@@ -2489,7 +2516,7 @@
 	/**
 	 * Convert color to XYZ color space
 	 * @param {Object|String} color
-	 * @returns {Object}
+	 * @returns {XYZ}
 	 */
 	function toXYZ(color) {
 		return toColorSpace(color, Color.XYZ);
@@ -2500,7 +2527,7 @@
 	/**
 	 * Convert color to CIELab color space
 	 * @param {Object|String} color
-	 * @returns {Object}
+	 * @returns {CIELab}
 	 */
 	function toCIELab(color) {
 		return toColorSpace(color, Color.CIELAB);
@@ -2616,7 +2643,7 @@
 	/**
 	 * Convert the matched colors in a string to the given color space
 	 * @param {String} space
-	 * @returns {Object}
+	 * @returns {String}
 	 */
 	String.prototype.toColorSpace = function (space) {
 		if (space) {
@@ -2632,7 +2659,7 @@
 
 	/**
 	 * Convert the matched colors in a string to Hex
-	 * @returns {Object}
+	 * @returns {String}
 	 */
 	String.prototype.toHex = function () {
 		return this.toColorSpace(Color.HEX);
@@ -2640,7 +2667,7 @@
 
 	/**
 	 * Convert the matched colors in a string to RGB
-	 * @returns {Object}
+	 * @returns {String}
 	 */
 	String.prototype.toRGB = function () {
 		return this.toColorSpace(Color.RGB);
@@ -2648,10 +2675,18 @@
 
 	/**
 	 * Convert the matched colors in a string to HSL
-	 * @returns {Object}
+	 * @returns {String}
 	 */
 	String.prototype.toHSL = function () {
 		return this.toColorSpace(Color.HSL);
+	};
+
+	/**
+	 * Convert the matched colors in a string to HSLA
+	 * @returns {String}
+	 */
+	String.prototype.toHSLA = function () {
+		return this.toColorSpace(Color.HSLA);
 	};
 
 	/**
@@ -2687,11 +2722,27 @@
 	};
 
 	/**
+	 * Convert the matched colors in the object's values to RGBA
+	 * @returns {Object}
+	 */
+	Object.prototype.toRGBA = function () {
+		return this.toColorSpace(Color.RGBA);
+	};
+
+	/**
 	 * Convert the matched colors in the object's values to HSL
 	 * @returns {Object}
 	 */
 	Object.prototype.toHSL = function () {
 		return this.toColorSpace(Color.HSL);
+	};
+
+	/**
+	 * Convert the matched colors in the object's values to HSLA
+	 * @returns {Object}
+	 */
+	Object.prototype.toHSLA = function () {
+		return this.toColorSpace(Color.HSLA);
 	};
 
 	/**
@@ -2720,7 +2771,7 @@
 	};
 
 	/**
-	 * Convert values in the array to Hex
+	 * Convert values in the array to RGB
 	 * @returns {Array}
 	 */
 	Array.prototype.toRGB = function () {
@@ -2728,11 +2779,27 @@
 	};
 
 	/**
-	 * Convert values in the array to Hex
+	 * Convert values in the array to RGBA
+	 * @returns {Array}
+	 */
+	Array.prototype.toRGBA = function () {
+		return this.toColorSpace(Color.RGBA);
+	};
+
+	/**
+	 * Convert values in the array to HSL
 	 * @returns {Array}
 	 */
 	Array.prototype.toHSL = function () {
 		return this.toColorSpace(Color.HSL);
+	};
+
+	/**
+	 * Convert values in the array to HSLA
+	 * @returns {Array}
+	 */
+	Array.prototype.toHSLA = function () {
+		return this.toColorSpace(Color.HSLA);
 	};
 
 	/**
