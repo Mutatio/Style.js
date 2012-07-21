@@ -1044,11 +1044,11 @@
 	Hex.prototype.value = undefined;
 
 	/**
-	 * Check whether the Hex object value is set
+	 * Check whether a valid value is set
 	 * @returns {Boolean}
 	 */
 	Hex.prototype.isSet = function () {
-		return !Util.empty(this.value);
+		return !Util.empty(this.value) && Hex.isValid(this.value);
 	};
 
 	/**
