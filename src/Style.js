@@ -899,12 +899,12 @@
 	};
 
 	/**
-	 * Convert to string
-	 * @returns {String}
+	 * Convert to CIELab color
+	 * @returns {CIELab}
 	 */
-	RGB.prototype.toString = function () {
+	RGB.prototype.toCIELab = function () {
 		if (this.isSet()) {
-			return 'rgb(' + this.red + ', ' + this.green + ', ' + this.blue + ')';
+			return this.toXYZ().toCIELab();
 		}
 	};
 
@@ -915,6 +915,16 @@
 	 */
 	RGB.random = function () {
 		return new RGB(Math.floor(Math.random() * 255), Math.floor(Math.random() * 255), Math.floor(Math.random() * 255));
+	};
+
+	/**
+	 * Convert to string
+	 * @returns {String}
+	 */
+	RGB.prototype.toString = function () {
+		if (this.isSet()) {
+			return 'rgb(' + this.red + ', ' + this.green + ', ' + this.blue + ')';
+		}
 	};
 
 	/**
