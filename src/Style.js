@@ -1643,6 +1643,8 @@
 			} else {
 				return toCIELab(L);
 			}
+		} else {
+			return toCIELab(L);
 		}
 	}
 
