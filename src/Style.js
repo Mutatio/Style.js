@@ -1625,12 +1625,42 @@
 	};
 
 	/**
+	 * Convert to RGBA color
+	 * @returns {RGBA}
+	 */
+	XYZ.prototype.toRGBA = function () {
+		if (this.isSet()) {
+			return this.toRGB().toRGBA();
+		}
+	};
+
+	/**
 	 * Convert to Hex color
 	 * @returns {Hex}
 	 */
 	XYZ.prototype.toHex = function () {
 		if (this.isSet()) {
 			return this.toRGB().toHex();
+		}
+	};
+
+	/**
+	 * Convert to HSL color
+	 * @returns {HSL}
+	 */
+	XYZ.prototype.toHSL = function () {
+		if (this.isSet()) {
+			return this.toRGB().toHSL();
+		}
+	};
+
+	/**
+	 * Convert to HSV color
+	 * @returns {HSV}
+	 */
+	XYZ.prototype.toHSV = function () {
+		if (this.isSet()) {
+			return this.toRGB().toHSV();
 		}
 	};
 
