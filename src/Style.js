@@ -1604,7 +1604,13 @@
 	 * @returns {HSLA}
 	 */
 	HSLA.random = function (randomAlpha) {
-		return RGBA.random(randomAlpha ? Math.random() : 1).toHSLA();
+		var out = HSL.random().toHSLA();
+
+		if (randomAlpha) {
+			out.alpha = Math.random();
+		}
+
+		return out;
 	};
 
 	/**
