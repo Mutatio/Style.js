@@ -1554,6 +1554,8 @@
 			} else {
 				return toXYZ(X);
 			}
+		} else {
+			return toXYZ(X);
 		}
 	}
 
