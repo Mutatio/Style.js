@@ -1,0 +1,109 @@
+<html>
+    <head>
+		<title>Style.js Classes Test</title>
+		<script type="text/javascript" src="../../Type.js/src/Type.js"></script>
+		<script type="text/javascript" src="../../Util.js/src/Util.js"></script>
+		<script type="text/javascript" src="../src/Style.js"></script>
+
+		<style type="text/css">
+			pre {
+				font-size: 12px
+			}
+
+			.er {
+				color: #f30
+			}
+
+			.ok {
+				color: #393
+			}
+		</style>
+    </head>
+
+    <body>
+		<pre><code><script type="text/javascript">
+			var benchmark = +(new Date());
+			var functions = [];
+
+			for (var i in Color) {
+				if (Type.isString(Color[i]) && Color[i] !== 'Named') {
+					functions.push(Color[i]);
+				}
+			}
+
+			var len = functions.length;
+			var color, func, tmp;
+			var countPass = 0, countFail = 0;
+			var out = '';
+
+			if (len > 0) {
+				for (var y = 0; y < len; ++y) {
+					out += '<h2>Random ' + functions[y] + ' color</h2>';
+
+					if (Type.isFunction(this[functions[y]]['random'])) {
+						++countPass;
+
+						color = this[functions[y]]['random']();
+
+						if (color && color.isSet()) {
+							++countPass;
+
+							for (var i = 0; i < len; ++i) {
+								var obj = new this[functions[i]](color);
+
+								if (obj.isSet()) {
+									++countPass;
+
+									out += '<span class="ok">' + functions[i] + ' class success</span>\n';
+
+									for (var x = 0; x < len; ++x) {
+										if (functions[x] !== functions[i]) {
+											func = 'to' + functions[x];
+
+											if (Type.isFunction(obj[func])) {
+												tmp = obj[func]();
+
+												if (tmp !== undefined && functions[x] === Type.getType(tmp) && tmp.isSet()) {
+													++countPass;
+
+													out += '-&gt; <span class="ok">PASS: ' + functions[i] + '.' + func + '()</span>\n';
+												} else {
+													++countFail;
+
+													out += '-&gt; <span class="er">FAIL: ' + functions[i] + '.' + func + '()</span>\n';
+												}
+											} else {
+												++countFail;
+
+												out += '-&gt; <span class="er">FAIL: ' + functions[i] + '.' + func + '()</span>\n';
+											}
+										}
+									}
+
+									out += '\n';
+								} else {
+									++countFail;
+
+									out += '<span class="er">' + functions[i] + ' class failure</span>\n\n';
+								}
+							}
+						} else {
+							++countFail;
+
+							out += '<span class="er">FAIL: ' + functions[i] + '.random() didn\'t return a valid color</span>\n';
+						}
+					} else {
+						++countFail;
+
+						out += '<span class="er">FAIL: ' + functions[i] + '.random() doesn\'t exist</span>\n';
+					}
+				}
+			}
+
+			var total = countPass + countFail;
+			benchmark = ((+(new Date()) - benchmark) / 1000).round(3);
+
+			document.write('<h1 ' + (countFail > 0 ? 'class="er">Failed' : 'class="ok">Passed') + ' Object Creation and Converstion Tests</h1><span class="ok" style="font-weight: bold">PASSED: ' + countPass + ' (' + ((countPass / total) * 100).round(2) + '%)</span>\n<span class="er" style="font-weight: bold">FAILED: ' + countFail + ' (' + ((countFail / total) * 100).round(2) + '%)</span>\n<strong>TIME:   ' + benchmark + 's</strong>\n' + out);
+		</script></code></pre>
+    </body>
+</html>
