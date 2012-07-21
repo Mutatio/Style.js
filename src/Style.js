@@ -988,6 +988,7 @@
 
 	/**
 	 * Convert to RGB color
+	 * @param {Object} background
 	 * @returns {RGB}
 	 */
 	RGBA.prototype.toRGB = function (background) {
@@ -1016,6 +1017,60 @@
 	};
 
 	/**
+	 * Convert to Hex color
+	 * @param {Object} background
+	 * @returns {Hex}
+	 */
+	RGBA.prototype.toHex = function (background) {
+		if (this.isSet()) {
+			return this.toRGB(background).toHex();
+		}
+	};
+
+	/**
+	 * Convert to HSL color
+	 * @param {Object} background
+	 * @returns {HSL}
+	 */
+	RGBA.prototype.toHSL = function (background) {
+		if (this.isSet()) {
+			return this.toRGB(background).toHSL();
+		}
+	};
+
+	/**
+	 * Convert to HSV color
+	 * @param {Object} background
+	 * @returns {HSV}
+	 */
+	RGBA.prototype.toHSV = function (background) {
+		if (this.isSet()) {
+			return this.toRGB(background).toHSV();
+		}
+	};
+
+	/**
+	 * Convert to XYZ color
+	 * @param {Object} background
+	 * @returns {XYZ}
+	 */
+	RGBA.prototype.toXYZ = function (background) {
+		if (this.isSet()) {
+			return this.toRGB(background).toXYZ();
+		}
+	};
+
+	/**
+	 * Convert to CIELab color
+	 * @returns {CIELab}
+	 */
+	RGBA.prototype.toCIELab = function (background) {
+		if (this.isSet()) {
+			return this.toRGB(background).toCIELab();
+		}
+	};
+
+	/**
 	 * Convert to string
 	 * @returns {String}
 	 */
@@ -1023,6 +1078,18 @@
 		if (this.isSet()) {
 			return 'rgba(' + this.red + ', ' + this.green + ', ' + this.blue + ', ' + this.alpha + ')';
 		}
+	};
+
+	/**
+	 * Get a random RGBA color
+	 * @static
+	 * @param {Boolean} randomAlpha
+	 * @returns {RGBA}
+	 */
+	RGBA.random = function (randomAlpha) {
+		randomAlpha = randomAlpha ? Math.random() : 1;
+
+		return new RGBA(Math.floor(Math.random() * 255), Math.floor(Math.random() * 255), Math.floor(Math.random() * 255), randomAlpha);
 	};
 
 	/**
