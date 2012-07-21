@@ -960,6 +960,8 @@
 							this.blue = parts[3];
 							this.alpha = parts[4];
 						}
+					} else {
+						return toRGBA(red);
 					}
 				} else {
 					return toRGBA(red);
