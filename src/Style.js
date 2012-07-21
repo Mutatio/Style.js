@@ -763,6 +763,8 @@
 							this.green = parts[2];
 							this.blue = parts[3];
 						}
+					} else {
+						return toRGB(red);
 					}
 				} else {
 					return toRGB(red);
