@@ -1598,6 +1598,16 @@
 	};
 
 	/**
+	 * Get a random HSLA color
+	 * @static
+	 * @param {Boolean} randomAlpha
+	 * @returns {HSLA}
+	 */
+	HSLA.random = function (randomAlpha) {
+		return RGBA.random(randomAlpha ? Math.random() : 1).toHSLA();
+	};
+
+	/**
 	 * HSV color class
 	 * @constructor
 	 */
@@ -1955,9 +1965,19 @@
 	 * Convert to RGB color
 	 * @returns {RGB}
 	 */
-	CIELab.prototype.toRBG = function () {
+	CIELab.prototype.toRGB = function () {
 		if (this.isSet()) {
-			return this.toXYZ().toRBG();
+			return this.toXYZ().toRGB();
+		}
+	};
+
+	/**
+	 * Convert to RGBA color
+	 * @returns {RGBA}
+	 */
+	CIELab.prototype.toRGBA = function () {
+		if (this.isSet()) {
+			return this.toXYZ().toRGBA();
 		}
 	};
 
@@ -1968,6 +1988,36 @@
 	CIELab.prototype.toHex = function () {
 		if (this.isSet()) {
 			return this.toXYZ().toHex();
+		}
+	};
+
+	/**
+	 * Convert to HSL color
+	 * @returns {HSL}
+	 */
+	CIELab.prototype.toHSL = function () {
+		if (this.isSet()) {
+			return this.toXYZ().toHSL();
+		}
+	};
+
+	/**
+	 * Convert to HSLA color
+	 * @returns {HSLA}
+	 */
+	CIELab.prototype.toHSLA = function () {
+		if (this.isSet()) {
+			return this.toXYZ().toHSLA();
+		}
+	};
+
+	/**
+	 * Convert to HSV color
+	 * @returns {HSV}
+	 */
+	CIELab.prototype.toHSV = function () {
+		if (this.isSet()) {
+			return this.toXYZ().toHSV();
 		}
 	};
 
