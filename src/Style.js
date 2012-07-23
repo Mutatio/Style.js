@@ -171,6 +171,12 @@
 	/**
 	 * @static
 	 * @constant
+	 */
+	Color.CMYK = 'CMYK';
+
+	/**
+	 * @static
+	 * @constant
 	 * @type {Object}
 	 */
 	Color.regex = {
@@ -937,6 +943,30 @@
 	};
 
 	/**
+	 * Convert to CMYK color
+	 * @returns {CMYK}
+	 */
+	RGB.prototype.toCMYK = function () {
+		if (this.isSet()) {
+			if (this.red === 0 && this.green === 0 && this.blue === 0) {
+				return new CMYK(0, 0, 0, 1);
+			} else {
+				var cyan = 1 - (this.red / 255);
+				var magenta = 1 - (this.green / 255);
+				var yellow = 1 - (this.blue / 255);
+				var key = Math.min(cyan, magenta, yellow);
+				var _key = 1 - key;
+
+				cyan = (cyan - key) / _key;
+				magenta = (magenta - key) / _key;
+				yellow = (yellow - key) / _key;
+
+				return new CMYK(cyan, magenta, yellow, key);
+			}
+		}
+	};
+
+	/**
 	 * Convert to string
 	 * @returns {String}
 	 */
@@ -1118,6 +1148,16 @@
 	};
 
 	/**
+	 * Convert to CMYK color
+	 * @returns {CMYK}
+	 */
+	RGBA.prototype.toCMYK = function (background) {
+		if (this.isSet()) {
+			return this.toRGB(background).toCMYK();
+		}
+	};
+
+	/**
 	 * Convert to string
 	 * @returns {String}
 	 */
@@ -1201,7 +1241,7 @@
 	 */
 	Hex.prototype.toRGBA = function () {
 		if (this.value) {
-			return new RGBA(parseInt(this.value.substring(0, 2), 16), parseInt(this.value.substring(2, 4), 16), parseInt(this.value.substring(4, 6), 16), 1);
+			return this.toRGB().toRGBA();
 		}
 	};
 
@@ -1252,6 +1292,16 @@
 	Hex.prototype.toCIELab = function () {
 		if (this.value) {
 			return this.toRGB().toCIELab();
+		}
+	};
+
+	/**
+	 * Convert to CMYK color
+	 * @returns {CMYK}
+	 */
+	Hex.prototype.toCMYK = function () {
+		if (this.value) {
+			return this.toRGB().toCMYK();
 		}
 	};
 
@@ -1442,6 +1492,16 @@
 	};
 
 	/**
+	 * Convert to CMYK color
+	 * @returns {CMYK}
+	 */
+	HSL.prototype.toCMYK = function () {
+		if (this.isSet()) {
+			return this.toRGB().toCMYK();
+		}
+	};
+
+	/**
 	 * Convert to CSS string
 	 * @returns {String}
 	 */
@@ -1587,6 +1647,17 @@
 	HSLA.prototype.toCIELab = function (background) {
 		if (this.isSet()) {
 			return this.toRGBA(background).toCIELab();
+		}
+	};
+
+	/**
+	 * Convert to CMYK color
+	 * @param {Object} background
+	 * @returns {CMYK}
+	 */
+	HSLA.prototype.toCMYK = function (background) {
+		if (this.isSet()) {
+			return this.toRGBA(background).toCMYK();
 		}
 	};
 
@@ -1788,6 +1859,16 @@
 	};
 
 	/**
+	 * Convert to CMYK color
+	 * @returns {CMYK}
+	 */
+	HSV.prototype.toCMYK = function () {
+		if (this.isSet()) {
+			return this.toRGB().toCMYK();
+		}
+	};
+
+	/**
 	 * Get a random HSV color
 	 * @static
 	 * @returns {HSV}
@@ -1926,6 +2007,16 @@
 	};
 
 	/**
+	 * Convert to CMYK color
+	 * @returns {CMYK}
+	 */
+	XYZ.prototype.toCMYK = function () {
+		if (this.isSet()) {
+			return this.toRGB().toCMYK();
+		}
+	};
+
+	/**
 	 * Get a random XYZ color
 	 * @static
 	 * @returns {XYZ}
@@ -2050,12 +2141,155 @@
 	};
 
 	/**
+	 * Convert to CMYK color
+	 * @returns {CMYK}
+	 */
+	CIELab.prototype.toCMYK = function () {
+		if (this.isSet()) {
+			return this.toXYZ().toCMYK();
+		}
+	};
+
+	/**
 	 * Get a random CIELab color
 	 * @static
 	 * @returns {CIELab}
 	 */
 	CIELab.random = function () {
 		return XYZ.random().toCIELab();
+	};
+
+	/**
+	 * CMYK color class
+	 * @constructor
+	 */
+	function CMYK(cyan, magenta, yellow, key) {
+		if (Type.isNumber(cyan) && Type.isNumber(magenta) && Type.isNumber(yellow) && Type.isNumber(key) && cyan.between(0, 1) && magenta.between(0, 1) && yellow.between(0, 1) && key.between(0, 1)) {
+			this.cyan = cyan;
+			this.magenta = magenta;
+			this.yellow = yellow;
+			this.key = key;
+		} else if (Type.isObject(cyan)) {
+			if (cyan instanceof this.constructor) {
+				this.cyan = cyan.cyan;
+				this.magenta = cyan.magenta;
+				this.yellow = cyan.yellow;
+				this.key = cyan.key;
+			} else {
+				return toCMYK(cyan);
+			}
+		} else {
+			return toCMYK(cyan);
+		}
+	}
+
+	$.CMYK = CMYK;
+
+	CMYK.prototype.cyan = undefined;
+	CMYK.prototype.magenta = undefined;
+	CMYK.prototype.yellow = undefined;
+	CMYK.prototype.key = undefined;
+
+	/**
+	 * Check whether the CMYK object values are set
+	 * @returns {Boolean}
+	 */
+	CMYK.prototype.isSet = function () {
+		return Type.isNumber(this.cyan) && Type.isNumber(this.magenta) && Type.isNumber(this.yellow) && Type.isNumber(this.key);
+	};
+
+	/**
+	 * Convert to RGB color
+	 * @returns {RGB}
+	 */
+	CMYK.prototype.toRGB = function () {
+		if (this.isSet()) {
+			var _key = 1 - this.key;
+			var red = Math.round((1 - Math.min(1, this.cyan * _key + this.key)) * 255);
+			var green = Math.round((1 - Math.min(1, this.magenta * _key + this.key)) * 255);
+			var blue = Math.round((1 - Math.min(1, this.yellow * _key + this.key)) * 255);
+
+			return new RGB(red, green, blue);
+		}
+	};
+
+	/**
+	 * Convert to RGBA color
+	 * @returns {RGBA}
+	 */
+	CMYK.prototype.toRGBA = function () {
+		if (this.isSet()) {
+			return this.toRGB().toRGBA();
+		}
+	};
+
+	/**
+	 * Convert to Hex color
+	 * @returns {Hex}
+	 */
+	CMYK.prototype.toHex = function () {
+		if (this.isSet()) {
+			return this.toRGB().toHex();
+		}
+	};
+
+	/**
+	 * Convert to HSL color
+	 * @returns {HSL}
+	 */
+	CMYK.prototype.toHSL = function () {
+		if (this.isSet()) {
+			return this.toRGB().toHSL();
+		}
+	};
+
+	/**
+	 * Convert to HSLA color
+	 * @returns {HSLA}
+	 */
+	CMYK.prototype.toHSLA = function () {
+		if (this.isSet()) {
+			return this.toRGB().toHSLA();
+		}
+	};
+
+	/**
+	 * Convert to HSV color
+	 * @returns {HSV}
+	 */
+	CMYK.prototype.toHSV = function () {
+		if (this.isSet()) {
+			return this.toRGB().toHSV();
+		}
+	};
+
+	/**
+	 * Convert to XYZ color
+	 * @returns {XYZ}
+	 */
+	CMYK.prototype.toXYZ = function () {
+		if (this.isSet()) {
+			return this.toRGB().toXYZ();
+		}
+	};
+
+	/**
+	 * Convert to CIELab color
+	 * @returns {CIELab}
+	 */
+	CMYK.prototype.toCIELab = function () {
+		if (this.isSet()) {
+			return this.toRGB().toCIELab();
+		}
+	};
+
+	/**
+	 * Get a random CMYK color
+	 * @static
+	 * @returns {CMYK}
+	 */
+	CMYK.random = function () {
+		return new CMYK(Math.random(), Math.random(), Math.random(), Math.random());
 	};
 
 	/**
@@ -2797,6 +3031,17 @@
 	}
 
 	$.toCIELab = toCIELab;
+
+	/**
+	 * Convert color to CMYK color space
+	 * @param {Object|String} color
+	 * @returns {CMYK}
+	 */
+	function toCMYK(color) {
+		return toColorSpace(color, Color.CMYK);
+	}
+
+	$.toCMYK = toCMYK;
 
 	/**
 	 * Convert color to its nearest web safe equivalent
