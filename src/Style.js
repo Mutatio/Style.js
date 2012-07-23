@@ -110,7 +110,7 @@
 	 * Generic Color class for shared color functionality
 	 * @class
 	 */
-	function Color() {};
+	function Color() {}
 
 	$.Color = Color;
 
@@ -1037,9 +1037,10 @@
 					}
 				}
 
-				var red = Math.round(((1 - this.alpha) * (this.red / 255) + (this.alpha * (background.red / 255))) * 255);
-				var green = Math.round(((1 - this.alpha) * (this.green / 255) + (this.alpha * (background.green / 255))) * 255);
-				var blue = Math.round(((1 - this.alpha) * (this.blue / 255) + (this.alpha * (background.blue / 255))) * 255);
+				var alpha = 1 - this.alpha;
+				var red = Math.round((this.alpha * (this.red / 255) + (alpha * (background.red / 255))) * 255);
+				var green = Math.round((this.alpha * (this.green / 255) + (alpha * (background.green / 255))) * 255);
+				var blue = Math.round((this.alpha * (this.blue / 255) + (alpha * (background.blue / 255))) * 255);
 
 				return new RGB(red, green, blue);
 			}
@@ -1070,12 +1071,17 @@
 
 	/**
 	 * Convert to HSLA color
-	 * @param {Object} background
 	 * @returns {HSLA}
 	 */
-	RGBA.prototype.toHSLA = function (background) {
+	RGBA.prototype.toHSLA = function () {
 		if (this.isSet()) {
-			return this.toRGB(background).toHSLA();
+			var out = new RGB(this.red, this.green, this.blue).toHSLA();
+
+			if (this.alpha !== 1) {
+				out.alpha = this.alpha;
+			}
+
+			return out;
 		}
 	};
 
@@ -1128,7 +1134,7 @@
 	 * @returns {RGBA}
 	 */
 	RGBA.random = function (randomAlpha) {
-		randomAlpha = randomAlpha ? Math.random() : 1;
+		randomAlpha = randomAlpha ? Math.random().round(3) : 1;
 
 		return new RGBA(Math.floor(Math.random() * 255), Math.floor(Math.random() * 255), Math.floor(Math.random() * 255), randomAlpha);
 	};
@@ -1513,16 +1519,13 @@
 		if (this.isSet()) {
 			var out = new HSL(this.hue, this.saturation, this.lightness);
 
-			if (this.alpha === 1) {
-				return out.toRGBA();
-			} else {
-				// Assume HSL, convert to RGB (alpha = 1.0)
-				out = out.toRGBA();
-				// Copy true alpha of HSLA object
-				out.alpha = this.alpha;
+			out = out.toRGBA();
 
-				return out;
+			if (this.alpha !== 1) {
+				out.alpha = this.alpha;
 			}
+
+			return out;
 		}
 	};
 
@@ -1607,7 +1610,7 @@
 		var out = HSL.random().toHSLA();
 
 		if (randomAlpha) {
-			out.alpha = Math.random();
+			out.alpha = Math.random().round(3);
 		}
 
 		return out;
