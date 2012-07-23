@@ -1515,7 +1515,7 @@
 	 * @param {Object} background
 	 * @returns {RGBA}
 	 */
-	HSLA.prototype.toRGBA = function (background) {
+	HSLA.prototype.toRGBA = function () {
 		if (this.isSet()) {
 			var out = new HSL(this.hue, this.saturation, this.lightness);
 
