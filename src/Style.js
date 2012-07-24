@@ -99,7 +99,6 @@
 
 	/**
 	 * Attempt to transform object value to Style
-	 * @param {Boolean} multidimensional If true process the child objects
 	 * @returns {Style}
 	 */
 	Object.prototype.toStyle = function () {
@@ -818,9 +817,7 @@
 	 * @returns {RGBA}
 	 */
 	RGB.prototype.toRGBA = function () {
-		if (this.isSet()) {
-			return new RGBA(this.red, this.green, this.blue, 1);
-		}
+		return this.isSet() ? new RGBA(this.red, this.green, this.blue, 1) : null;
 	};
 
 	/**
@@ -828,9 +825,7 @@
 	 * @returns {Hex}
 	 */
 	RGB.prototype.toHex = function () {
-		if (this.isSet()) {
-			return new Hex('#' + (1 << 24 | this.red << 16 | this.green << 8 | this.blue).toString(16).substr(1));
-		}
+		return this.isSet() ? new Hex('#' + (1 << 24 | this.red << 16 | this.green << 8 | this.blue).toString(16).substr(1)) : null;
 	};
 
 	/**
@@ -872,6 +867,8 @@
 
 			return new HSL(hue * 360, saturation * 100, lightness * 100);
 		}
+
+		return null;
 	};
 
 	/**
@@ -879,9 +876,7 @@
 	 * @returns {HSLA}
 	 */
 	RGB.prototype.toHSLA = function () {
-		if (this.isSet()) {
-			return this.toHSL().toHSLA();
-		}
+		return this.isSet() ? this.toHSL().toHSLA() : null;
 	};
 
 	/**
@@ -912,6 +907,8 @@
 
 			return new HSV(hue, saturation, max * 100 / 255);
 		}
+
+		return null;
 	};
 
 	/**
@@ -930,6 +927,8 @@
 
 			return new XYZ((X * 0.4124) + (Y * 0.3576) + (Z * 0.1805), (X * 0.2126) + (Y * 0.7152) + (Z * 0.0722), (X * 0.0193) + (Y * 0.1192) + (Z * 0.9505));
 		}
+
+		return null;
 	};
 
 	/**
@@ -937,9 +936,7 @@
 	 * @returns {CIELab}
 	 */
 	RGB.prototype.toCIELab = function () {
-		if (this.isSet()) {
-			return this.toXYZ().toCIELab();
-		}
+		return this.isSet() ? this.toXYZ().toCIELab() : null;
 	};
 
 	/**
@@ -964,6 +961,8 @@
 				return new CMYK(cyan, magenta, yellow, key);
 			}
 		}
+
+		return null;
 	};
 
 	/**
@@ -971,9 +970,7 @@
 	 * @returns {String}
 	 */
 	RGB.prototype.toString = function () {
-		if (this.isSet()) {
-			return 'rgb(' + Math.round(this.red) + ', ' + Math.round(this.green) + ', ' + Math.round(this.blue) + ')';
-		}
+		return this.isSet() ? 'rgb(' + Math.round(this.red) + ', ' + Math.round(this.green) + ', ' + Math.round(this.blue) + ')' : '';
 	};
 
 	/**
@@ -1075,6 +1072,8 @@
 				return new RGB(red, green, blue);
 			}
 		}
+
+		return null;
 	};
 
 	/**
@@ -1083,9 +1082,7 @@
 	 * @returns {Hex}
 	 */
 	RGBA.prototype.toHex = function (background) {
-		if (this.isSet()) {
-			return this.toRGB(background).toHex();
-		}
+		return this.isSet() ? this.toRGB(background).toHex() : null;
 	};
 
 	/**
@@ -1094,9 +1091,7 @@
 	 * @returns {HSL}
 	 */
 	RGBA.prototype.toHSL = function (background) {
-		if (this.isSet()) {
-			return this.toRGB(background).toHSL();
-		}
+		return this.isSet() ? this.toRGB(background).toHSL() : null;
 	};
 
 	/**
@@ -1104,15 +1099,17 @@
 	 * @returns {HSLA}
 	 */
 	RGBA.prototype.toHSLA = function () {
+		var out = null;
+
 		if (this.isSet()) {
-			var out = new RGB(this.red, this.green, this.blue).toHSLA();
+			out = new RGB(this.red, this.green, this.blue).toHSLA();
 
 			if (this.alpha !== 1) {
 				out.alpha = this.alpha;
 			}
-
-			return out;
 		}
+
+		return out;
 	};
 
 	/**
@@ -1121,9 +1118,7 @@
 	 * @returns {HSV}
 	 */
 	RGBA.prototype.toHSV = function (background) {
-		if (this.isSet()) {
-			return this.toRGB(background).toHSV();
-		}
+		return this.isSet() ? this.toRGB(background).toHSV() : null;
 	};
 
 	/**
@@ -1132,9 +1127,7 @@
 	 * @returns {XYZ}
 	 */
 	RGBA.prototype.toXYZ = function (background) {
-		if (this.isSet()) {
-			return this.toRGB(background).toXYZ();
-		}
+		return this.isSet() ? this.toRGB(background).toXYZ() : null;
 	};
 
 	/**
@@ -1142,9 +1135,7 @@
 	 * @returns {CIELab}
 	 */
 	RGBA.prototype.toCIELab = function (background) {
-		if (this.isSet()) {
-			return this.toRGB(background).toCIELab();
-		}
+		return this.isSet() ? this.toRGB(background).toCIELab() : null;
 	};
 
 	/**
@@ -1152,9 +1143,7 @@
 	 * @returns {CMYK}
 	 */
 	RGBA.prototype.toCMYK = function (background) {
-		if (this.isSet()) {
-			return this.toRGB(background).toCMYK();
-		}
+		return this.isSet() ? this.toRGB(background).toCMYK() : null;
 	};
 
 	/**
@@ -1162,9 +1151,7 @@
 	 * @returns {String}
 	 */
 	RGBA.prototype.toString = function () {
-		if (this.isSet()) {
-			return 'rgba(' + Math.round(this.red) + ', ' + Math.round(this.green) + ', ' + Math.round(this.blue) + ', ' + this.alpha + ')';
-		}
+		return this.isSet() ? 'rgba(' + Math.round(this.red) + ', ' + Math.round(this.green) + ', ' + Math.round(this.blue) + ', ' + this.alpha + ')' : null;
 	};
 
 	/**
@@ -1215,14 +1202,20 @@
 
 			if (Color.listNamed[hex]) {
 				this.value = Color.listNamed[hex];
+
+				return true;
 			} else if (Hex.isValid(hex)) {
 				if (hex.charAt(0) === '#') {
 					hex = hex.substring(1);
 				}
 
 				this.value = Hex.isTriplet(hex) ? Hex.expand(hex) : hex;
+
+				return true;
 			}
 		}
+
+		return false;
 	};
 
 	/**
@@ -1230,9 +1223,7 @@
 	 * @returns {RGB}
 	 */
 	Hex.prototype.toRGB = function () {
-		if (this.value) {
-			return new RGB(parseInt(this.value.substring(0, 2), 16), parseInt(this.value.substring(2, 4), 16), parseInt(this.value.substring(4, 6), 16));
-		}
+		return this.isSet() ? new RGB(parseInt(this.value.substring(0, 2), 16), parseInt(this.value.substring(2, 4), 16), parseInt(this.value.substring(4, 6), 16)) : null;
 	};
 
 	/**
@@ -1240,9 +1231,7 @@
 	 * @returns {RGBA}
 	 */
 	Hex.prototype.toRGBA = function () {
-		if (this.value) {
-			return this.toRGB().toRGBA();
-		}
+		return this.isSet() ? this.toRGB().toRGBA() : null;
 	};
 
 	/**
@@ -1250,9 +1239,7 @@
 	 * @returns {HSL}
 	 */
 	Hex.prototype.toHSL = function () {
-		if (this.value) {
-			return this.toRGB().toHSL();
-		}
+		return this.isSet() ? this.toRGB().toHSL() : null;
 	};
 
 	/**
@@ -1260,9 +1247,7 @@
 	 * @returns {HSLA}
 	 */
 	Hex.prototype.toHSLA = function () {
-		if (this.value) {
-			return this.toRGB().toHSLA();
-		}
+		return this.isSet() ? this.toRGB().toHSLA() : null;
 	};
 
 	/**
@@ -1270,9 +1255,7 @@
 	 * @returns {HSV}
 	 */
 	Hex.prototype.toHSV = function () {
-		if (this.value) {
-			return this.toRGB().toHSV();
-		}
+		return this.isSet() ? this.toRGB().toHSV() : null;
 	};
 
 	/**
@@ -1280,9 +1263,7 @@
 	 * @returns {XYZ}
 	 */
 	Hex.prototype.toXYZ = function () {
-		if (this.value) {
-			return this.toRGB().toXYZ();
-		}
+		return this.isSet() ? this.toRGB().toXYZ() : null;
 	};
 
 	/**
@@ -1290,9 +1271,7 @@
 	 * @returns {CIELab}
 	 */
 	Hex.prototype.toCIELab = function () {
-		if (this.value) {
-			return this.toRGB().toCIELab();
-		}
+		return this.isSet() ? this.toRGB().toCIELab() : null;
 	};
 
 	/**
@@ -1300,9 +1279,7 @@
 	 * @returns {CMYK}
 	 */
 	Hex.prototype.toCMYK = function () {
-		if (this.value) {
-			return this.toRGB().toCMYK();
-		}
+		return this.isSet() ? this.toRGB().toCMYK() : null;
 	};
 
 	/**
@@ -1310,9 +1287,7 @@
 	 * @returns {String}
 	 */
 	Hex.prototype.toString = function () {
-		if (!Util.empty(this.value)) {
-			return '#' + this.value;
-		}
+		return this.isSet() ? '#' + this.value : '';
 	};
 
 	/**
@@ -1429,6 +1404,8 @@
 
 			return new RGB(red * 255, green * 255, blue * 255);
 		}
+
+		return null;
 	};
 
 	/**
@@ -1436,9 +1413,7 @@
 	 * @returns {RGBA}
 	 */
 	HSL.prototype.toRGBA = function () {
-		if (this.isSet()) {
-			return this.toRGB().toRGBA();
-		}
+		return this.isSet() ? this.toRGB().toRGBA() : null;
 	};
 
 	/**
@@ -1446,9 +1421,7 @@
 	 * @returns {Hex}
 	 */
 	HSL.prototype.toHex = function () {
-		if (this.isSet()) {
-			return this.toRGB().toHex();
-		}
+		return this.isSet() ? this.toRGB().toHex() : null;
 	};
 
 	/**
@@ -1459,6 +1432,8 @@
 		if (this.isSet()) {
 			return new HSLA(this.hue, this.saturation, this.lightness, 1);
 		}
+
+		return null;
 	};
 
 	/**
@@ -1466,9 +1441,7 @@
 	 * @returns {HSV}
 	 */
 	HSL.prototype.toHSV = function () {
-		if (this.isSet()) {
-			return this.toRGB().toHSV();
-		}
+		return this.isSet() ? this.toRGB().toHSV() : null;
 	};
 
 	/**
@@ -1476,9 +1449,7 @@
 	 * @returns {XYZ}
 	 */
 	HSL.prototype.toXYZ = function () {
-		if (this.isSet()) {
-			return this.toRGB().toXYZ();
-		}
+		return this.isSet() ? this.toRGB().toXYZ() : null;
 	};
 
 	/**
@@ -1486,9 +1457,7 @@
 	 * @returns {CIELab}
 	 */
 	HSL.prototype.toCIELab = function () {
-		if (this.isSet()) {
-			return this.toRGB().toCIELab();
-		}
+		return this.isSet() ? this.toRGB().toCIELab() : null;
 	};
 
 	/**
@@ -1496,9 +1465,7 @@
 	 * @returns {CMYK}
 	 */
 	HSL.prototype.toCMYK = function () {
-		if (this.isSet()) {
-			return this.toRGB().toCMYK();
-		}
+		return this.isSet() ? this.toRGB().toCMYK() : null;
 	};
 
 	/**
@@ -1506,9 +1473,7 @@
 	 * @returns {String}
 	 */
 	HSL.prototype.toString = function () {
-		if (this.isSet()) {
-			return 'hsl(' + Math.round(this.hue) + ', ' + Math.round(this.saturation) + '%, ' + Math.round(this.lightness) + '%)';
-		}
+		return this.isSet() ? 'hsl(' + Math.round(this.hue) + ', ' + Math.round(this.saturation) + '%, ' + Math.round(this.lightness) + '%)' : '';
 	};
 
 	/**
@@ -1565,9 +1530,7 @@
 	 * @returns {RGB}
 	 */
 	HSLA.prototype.toRGB = function (background) {
-		if (this.isSet()) {
-			return this.toRGBA(background).toRGB();
-		}
+		return this.isSet() ? this.toRGBA(background).toRGB() : null;
 	};
 
 	/**
@@ -1576,17 +1539,17 @@
 	 * @returns {RGBA}
 	 */
 	HSLA.prototype.toRGBA = function () {
-		if (this.isSet()) {
-			var out = new HSL(this.hue, this.saturation, this.lightness);
+		var out = null;
 
-			out = out.toRGBA();
+		if (this.isSet()) {
+			out = new HSL(this.hue, this.saturation, this.lightness).toRGBA();
 
 			if (this.alpha !== 1) {
 				out.alpha = this.alpha;
 			}
-
-			return out;
 		}
+
+		return out;
 	};
 
 	/**
@@ -1595,9 +1558,7 @@
 	 * @returns {Hex}
 	 */
 	HSLA.prototype.toHex = function (background) {
-		if (this.isSet()) {
-			return this.toRGBA(background).toHex();
-		}
+		return this.isSet() ? this.toRGBA(background).toHex() : null;
 	};
 
 	/**
@@ -1606,15 +1567,17 @@
 	 * @returns {HSL}
 	 */
 	HSLA.prototype.toHSL = function (background) {
-		if (this.isSet()) {
-			var out = new HSL(this.hue, this.saturation, this.lightness);
+		var out = null;
 
-			if (this.alpha === 1) {
-				return out;
-			} else {
-				return this.toRGBA(background);
+		if (this.isSet()) {
+			out = new HSL(this.hue, this.saturation, this.lightness);
+
+			if (this.alpha !== 1) {
+				out = this.toRGBA(background).toHSL();
 			}
 		}
+
+		return out;
 	};
 
 	/**
@@ -1623,9 +1586,7 @@
 	 * @returns {HSV}
 	 */
 	HSLA.prototype.toHSV = function (background) {
-		if (this.isSet()) {
-			return this.toRGBA(background).toHSV();
-		}
+		return this.isSet() ? this.toRGBA(background).toHSV() : null;
 	};
 
 	/**
@@ -1634,9 +1595,7 @@
 	 * @returns {XYZ}
 	 */
 	HSLA.prototype.toXYZ = function (background) {
-		if (this.isSet()) {
-			return this.toRGBA(background).toXYZ();
-		}
+		return this.isSet() ? this.toRGBA(background).toXYZ() : null;
 	};
 
 	/**
@@ -1645,9 +1604,7 @@
 	 * @returns {CIELab}
 	 */
 	HSLA.prototype.toCIELab = function (background) {
-		if (this.isSet()) {
-			return this.toRGBA(background).toCIELab();
-		}
+		return this.isSet() ? this.toRGBA(background).toCIELab() : null;
 	};
 
 	/**
@@ -1656,9 +1613,7 @@
 	 * @returns {CMYK}
 	 */
 	HSLA.prototype.toCMYK = function (background) {
-		if (this.isSet()) {
-			return this.toRGBA(background).toCMYK();
-		}
+		return this.isSet() ? this.toRGBA(background).toCMYK() : null;
 	};
 
 	/**
@@ -1666,9 +1621,7 @@
 	 * @returns {String}
 	 */
 	HSLA.prototype.toString = function () {
-		if (this.isSet()) {
-			return 'hsla(' + Math.round(this.hue) + ', ' + Math.round(this.saturation) + '%, ' + Math.round(this.lightness) + '%, ' + this.alpha + ')';
-		}
+		return this.isSet() ? 'hsla(' + Math.round(this.hue) + ', ' + Math.round(this.saturation) + '%, ' + Math.round(this.lightness) + '%, ' + this.alpha + ')' : '';
 	};
 
 	/**
@@ -1796,6 +1749,8 @@
 				return new RGB(red * 255, green * 255, blue * 255);
 			}
 		}
+
+		return null;
 	};
 
 	/**
@@ -1803,9 +1758,7 @@
 	 * @returns {RGBA}
 	 */
 	HSV.prototype.toRGBA = function () {
-		if (this.isSet()) {
-			return this.toRGB().toRGBA();
-		}
+		return this.isSet() ? this.toRGB().toRGBA() : null;
 	};
 
 	/**
@@ -1813,9 +1766,7 @@
 	 * @returns {Hex}
 	 */
 	HSV.prototype.toHex = function () {
-		if (this.isSet()) {
-			return this.toRGB().toHex();
-		}
+		return this.isSet() ? this.toRGB().toHex() : null;
 	};
 
 	/**
@@ -1823,9 +1774,7 @@
 	 * @returns {HSL}
 	 */
 	HSV.prototype.toHSL = function () {
-		if (this.isSet()) {
-			return this.toRGB().toHSL();
-		}
+		return this.isSet() ? this.toRGB().toHSL() : null;
 	};
 
 	/**
@@ -1833,9 +1782,7 @@
 	 * @returns {HSLA}
 	 */
 	HSV.prototype.toHSLA = function () {
-		if (this.isSet()) {
-			return this.toRGB().toHSLA();
-		}
+		return this.isSet() ? this.toRGB().toHSLA() : null;
 	};
 
 	/**
@@ -1843,9 +1790,7 @@
 	 * @returns {XYZ}
 	 */
 	HSV.prototype.toXYZ = function () {
-		if (this.isSet()) {
-			return this.toRGB().toXYZ();
-		}
+		return this.isSet() ? this.toRGB().toXYZ() : null;
 	};
 
 	/**
@@ -1853,9 +1798,7 @@
 	 * @returns {CIELab}
 	 */
 	HSV.prototype.toCIELab = function () {
-		if (this.isSet()) {
-			return this.toRGB().toCIELab();
-		}
+		return this.isSet() ? this.toRGB().toCIELab() : null;
 	};
 
 	/**
@@ -1863,9 +1806,7 @@
 	 * @returns {CMYK}
 	 */
 	HSV.prototype.toCMYK = function () {
-		if (this.isSet()) {
-			return this.toRGB().toCMYK();
-		}
+		return this.isSet() ? this.toRGB().toCMYK() : null;
 	};
 
 	/**
@@ -1932,6 +1873,8 @@
 
 			return new RGB(red, green, blue);
 		}
+
+		return null;
 	};
 
 	/**
@@ -1939,9 +1882,7 @@
 	 * @returns {RGBA}
 	 */
 	XYZ.prototype.toRGBA = function () {
-		if (this.isSet()) {
-			return this.toRGB().toRGBA();
-		}
+		return this.isSet() ? this.toRGB().toRGBA() : null;
 	};
 
 	/**
@@ -1949,9 +1890,7 @@
 	 * @returns {Hex}
 	 */
 	XYZ.prototype.toHex = function () {
-		if (this.isSet()) {
-			return this.toRGB().toHex();
-		}
+		return this.isSet() ? this.toRGB().toHex() : null;
 	};
 
 	/**
@@ -1959,9 +1898,7 @@
 	 * @returns {HSL}
 	 */
 	XYZ.prototype.toHSL = function () {
-		if (this.isSet()) {
-			return this.toRGB().toHSL();
-		}
+		return this.isSet() ? this.toRGB().toHSL() : null;
 	};
 
 	/**
@@ -1969,9 +1906,7 @@
 	 * @returns {HSLA}
 	 */
 	XYZ.prototype.toHSLA = function () {
-		if (this.isSet()) {
-			return this.toRGB().toHSLA();
-		}
+		return this.isSet() ? this.toRGB().toHSLA() : null;
 	};
 
 	/**
@@ -1979,9 +1914,7 @@
 	 * @returns {HSV}
 	 */
 	XYZ.prototype.toHSV = function () {
-		if (this.isSet()) {
-			return this.toRGB().toHSV();
-		}
+		return this.isSet() ? this.toRGB().toHSV() : null;
 	};
 
 	/**
@@ -2004,6 +1937,8 @@
 
 			return new CIELab(L, a, b);
 		}
+
+		return null;
 	};
 
 	/**
@@ -2011,9 +1946,7 @@
 	 * @returns {CMYK}
 	 */
 	XYZ.prototype.toCMYK = function () {
-		if (this.isSet()) {
-			return this.toRGB().toCMYK();
-		}
+		return this.isSet() ? this.toRGB().toCMYK() : null;
 	};
 
 	/**
@@ -2066,9 +1999,7 @@
 	 * @returns {RGB}
 	 */
 	CIELab.prototype.toRGB = function () {
-		if (this.isSet()) {
-			return this.toXYZ().toRGB();
-		}
+		return this.isSet() ? this.toXYZ().toRGB() : null;
 	};
 
 	/**
@@ -2076,9 +2007,7 @@
 	 * @returns {RGBA}
 	 */
 	CIELab.prototype.toRGBA = function () {
-		if (this.isSet()) {
-			return this.toXYZ().toRGBA();
-		}
+		return this.isSet() ? this.toXYZ().toRGBA() : null;
 	};
 
 	/**
@@ -2086,9 +2015,7 @@
 	 * @returns {Hex}
 	 */
 	CIELab.prototype.toHex = function () {
-		if (this.isSet()) {
-			return this.toXYZ().toHex();
-		}
+		return this.isSet() ? this.toXYZ().toHex() : null;
 	};
 
 	/**
@@ -2096,9 +2023,7 @@
 	 * @returns {HSL}
 	 */
 	CIELab.prototype.toHSL = function () {
-		if (this.isSet()) {
-			return this.toXYZ().toHSL();
-		}
+		return this.isSet() ? this.toXYZ().toHSL() : null;
 	};
 
 	/**
@@ -2106,9 +2031,7 @@
 	 * @returns {HSLA}
 	 */
 	CIELab.prototype.toHSLA = function () {
-		if (this.isSet()) {
-			return this.toXYZ().toHSLA();
-		}
+		return this.isSet() ? this.toXYZ().toHSLA() : null;
 	};
 
 	/**
@@ -2116,9 +2039,7 @@
 	 * @returns {HSV}
 	 */
 	CIELab.prototype.toHSV = function () {
-		if (this.isSet()) {
-			return this.toXYZ().toHSV();
-		}
+		return this.isSet() ? this.toXYZ().toHSV() : null;
 	};
 
 	/**
@@ -2126,18 +2047,22 @@
 	 * @returns {XYZ}
 	 */
 	CIELab.prototype.toXYZ = function () {
-		var Y = (this.L + 16) / 116;
-		var X = this.a / 500 + Y;
-		var Z = Y - this.b / 200;
-		var X3 = Math.pow(X, 3);
-		var Y3 = Math.pow(Y, 3);
-		var Z3 = Math.pow(Z, 3);
+		if (this.isSet()) {
+			var Y = (this.L + 16) / 116;
+			var X = this.a / 500 + Y;
+			var Z = Y - this.b / 200;
+			var X3 = Math.pow(X, 3);
+			var Y3 = Math.pow(Y, 3);
+			var Z3 = Math.pow(Z, 3);
 
-		X = (X3 > 0.008856 ? X3 : (X - 16 / 116) / 7.787) * 95.047;
-		Y = (Y3 > 0.008856 ? Y3 : (Y - 16 / 116) / 7.787) * 100;
-		Z = (Z3 > 0.008856 ? Z3 : (Z - 16 / 116) / 7.787) * 108.883;
+			X = (X3 > 0.008856 ? X3 : (X - 16 / 116) / 7.787) * 95.047;
+			Y = (Y3 > 0.008856 ? Y3 : (Y - 16 / 116) / 7.787) * 100;
+			Z = (Z3 > 0.008856 ? Z3 : (Z - 16 / 116) / 7.787) * 108.883;
 
-		return new XYZ(X, Y, Z);
+			return new XYZ(X, Y, Z);
+		}
+
+		return null;
 	};
 
 	/**
@@ -2145,9 +2070,7 @@
 	 * @returns {CMYK}
 	 */
 	CIELab.prototype.toCMYK = function () {
-		if (this.isSet()) {
-			return this.toXYZ().toCMYK();
-		}
+		return this.isSet() ? this.toXYZ().toCMYK() : null;
 	};
 
 	/**
@@ -2211,6 +2134,8 @@
 
 			return new RGB(red, green, blue);
 		}
+
+		return null;
 	};
 
 	/**
@@ -2218,9 +2143,7 @@
 	 * @returns {RGBA}
 	 */
 	CMYK.prototype.toRGBA = function () {
-		if (this.isSet()) {
-			return this.toRGB().toRGBA();
-		}
+		return this.isSet() ? this.toRGB().toRGBA() : null;
 	};
 
 	/**
@@ -2228,9 +2151,7 @@
 	 * @returns {Hex}
 	 */
 	CMYK.prototype.toHex = function () {
-		if (this.isSet()) {
-			return this.toRGB().toHex();
-		}
+		return this.isSet() ? this.toRGB().toHex() : null;
 	};
 
 	/**
@@ -2238,9 +2159,7 @@
 	 * @returns {HSL}
 	 */
 	CMYK.prototype.toHSL = function () {
-		if (this.isSet()) {
-			return this.toRGB().toHSL();
-		}
+		return this.isSet() ? this.toRGB().toHSL() : null;
 	};
 
 	/**
@@ -2248,9 +2167,7 @@
 	 * @returns {HSLA}
 	 */
 	CMYK.prototype.toHSLA = function () {
-		if (this.isSet()) {
-			return this.toRGB().toHSLA();
-		}
+		return this.isSet() ? this.toRGB().toHSLA() : null;
 	};
 
 	/**
@@ -2258,9 +2175,7 @@
 	 * @returns {HSV}
 	 */
 	CMYK.prototype.toHSV = function () {
-		if (this.isSet()) {
-			return this.toRGB().toHSV();
-		}
+		return this.isSet() ? this.toRGB().toHSV() : null;
 	};
 
 	/**
@@ -2268,9 +2183,7 @@
 	 * @returns {XYZ}
 	 */
 	CMYK.prototype.toXYZ = function () {
-		if (this.isSet()) {
-			return this.toRGB().toXYZ();
-		}
+		return this.isSet() ? this.toRGB().toXYZ() : null;
 	};
 
 	/**
@@ -2278,9 +2191,7 @@
 	 * @returns {CIELab}
 	 */
 	CMYK.prototype.toCIELab = function () {
-		if (this.isSet()) {
-			return this.toRGB().toCIELab();
-		}
+		return this.isSet() ? this.toRGB().toCIELab() : null;
 	};
 
 	/**
@@ -2928,20 +2839,16 @@
 	 */
 	function toColorSpace(color, space) {
 		if (color && space) {
-			space = 'to' + space;
+			var type = Color.getType(color);
 
-			if (Type.isFunction($[space])) {
-				var type = Color.getType(color);
+			if (type && Type.isFunction($[type])) {
+				color = new $[type](color);
 
-				if (type) {
-					color = new $[type](color);
-
-					if (Type.isFunction(color[space])) {
-						return color[space]();
-					}
-				}
+				return color['to' + space]();
 			}
 		}
+
+		return null;
 	}
 
 	/**
@@ -2980,6 +2887,8 @@
 				}
 			}
 		}
+
+		return null;
 	}
 
 	$.toWebSafe = toWebSafe;
@@ -3045,6 +2954,8 @@
 				}
 			}
 		}
+
+		return null;
 	}
 
 	$.toNamed = toNamed;
