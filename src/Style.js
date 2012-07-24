@@ -776,9 +776,9 @@
 					var parts = Color.regex.RGB.exec(red);
 
 					if (parts) {
-						parts[1] = Math.round(parts[1]);
-						parts[2] = Math.round(parts[2]);
-						parts[3] = Math.round(parts[3]);
+						parts[1] = parseInt(parts[1], 10);
+						parts[2] = parseInt(parts[2], 10);
+						parts[3] = parseInt(parts[3], 10);
 
 						if (parts[1].between(0, 255) && parts[2].between(0, 255) && parts[3].between(0, 255)) {
 							this.red = parts[1];
@@ -910,7 +910,7 @@
 				hue += 360;
 			}
 
-			return new HSV(Math.round(hue), Math.round(saturation), Math.round(max * 100 / 255));
+			return new HSV(hue, saturation, max * 100 / 255);
 		}
 	};
 
@@ -972,7 +972,7 @@
 	 */
 	RGB.prototype.toString = function () {
 		if (this.isSet()) {
-			return 'rgb(' + this.red + ', ' + this.green + ', ' + this.blue + ')';
+			return 'rgb(' + Math.round(this.red) + ', ' + Math.round(this.green) + ', ' + Math.round(this.blue) + ')';
 		}
 	};
 
@@ -982,7 +982,7 @@
 	 * @returns {RGB}
 	 */
 	RGB.random = function () {
-		return new RGB(Math.floor(Math.random() * 255), Math.floor(Math.random() * 255), Math.floor(Math.random() * 255));
+		return new RGB(Math.random() * 255, Math.random() * 255, Math.random() * 255);
 	};
 
 	/**
@@ -1005,9 +1005,9 @@
 					var parts = Color.regex.RGBA.exec(red);
 
 					if (parts) {
-						parts[1] = Math.round(parts[1]);
-						parts[2] = Math.round(parts[2]);
-						parts[3] = Math.round(parts[3]);
+						parts[1] = parseInt(parts[1], 10);
+						parts[2] = parseInt(parts[2], 10);
+						parts[3] = parseInt(parts[3], 10);
 						parts[4] = parseFloat(parts[4]);
 
 						if (parts[1].between(0, 255) && parts[2].between(0, 255) && parts[3].between(0, 255) && parts[4].between(0, 1)) {
@@ -1068,9 +1068,9 @@
 				}
 
 				var alpha = 1 - this.alpha;
-				var red = Math.round((this.alpha * (this.red / 255) + (alpha * (background.red / 255))) * 255);
-				var green = Math.round((this.alpha * (this.green / 255) + (alpha * (background.green / 255))) * 255);
-				var blue = Math.round((this.alpha * (this.blue / 255) + (alpha * (background.blue / 255))) * 255);
+				var red = (this.alpha * (this.red / 255) + (alpha * (background.red / 255))) * 255;
+				var green = (this.alpha * (this.green / 255) + (alpha * (background.green / 255))) * 255;
+				var blue = (this.alpha * (this.blue / 255) + (alpha * (background.blue / 255))) * 255;
 
 				return new RGB(red, green, blue);
 			}
@@ -1163,7 +1163,7 @@
 	 */
 	RGBA.prototype.toString = function () {
 		if (this.isSet()) {
-			return 'rgba(' + this.red + ', ' + this.green + ', ' + this.blue + ', ' + this.alpha + ')';
+			return 'rgba(' + Math.round(this.red) + ', ' + Math.round(this.green) + ', ' + Math.round(this.blue) + ', ' + this.alpha + ')';
 		}
 	};
 
@@ -1176,7 +1176,7 @@
 	RGBA.random = function (randomAlpha) {
 		randomAlpha = randomAlpha ? Math.random().round(3) : 1;
 
-		return new RGBA(Math.floor(Math.random() * 255), Math.floor(Math.random() * 255), Math.floor(Math.random() * 255), randomAlpha);
+		return new RGBA(Math.random() * 255, Math.random() * 255, Math.random() * 255, randomAlpha);
 	};
 
 	/**
@@ -1427,7 +1427,7 @@
 				blue = Hue.toRGB(p, q, hue - 1 / 3);
 			}
 
-			return new RGB(Math.round(red * 255), Math.round(green * 255), Math.round(blue * 255));
+			return new RGB(red * 255, green * 255, blue * 255);
 		}
 	};
 
@@ -1737,7 +1737,7 @@
 			var blue = null;
 
 			if (saturation === 0) {
-				red = Math.round(value * 2.55);
+				red = value * 2.55;
 
 				return new RGB(red, red, red);
 			} else {
@@ -1793,7 +1793,7 @@
 						blue = q;
 				}
 
-				return new RGB(Math.round(red * 255), Math.round(green * 255), Math.round(blue * 255));
+				return new RGB(red * 255, green * 255, blue * 255);
 			}
 		}
 	};
@@ -1926,9 +1926,9 @@
 			var green = (X * -0.9689) + (Y * 1.8758) + (Z * 0.0415);
 			var blue = (X * 0.0557) + (Y * -0.2040) + (Z * 1.0570);
 
-			red = Math.round((red > 0.0031308 ? (1.055 * Math.pow(red, 1 / 2.4)) - 0.055 : 12.92 * red) * 255);
-			green = Math.round((green > 0.0031308 ? (1.055 * Math.pow(green, 1 / 2.4)) - 0.055 : 12.92 * green) * 255);
-			blue = Math.round((blue > 0.0031308 ? (1.055 * Math.pow(blue, 1 / 2.4)) - 0.055 : 12.92 * blue) * 255);
+			red = (red > 0.0031308 ? (1.055 * Math.pow(red, 1 / 2.4)) - 0.055 : 12.92 * red) * 255;
+			green = (green > 0.0031308 ? (1.055 * Math.pow(green, 1 / 2.4)) - 0.055 : 12.92 * green) * 255;
+			blue = (blue > 0.0031308 ? (1.055 * Math.pow(blue, 1 / 2.4)) - 0.055 : 12.92 * blue) * 255;
 
 			return new RGB(red, green, blue);
 		}
@@ -2205,9 +2205,9 @@
 	CMYK.prototype.toRGB = function () {
 		if (this.isSet()) {
 			var _key = 1 - this.key;
-			var red = Math.round((1 - Math.min(1, this.cyan * _key + this.key)) * 255);
-			var green = Math.round((1 - Math.min(1, this.magenta * _key + this.key)) * 255);
-			var blue = Math.round((1 - Math.min(1, this.yellow * _key + this.key)) * 255);
+			var red = (1 - Math.min(1, this.cyan * _key + this.key)) * 255;
+			var green = (1 - Math.min(1, this.magenta * _key + this.key)) * 255;
+			var blue = (1 - Math.min(1, this.yellow * _key + this.key)) * 255;
 
 			return new RGB(red, green, blue);
 		}
@@ -2416,9 +2416,9 @@
 						}
 
 						if (realLen > 1) {
-							color.red = Math.round(color.red / realLen);
-							color.green = Math.round(color.green / realLen);
-							color.blue = Math.round(color.blue / realLen);
+							color.red = color.red / realLen;
+							color.green = color.green / realLen;
+							color.blue = color.blue / realLen;
 
 							return Color.toType(color, type);
 						}
