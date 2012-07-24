@@ -97,8 +97,8 @@ Style({
 			_webkit_border_radius: "5px",
 			_moz_border_radius: "5px",
 			border_radius: "5px",
-			_moz_box_shadow: "0 0 5px " + toRGB("#E0E4CC"),
-			_webkit_box_shadow: "0 0 5px " + toRGB("#E0E4CC"),
+			_moz_box_shadow: "0 0 5px " + new RGB("#E0E4CC"),
+			_webkit_box_shadow: "0 0 5px " + new RGB("#E0E4CC"),
 			box_shadow: "0 0 5px #E0E4CC",
 			color: "#635f53",
 
@@ -128,7 +128,7 @@ Style({
 			a: {
 				text_decoration: "none"
 			}
-		}.extend(bg),
+		}.extend(bg).toHex(),
 
 		li: {
 			display: "inline-block",
