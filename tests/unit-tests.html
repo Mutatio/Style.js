@@ -1,0 +1,87 @@
+<html>
+    <head>
+		<title>Style.js - Unit Tests</title>
+		<script type="text/javascript" src="../../Type.js/src/Type.js"></script>
+		<script type="text/javascript" src="../../Util.js/src/Util.js"></script>
+		<script type="text/javascript" src="../src/Style.js"></script>
+    </head>
+
+    <body>
+		<pre><code><script type="text/javascript">
+			/**
+			 * Basic unit tests using Firebug & FireUnit
+			 */
+			if (this['fireunit'] !== undefined) {
+				var benchmark = +(new Date());
+				var test = Type.isFunction(Color);
+
+				fireunit.ok(test, 'Check Color existence');
+
+				if (test) {
+					var functions = [];
+
+					for (var i in Color) {
+						if (Type.isString(Color[i]) && Color[i] !== 'Named') {
+							functions.push(Color[i]);
+						}
+					}
+
+					var len = functions.length;
+					var color, func, tmp;
+
+					if (len > 0) {
+						for (var y = 0; y < len; ++y) {
+							test = Type.isFunction(this[functions[y]]);
+
+							fireunit.ok(test, 'Check ' + functions[y] + ' existence');
+
+							if (test) {
+								test = Type.isFunction(this[functions[y]]['random']);
+
+								fireunit.ok(test, 'Check existence of ' + functions[y] + '.random() method');
+
+								if (test) {
+									color = this[functions[y]]['random']();
+									test = color && functions[y] === Type.getType(color) && color.isSet();
+
+									fireunit.ok(test, 'Call ' + functions[y] + '.random() and check if value set');
+
+									if (test) {
+										for (var i = 0; i < len; ++i) {
+											var obj = new this[functions[i]](color);
+											test = obj && obj.isSet();
+
+											fireunit.ok(test, 'Create ' + functions[i] + ' object using ' + functions[y] + '.random() color');
+
+											if (test) {
+												for (var x = 0; x < len; ++x) {
+													if (functions[x] !== functions[i]) {
+														func = 'to' + functions[x];
+														test = Type.isFunction(obj[func]);
+
+														fireunit.ok(test, 'Check existence of ' + functions[i] + '.' + func + '() method');
+
+														if (test) {
+															tmp = obj[func]();
+															test = tmp && functions[x] === Type.getType(tmp) && tmp.isSet();
+
+															fireunit.ok(test, 'Call ' + functions[i] + '.' + func + '(), validate returned object');
+														}
+													}
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+
+				document.write('Time taken: ' + ((+(new Date()) - benchmark) / 1000).round(3) + 's');
+			} else {
+				alert('Please install FireUnit.');
+			}
+		</script></code></pre>
+    </body>
+</html>
