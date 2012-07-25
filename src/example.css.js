@@ -26,7 +26,7 @@ var CSS = '#myTestCSS {\n\
 /**
  * Links
  */
-Style({
+new Style({
 	a: {
 		font_weight: 'bold',
 		text_decoration: 'none',
@@ -36,12 +36,12 @@ Style({
 	}
 });
 
-var bgProp = Property({
+var bgProp = new Property({
 	color: ['red','green','blue'],
 	image: 'url(myPicture.png)'
 });
 
-var font = Property({
+var font = new Property({
 	weight: 'bold',
 	family: "'Helvetica Neue', Helvetica, Arial, sans-serif",
 	size: '12px/14px'
@@ -50,7 +50,7 @@ var font = Property({
 /**
  * Base
  */
-Style({
+new Style({
 	body: {
 		font: font,
 		cursor: "default",
@@ -77,7 +77,7 @@ Style({
 /*
  * Main header
  */
-Style({
+new Style({
 	header: {
 		margin: "10px auto 0 auto",
 		width: "800px",

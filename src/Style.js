@@ -68,7 +68,6 @@
 
 	/**
 	 * Add values from an object to the current object
-	 * @param {Object} obj
 	 * @returns {Object}
 	 */
 	Object.prototype.extend = function () {
@@ -449,6 +448,8 @@
 				}
 			}
 		}
+
+		return undefined;
 	};
 
 	/**
@@ -477,6 +478,8 @@
 					return toColorSpace(color, type);
 			}
 		}
+
+		return null;
 	};
 
 	/**
@@ -533,13 +536,8 @@
 	 * Style class / wrapper, populates Styles array
 	 * @constructor
 	 * @param {Object|String} obj Style object / string
-	 * @returns {Style}
 	 */
 	function Style(obj) {
-		if (this === undefined) {
-			return new Style(obj);
-		}
-
 		if (!Util.empty(obj)) {
 			this.self = obj;
 
@@ -700,19 +698,16 @@
 		} else if (Type.isString(obj)) {
 			return obj;
 		}
+
+		return '';
 	};
 
 	/**
 	 * Property class / wrapper
 	 * @constructor
 	 * @param {Object|String} obj Property object
-	 * @returns {Property}
 	 */
 	function Property(obj) {
-		if (this === undefined) {
-			return new Property(obj);
-		}
-
 		if (!Util.empty(obj)) {
 			this.self = obj;
 		}
@@ -760,7 +755,7 @@
 	/**
 	 * RGB color class
 	 * @constructor
-	 * @param {Number} red
+	 * @param {Number|Object} red Red value / color object
 	 * @param {Number} green
 	 * @param {Number} blue
 	 */
@@ -796,6 +791,8 @@
 				this.blue = blue;
 			}
 		}
+
+		return this;
 	}
 
 	$.RGB = RGB;
@@ -985,7 +982,7 @@
 	/**
 	 * RGBA color class
 	 * @constructor
-	 * @param {Number} red
+	 * @param {Number|Object} red Red value / color object
 	 * @param {Number} green
 	 * @param {Number} blue
 	 * @param {Number} alpha
@@ -1026,6 +1023,8 @@
 				this.alpha = Type.isNumber(alpha) && alpha.between(0, 1) ? alpha : 1;
 			}
 		}
+
+		return this;
 	}
 
 	$.RGBA = RGBA;
@@ -1151,7 +1150,7 @@
 	 * @returns {String}
 	 */
 	RGBA.prototype.toString = function () {
-		return this.isSet() ? 'rgba(' + Math.round(this.red) + ', ' + Math.round(this.green) + ', ' + Math.round(this.blue) + ', ' + this.alpha + ')' : null;
+		return this.isSet() ? 'rgba(' + Math.round(this.red) + ', ' + Math.round(this.green) + ', ' + Math.round(this.blue) + ', ' + this.alpha.round(2) + ')' : null;
 	};
 
 	/**
@@ -1161,14 +1160,13 @@
 	 * @returns {RGBA}
 	 */
 	RGBA.random = function (randomAlpha) {
-		randomAlpha = randomAlpha ? Math.random().round(3) : 1;
-
-		return new RGBA(Math.random() * 255, Math.random() * 255, Math.random() * 255, randomAlpha);
+		return new RGBA(Math.random() * 255, Math.random() * 255, Math.random() * 255, randomAlpha ? Math.random() : 1);
 	};
 
 	/**
 	 * Hex color class
 	 * @constructor
+	 * @param {String|Object} value Hex valid / color object
 	 */
 	function Hex(value) {
 		if (Type.isString(value)) {
@@ -1178,6 +1176,8 @@
 		} else {
 			return toColorSpace(value, Color.HEX);
 		}
+
+		return this;
 	}
 
 	$.Hex = Hex;
@@ -1346,6 +1346,9 @@
 	/**
 	 * HSL color class
 	 * @constructor
+	 * @param {Number|Object} hue Hue value / color object
+	 * @param {Number} saturation
+	 * @param {Number} lightness
 	 */
 	function HSL(hue, saturation, lightness) {
 		if (Type.isNumber(hue) && Type.isNumber(saturation) && Type.isNumber(lightness)) {
@@ -1363,6 +1366,8 @@
 		} else {
 			return toColorSpace(hue, Color.HSL);
 		}
+
+		return this;
 	}
 
 	$.HSL = HSL;
@@ -1488,6 +1493,10 @@
 	/**
 	 * HSLA color class
 	 * @constructor
+	 * @param {Number|Object} hue Hue value / color object
+	 * @param {Number} saturation
+	 * @param {Number} lightness
+	 * @param {Number} alpha
 	 */
 	function HSLA(hue, saturation, lightness, alpha) {
 		if (Type.isNumber(hue) && Type.isNumber(saturation) && Type.isNumber(lightness)) {
@@ -1507,6 +1516,8 @@
 		} else {
 			return toColorSpace(hue, Color.HSLA);
 		}
+
+		return this;
 	}
 
 	$.HSLA = HSLA;
@@ -1535,7 +1546,6 @@
 
 	/**
 	 * Convert to RGBA color
-	 * @param {Object} background
 	 * @returns {RGBA}
 	 */
 	HSLA.prototype.toRGBA = function () {
@@ -1621,7 +1631,7 @@
 	 * @returns {String}
 	 */
 	HSLA.prototype.toString = function () {
-		return this.isSet() ? 'hsla(' + Math.round(this.hue) + ', ' + Math.round(this.saturation) + '%, ' + Math.round(this.lightness) + '%, ' + this.alpha + ')' : '';
+		return this.isSet() ? 'hsla(' + Math.round(this.hue) + ', ' + Math.round(this.saturation) + '%, ' + Math.round(this.lightness) + '%, ' + this.alpha.round(2) + ')' : '';
 	};
 
 	/**
@@ -1634,7 +1644,7 @@
 		var out = HSL.random().toHSLA();
 
 		if (randomAlpha) {
-			out.alpha = Math.random().round(3);
+			out.alpha = Math.random();
 		}
 
 		return out;
@@ -1643,6 +1653,9 @@
 	/**
 	 * HSV color class
 	 * @constructor
+	 * @param {Number|Object} hue Hue value / color object
+	 * @param {Number} saturation
+	 * @param {Number} value
 	 */
 	function HSV(hue, saturation, value) {
 		if (Type.isNumber(hue) && Type.isNumber(saturation) && Type.isNumber(value)) {
@@ -1660,6 +1673,8 @@
 		} else {
 			return toColorSpace(hue, Color.HSV);
 		}
+
+		return this;
 	}
 
 	$.HSV = HSV;
@@ -1821,6 +1836,9 @@
 	/**
 	 * XYZ color class
 	 * @constructor
+	 * @param {Number|Object} X X value / color object
+	 * @param {Number} Y
+	 * @param {Number} Z
 	 */
 	function XYZ(X, Y, Z) {
 		if (Type.isNumber(X) && Type.isNumber(Y) && Type.isNumber(Z)) {
@@ -1838,6 +1856,8 @@
 		} else {
 			return toColorSpace(X, Color.XYZ);
 		}
+
+		return this;
 	}
 
 	$.XYZ = XYZ;
@@ -1961,6 +1981,9 @@
 	/**
 	 * CIELab color class
 	 * @constructor
+	 * @param {Number|Object} L L value / color object
+	 * @param {Number} a
+	 * @param {Number} b
 	 */
 	function CIELab(L, a, b) {
 		if (Type.isNumber(L) && Type.isNumber(a) && Type.isNumber(b)) {
@@ -1978,6 +2001,8 @@
 		} else {
 			return toColorSpace(L, Color.CIELAB);
 		}
+
+		return this;
 	}
 
 	$.CIELab = CIELab;
@@ -2085,6 +2110,10 @@
 	/**
 	 * CMYK color class
 	 * @constructor
+	 * @param {Number|Object} cyan Cyan value / color object
+	 * @param {Number} magenta
+	 * @param {Number} yellow
+	 * @param {Number} key
 	 */
 	function CMYK(cyan, magenta, yellow, key) {
 		if (Type.isNumber(cyan) && Type.isNumber(magenta) && Type.isNumber(yellow) && Type.isNumber(key) && cyan.between(0, 1) && magenta.between(0, 1) && yellow.between(0, 1) && key.between(0, 1)) {
@@ -2104,6 +2133,8 @@
 		} else {
 			return toColorSpace(cyan, Color.CMYK);
 		}
+
+		return this;
 	}
 
 	$.CMYK = CMYK;
@@ -2290,6 +2321,8 @@
 				return Math.sqrt(result);
 			}
 		}
+
+		return undefined;
 	}
 
 	$.distance = distance;
@@ -2339,6 +2372,8 @@
 				return Color.toType(arguments[0], type);
 			}
 		}
+
+		return null;
 	}
 
 	$.mix = mix;
@@ -2389,6 +2424,8 @@
 				}
 			}
 		}
+
+		return null;
 	}
 
 	$.mutate = mutate;
@@ -2402,7 +2439,7 @@
 	 * @returns {Object}
 	 */
 	function adjustSaturation(color, multiplier, adjustment) {
-		if (color && Type.isNumber(multiplier) && ['saturate', 'desaturate'].contains(adjustment)) {
+		if (color && Type.isNumber(multiplier) && (adjustment === 'saturate' || adjustment === 'desaturate')) {
 			var type = Color.getType(color);
 
 			if (type) {
@@ -2429,6 +2466,8 @@
 				}
 			}
 		}
+
+		return null;
 	}
 
 	/**
@@ -2475,7 +2514,7 @@
 	 * @returns {Object}
 	 */
 	function adjustLightness(color, multiplier, adjustment) {
-		if (color && Type.isNumber(multiplier) && ['darken', 'lighten'].contains(adjustment)) {
+		if (color && Type.isNumber(multiplier) && (adjustment === 'darken' || adjustment === 'lighten')) {
 			var type = Color.getType(color);
 
 			if (type) {
@@ -2500,6 +2539,8 @@
 				}
 			}
 		}
+
+		return null;
 	}
 
 	/**
@@ -2593,6 +2634,8 @@
 				}
 			}
 		}
+
+		return null;
 	}
 
 	$.gradient = gradient;
@@ -2625,6 +2668,8 @@
 				}
 			}
 		}
+
+		return null;
 	}
 
 	$.shiftHue = shiftHue;
@@ -2642,6 +2687,8 @@
 				return color[0];
 			}
 		}
+
+		return null;
 	}
 
 	$.complement = complement;
@@ -2704,8 +2751,7 @@
 	/**
 	 * Perceieved brightness, if value is greater than 125 chose black foreground text, otherwise white
 	 * @see http://www.w3.org/WAI/ER/WD-AERT/#color-contrast
-	 * @param {Object|String} color1 Color object / value
-	 * @param {Object|String} color2 Color object / value
+	 * @param {Object|String} color
 	 * @returns {Number} Range between 0-500
 	 */
 	function brightness(color) {
@@ -2716,6 +2762,8 @@
 				return ((color.red * 299) + (color.green * 587) + (color.blue * 114)) / 1000;
 			}
 		}
+
+		return undefined;
 	}
 
 	$.brightness = brightness;
@@ -2736,6 +2784,8 @@
 				return (Math.max(color1.red, color2.red) - Math.min(color1.red, color2.red)) + (Math.max(color1.green, color2.green) - Math.min(color1.green, color2.green)) + (Math.max(color1.blue, color2.blue) - Math.min(color1.blue, color2.blue));
 			}
 		}
+
+		return undefined;
 	}
 
 	$.brightnessDifference = brightnessDifference;
@@ -2744,6 +2794,7 @@
 	 * Select a readable foreground color for the supplied background
 	 * @param {Object|String} background Color object / value
 	 * @param {Object|String} foreground Color object / value - optional, if not supplied a color complementary to the background will be used
+	 * @param {Number} difference
 	 * @returns {Object|String} Foreground color with high readability
 	 */
 	function selectForeground(background, foreground, difference) {
@@ -2775,6 +2826,8 @@
 				}
 			}
 		}
+
+		return null;
 	}
 
 	$.selectForeground = selectForeground;
@@ -2815,6 +2868,8 @@
 				return Math.round(result) + 'px';
 			}
 		}
+
+		return '';
 	}
 
 	$.calculate = calculate;
@@ -2973,6 +3028,8 @@
 				});
 			}
 		}
+
+		return this;
 	};
 
 	/**
@@ -3153,21 +3210,22 @@
 	/**
 	 * Return the named property with the supplied value
 	 * @private
-	 * @param {String} property Property name
-	 * @param {String|Number} property Property value
+	 * @param {String} property
+	 * @param {String|Number} value
 	 * @returns {Object}
 	 */
 	CSS.getProperty = function (property, value) {
+		var out = {};
+
 		if (property && value && CSS.properties.hasOwnProperty(property)) {
-			var out = {};
 			var len = CSS.properties[property].length;
 
 			for (var i = 0; i < len; ++i) {
 				out[CSS.properties[property][i]] = value;
 			}
-
-			return out;
 		}
+
+		return out;
 	};
 
 	/**
@@ -3179,9 +3237,10 @@
 	 * @returns {Object}
 	 */
 	CSS.borderRadius = function (topLeft, bottomLeft, bottomRight, topRight) {
+		var out = {};
+
 		if (topLeft && (!bottomLeft && !bottomRight && !topRight)) {
 			var len = CSS.properties.borderRadius.length;
-			var out = {};
 
 			if (Type.isNumber(topLeft)) {
 				topLeft += 'px';
@@ -3193,8 +3252,6 @@
 
 			return out;
 		} else if (topLeft || bottomLeft || bottomRight || topRight) {
-			var out = {};
-
 			if (topLeft) {
 				if (Type.isNumber(topLeft)) {
 					topLeft += 'px';
@@ -3229,6 +3286,8 @@
 
 			return out;
 		}
+
+		return out;
 	};
 
 	/**
@@ -3279,6 +3338,8 @@
 				}
 			}
 		}
+
+		return {};
 	};
 
 	/**
@@ -3341,11 +3402,18 @@
 				text_shadow: value.join(' ')
 			};
 		}
+
+		return null;
 	};
 
 	/**
 	 * Get CSS box shadow for specified argument values
-	 * @param {String|Number} value
+	 * @param {String|Number} horizontalLength
+	 * @param {String|Number} verticalLength
+	 * @param {String|Number} blurRadius
+	 * @param {String|Number} spread
+	 * @param {Object|Number} color
+	 * @param {String} set
 	 * @returns {Object}
 	 */
 	CSS.boxShadow = function (horizontalLength, verticalLength, blurRadius, spread, color, set) {
@@ -3402,6 +3470,8 @@
 
 			return out;
 		}
+
+		return null;
 	};
 
 	/**
