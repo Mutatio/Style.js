@@ -60,6 +60,30 @@
 	var branding = true;
 
 	/**
+	 * Default unit type for measurements
+	 * @private
+	 * @type {String}
+	 */
+	var defaultUnit = 'px';
+
+	/**
+	 * Valid unit types for measurements
+	 * @private
+	 * @type {Object.<String, Boolean>}
+	 */
+	var validUnits = {
+		'px': true,
+		'em': true,
+		'ex': true,
+		'pt': true,
+		'pc': true,
+		'mm': true,
+		'cm': true,
+		'in': true,
+		'%': true
+	};
+
+	/**
 	 * Push string value to Styles array
 	 */
 	String.prototype.toStyle = function () {
@@ -656,11 +680,11 @@
 					}
 
 					if (type === 'string' || type === 'number') {
-						output[parent].push(x.replace(/\_/g, '-') + ": " + obj[x]);
+						output[parent].push(x.replace(/\_/g, '-') + ": " + (type === 'number' && obj[x] > 0 ? obj[x] + 'px' : obj[x]));
 					} else if (Type.isArray(obj[x])) {
 						for (var y in obj[x]) {
 							if (!Type.isFunction(obj[x][y])) {
-								output[parent].push(x.replace(/\_/g, '-') + ": " + obj[x][y]);
+								output[parent].push(x.replace(/\_/g, '-') + ": " + (Type.isNumber(obj[x][y]) && obj[x][y] > 0 ? obj[x][y] + defaultUnit : obj[x][y]));
 							}
 						}
 					} else if (isProperty(obj[x])) {
@@ -726,13 +750,12 @@
 
 		if (!Util.empty(name) && Type.isObject(this.self)) {
 			for (var x in this.self) {
-				if (Type.isString(this.self[x])) {
-					out.push(name + '-' + x + ': ' + this.self[x]);
+				if ((type = typeof this.self[x]) === 'string' || type === 'number') {
+					out.push(name + '-' + x + ': ' + (type === 'number' && this.self[x] > 0 ? this.self[x] + defaultUnit : this.self[x]));
 				} else if (Type.isArray(this.self[x])) {
 					for (var y in this.self[x]) {
 						if ((type = typeof this.self[x][y]) === 'string' || type === 'number') {
-							// Push CSS property
-							out.push(name + '-' + x + ': ' + this.self[x][y]);
+							out.push(name + '-' + x + ': ' + (type === 'number' && this.self[x][y] > 0 ? this.self[x][y] + defaultUnit : this.self[x][y]));
 						}
 					}
 				}
@@ -2835,14 +2858,36 @@
 	/**
 	 * Set the default EM dimension (in pixels)
 	 * @param {Number} value Dimension in pixels
+	 * @returns {Boolean}
 	 */
 	function setEmSize(value) {
 		if (Type.isNumber(value)) {
 			emSize = value;
+
+			return true;
 		}
+
+		return false;
 	}
 
 	$.setEmSize = setEmSize;
+
+	/**
+	 * Set the default unit type
+	 * @param {String} unit
+	 * @returns {Boolean}
+	 */
+	function setDefaultUnit(unit) {
+		if (unit && validUnits.hasOwnProperty(unit)) {
+			defaultUnit = unit;
+
+			return true;
+		}
+
+		return false;
+	}
+
+	$.setDefaultUnit = setDefaultUnit;
 
 	/**
 	 * Calculate the result of a calculate() expression match
