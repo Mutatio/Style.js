@@ -139,62 +139,86 @@
 	/**
 	 * @static
 	 * @constant
+	 * @type {String}
 	 */
 	Color.NAMED = 'Named';
 
 	/**
 	 * @static
 	 * @constant
+	 * @type {String}
 	 */
 	Color.HEX = 'Hex';
 
 	/**
 	 * @static
 	 * @constant
+	 * @type {String}
 	 */
 	Color.RGB = 'RGB';
 
 	/**
 	 * @static
 	 * @constant
+	 * @type {String}
 	 */
 	Color.RGBA = 'RGBA';
 
 	/**
 	 * @static
 	 * @constant
+	 * @type {String}
 	 */
 	Color.HSL = 'HSL';
 
 	/**
 	 * @static
 	 * @constant
+	 * @type {String}
 	 */
 	Color.HSLA = 'HSLA';
 
 	/**
 	 * @static
 	 * @constant
+	 * @type {String}
 	 */
 	Color.HSV = 'HSV';
 
 	/**
 	 * @static
 	 * @constant
+	 * @type {String}
 	 */
 	Color.XYZ = 'XYZ';
 
 	/**
 	 * @static
 	 * @constant
+	 * @type {String}
 	 */
 	Color.CIELAB = 'CIELab';
 
 	/**
 	 * @static
 	 * @constant
+	 * @type {String}
 	 */
 	Color.CMYK = 'CMYK';
+
+	/**
+	 * @static
+	 * @constant
+	 * @type {Object.<String, Boolean>}
+	 */
+	Color.types = {};
+
+	// Populate Color.types object
+	for (var i in Color) {
+		if (Color.hasOwnProperty(i) && Type.isString(Color[i]) && Color[i] !== 'Named') {
+			Color.types[Color[i]] = true;
+		}
+	}
 
 	/**
 	 * @static
@@ -507,7 +531,7 @@
 	};
 
 	/**
-	 * Checks if value passed is valid color
+	 * Checks if color passed is valid color
 	 * @static
 	 * @param {Object|String} color
 	 * @returns {Boolean}
@@ -517,7 +541,7 @@
 	};
 
 	/**
-	 * Checks if value passed is valid CSS color
+	 * Checks if color passed is valid CSS color
 	 * @static
 	 * @param {Object|String} color
 	 * @returns {Boolean}
@@ -527,11 +551,31 @@
 			color = Color.getType(color);
 
 			if (color) {
-				return CSS.colorTypes.contains(color);
+				return CSS.colorTypes.hasOwnProperty(color);
 			}
 		}
 
 		return false;
+	};
+
+	/**
+	 * Checks if type passed is valid color type
+	 * @static
+	 * @param {String} type
+	 * @returns {Boolean}
+	 */
+	Color.isValidType = function (type) {
+		return type ? Color.types.hasOwnProperty(type) : false;
+	};
+
+	/**
+	 * Checks if type passed is valid CSS color type
+	 * @static
+	 * @param {String} type
+	 * @returns {Boolean}
+	 */
+	Color.isValidCSSType = function (type) {
+		return type ? CSS.colorTypes.hasOwnProperty(type) : false;
 	};
 
 	/**
@@ -674,23 +718,29 @@
 			var type;
 
 			for (var x in obj) {
-				if ((type = typeof obj[x]) !== 'function') {
+				if ((type = Type.getType(obj[x])) !== 'function') {
 					if (!output[parent]) {
 						output[parent] = [];
 					}
 
-					if (type === 'string' || type === 'number') {
-						output[parent].push(x.replace(/\_/g, '-') + ": " + (type === 'number' && obj[x] > 0 ? obj[x] + 'px' : obj[x]));
-					} else if (Type.isArray(obj[x])) {
+					if (type === 'string' || Color.isValidCSSType(type)) {
+						output[parent].push(x.replace(/\_/g, '-') + ": " + obj[x]);
+					} else if (type === 'number') {
+						output[parent].push(x.replace(/\_/g, '-') + ": " + obj[x] + defaultUnit);
+					} else if (type === 'array') {
 						for (var y in obj[x]) {
-							if (!Type.isFunction(obj[x][y])) {
-								output[parent].push(x.replace(/\_/g, '-') + ": " + (Type.isNumber(obj[x][y]) && obj[x][y] > 0 ? obj[x][y] + defaultUnit : obj[x][y]));
+							if ((type = Type.getType(obj[x][y])) !== 'function') {
+								if (type === 'string' || Color.isValidCSSType(type)) {
+									output[parent].push(x.replace(/\_/g, '-') + ": " + obj[x][y]);
+								} else if (type === 'number') {
+									output[parent].push(x.replace(/\_/g, '-') + ": " + obj[x][y] + defaultUnit);
+								}
 							}
 						}
-					} else if (isProperty(obj[x])) {
-						output[parent] = output[parent].concat(obj[x].compile(x.replace(/\_/g, '-')));
-					} else if (Type.isObject(obj[x])) {
+					} else if (type === 'Object') {
 						this.compile(obj[x], output, parent, x);
+					} else if (type === 'Property') {
+						output[parent] = output[parent].concat(obj[x].compile(x.replace(/\_/g, '-')));
 					}
 				}
 			}
@@ -750,12 +800,20 @@
 
 		if (!Util.empty(name) && Type.isObject(this.self)) {
 			for (var x in this.self) {
-				if ((type = typeof this.self[x]) === 'string' || type === 'number') {
-					out.push(name + '-' + x + ': ' + (type === 'number' && this.self[x] > 0 ? this.self[x] + defaultUnit : this.self[x]));
-				} else if (Type.isArray(this.self[x])) {
+				type = Type.getType(this.self[x]);
+
+				if (type === 'string' || Color.isValidCSSType(type)) {
+					out.push(name + '-' + x + ': ' + this.self[x]);
+				} else if (type === 'number') {
+					out.push(name + '-' + x + ': ' + this.self[x] + defaultUnit);
+				} else if (type === 'array') {
 					for (var y in this.self[x]) {
-						if ((type = typeof this.self[x][y]) === 'string' || type === 'number') {
-							out.push(name + '-' + x + ': ' + (type === 'number' && this.self[x][y] > 0 ? this.self[x][y] + defaultUnit : this.self[x][y]));
+						type = Type.getType(this.self[x][y]);
+
+						if (type === 'string' || Color.isValidCSSType(type)) {
+							out.push(name + '-' + x + ': ' + this.self[x][y]);
+						} else if (type === 'number') {
+							out.push(name + '-' + x + ': ' + this.self[x][y] + defaultUnit);
 						}
 					}
 				}
@@ -3248,9 +3306,15 @@
 	/**
 	 * Color values which have CSS representations, e.g. rgb(12, 34, 56)
 	 * @constant
-	 * @type {Array.<String>}
+	 * @type {Object.<String, Boolean>}
 	 */
-	CSS.colorTypes = ['Hex', 'RGB', 'HSL'];
+	CSS.colorTypes = {
+		RGB: true,
+		RGBA: true,
+		Hex: true,
+		HSL: true,
+		HSLA: true
+	};
 
 	/**
 	 * Return the named property with the supplied value
@@ -3288,7 +3352,7 @@
 			var len = CSS.properties.borderRadius.length;
 
 			if (Type.isNumber(topLeft)) {
-				topLeft += 'px';
+				topLeft += defaultUnit;
 			}
 
 			for (var i = 0; i < len; ++i) {
@@ -3299,7 +3363,7 @@
 		} else if (topLeft || bottomLeft || bottomRight || topRight) {
 			if (topLeft) {
 				if (Type.isNumber(topLeft)) {
-					topLeft += 'px';
+					topLeft += defaultUnit;
 				}
 
 				out.extend(CSS.getProperty('borderRadiusTopLeft', topLeft));
@@ -3307,7 +3371,7 @@
 
 			if (bottomLeft) {
 				if (Type.isNumber(bottomLeft)) {
-					bottomLeft += 'px';
+					bottomLeft += defaultUnit;
 				}
 
 				out.extend(CSS.getProperty('borderRadiusBottomLeft', bottomLeft));
@@ -3315,7 +3379,7 @@
 
 			if (bottomRight) {
 				if (Type.isNumber(bottomRight)) {
-					bottomRight += 'px';
+					bottomRight += defaultUnit;
 				}
 
 				out.extend(CSS.getProperty('borderRadiusBottomRight', bottomRight));
@@ -3323,7 +3387,7 @@
 
 			if (topRight) {
 				if (Type.isNumber(topRight)) {
-					topRight += 'px';
+					topRight += defaultUnit;
 				}
 
 				out.extend(CSS.getProperty('borderRadiusTopRight', topRight));
@@ -3354,7 +3418,7 @@
 
 				if (orientation === 'linear') {
 					for (i = 2; i < arguments.length; ++i) {
-						if (Type.isScalar(arguments[i])) {
+						if (Type.isScalar(arguments[i]) || Color.isValidCSS(arguments[i])) {
 							propertyValue += ', ' + arguments[i];
 						}
 					}
@@ -3366,7 +3430,7 @@
 					var shape = arguments[2];
 
 					for (i = 3; i < arguments.length; ++i) {
-						if (Type.isScalar(arguments[i])) {
+						if (Type.isScalar(arguments[i]) || Color.isValidCSS(arguments[i])) {
 							propertyValue += ', ' + arguments[i];
 						}
 					}
@@ -3418,7 +3482,7 @@
 			if (!horizontalLength) {
 				horizontalLength = 0;
 			} else if (Type.isNumber(horizontalLength)) {
-				horizontalLength += 'px';
+				horizontalLength += defaultUnit;
 			}
 
 			value.push(horizontalLength);
@@ -3426,14 +3490,14 @@
 			if (!verticalLength) {
 				verticalLength = 0;
 			} else if (Type.isNumber(verticalLength)) {
-				verticalLength += 'px';
+				verticalLength += defaultUnit;
 			}
 
 			value.push(verticalLength);
 
 			if (blurRadius) {
 				if (Type.isNumber(blurRadius)) {
-					blurRadius += 'px';
+					blurRadius += defaultUnit;
 				}
 
 				value.push(blurRadius);
@@ -3468,7 +3532,7 @@
 			if (!horizontalLength) {
 				horizontalLength = 0;
 			} else if (Type.isNumber(horizontalLength)) {
-				horizontalLength += 'px';
+				horizontalLength += defaultUnit;
 			}
 
 			value.push(horizontalLength);
@@ -3476,14 +3540,14 @@
 			if (!verticalLength) {
 				verticalLength = 0;
 			} else if (Type.isNumber(verticalLength)) {
-				verticalLength += 'px';
+				verticalLength += defaultUnit;
 			}
 
 			value.push(verticalLength);
 
 			if (blurRadius) {
 				if (Type.isNumber(blurRadius)) {
-					blurRadius += 'px';
+					blurRadius += defaultUnit;
 				}
 
 				value.push(blurRadius);
@@ -3491,7 +3555,7 @@
 
 			if (spread) {
 				if (Type.isNumber(spread)) {
-					spread += 'px';
+					spread += defaultUnit;
 				}
 
 				value.push(spread);
