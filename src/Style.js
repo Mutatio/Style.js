@@ -2410,7 +2410,7 @@
 
 	/**
 	 * Basic color mix functionality
-	 * @returns {Object} Mixed color result
+	 * @returns {Object|Null} Mixed color result
 	 */
 	function mix() {
 		var len = arguments.length;
@@ -2463,7 +2463,7 @@
 	 * Randomly mutate a color
 	 * @param {Object|String} color Color to mutate
 	 * @param {Number} change Rate of change
-	 * @returns {Object}
+	 * @returns {Object|Null}
 	 */
 	function mutate(color, change) {
 		if (color && Type.isNumber(change) && change.between(0, 1)) {
@@ -2517,10 +2517,10 @@
 	 * @param {Object|String} color
 	 * @param {Number} multiplier
 	 * @param {String} adjustment Option to either saturate or desaturate
-	 * @returns {Object}
+	 * @returns {Object|Null}
 	 */
 	function adjustSaturation(color, multiplier, adjustment) {
-		if (color && Type.isNumber(multiplier) && (adjustment === 'saturate' || adjustment === 'desaturate')) {
+		if (color && Type.isNumber(multiplier) && multiplier > 0 && (adjustment === 'saturate' || adjustment === 'desaturate')) {
 			var type = Color.getType(color);
 
 			if (type) {
@@ -2529,11 +2529,7 @@
 				if (color !== undefined && color.isSet()) {
 					var saturation = color.saturation;
 
-					if (adjustment === 'saturate') {
-						saturation += saturation * multiplier;
-					} else {
-						saturation -= saturation * multiplier;
-					}
+					saturation += (adjustment === 'saturate' ? 1 : -1) * saturation * multiplier;
 
 					if (saturation > 100) {
 						color.saturation = 100;
@@ -2555,7 +2551,7 @@
 	 * Saturate a color
 	 * @param {Object|String} color
 	 * @param {Number} multiplier
-	 * @returns {Object}
+	 * @returns {Object|Null}
 	 */
 	function saturate(color, multiplier) {
 		return adjustSaturation(color, multiplier, 'saturate');
@@ -2567,7 +2563,7 @@
 	 * Desaturate a color
 	 * @param {Object|String} color
 	 * @param {Number} multiplier
-	 * @returns {Object}
+	 * @returns {Object|Null}
 	 */
 	function desaturate(color, multiplier) {
 		return adjustSaturation(color, multiplier, 'desaturate');
@@ -2578,7 +2574,7 @@
 	/**
 	 * Get the grayscale version of a color (fully desaturate)
 	 * @param {Object|String} color
-	 * @returns {Object}
+	 * @returns {Object|Null}
 	 */
 	function grayscale(color) {
 		return adjustSaturation(color, 1, 'desaturate');
@@ -2587,12 +2583,125 @@
 	$.grayscale = grayscale;
 
 	/**
+	 * Set color opacity.
+	 * @param {Object|String} color
+	 * @param {Number} opacity
+	 * @param {Object|String} background
+	 * @returns {Object|Null}
+	 */
+	function setOpacity(color, opacity, background) {
+		if (color) {
+			var type = Color.getType(color);
+
+			if (type) {
+				if (opacity && Type.isNumber(opacity) && opacity < 1 && opacity >= 0) {
+					if (color instanceof RGBA || color instanceof HSLA) {
+						color.alpha = opacity;
+
+						return color;
+					} else {
+						color = color.toRGBA();
+						color.alpha = opacity;
+						color = color.toRGB(background);
+
+						return Color.toType(color, type);
+					}
+				} else if (opacity === 1) {
+					return color;
+				}
+			}
+		}
+
+		return null;
+	}
+
+	$.setOpacity = setOpacity;
+
+	/**
+	 * Adjust color opacity via a multiplier
+	 * @private
+	 * @param {Object|String} color
+	 * @param {Number} multiplier
+	 * @param {Object|String} background
+	 * @param {String} adjustment
+	 * @returns {Object|Null}
+	 */
+	function adjustOpacity(color, multiplier, background, adjustment) {
+		if (color) {
+			var type = Color.getType(color);
+
+			if (type) {
+				if ((adjustment === 'increase' || adjustment === 'decrease') && multiplier && Type.isNumber(multiplier) && multiplier > 0) {
+					var change;
+
+					if (color instanceof RGBA || color instanceof HSLA) {
+						change = color.alpha * multiplier;
+						color.alpha += adjustment === 'increase' ? change : -change;
+
+						if (color.alpha > 1) {
+							color.alpha = 1;
+						} else if (color.alpha < 0) {
+							color.alpha = 0;
+						}
+
+						return color;
+					} else {
+						color = color.toRGBA();
+						change = color.alpha * multiplier;
+						color.alpha += adjustment === 'increase' ? change : -change;
+
+						if (color.alpha > 1) {
+							color.alpha = 1;
+						} else if (color.alpha < 0) {
+							color.alpha = 0;
+						}
+
+						color = color.toRGB(background);
+
+						return Color.toType(color, type);
+					}
+				} else {
+					return color;
+				}
+			}
+		}
+
+		return null;
+	}
+
+	/**
+	 * Increase color opacity via a multiplier
+	 * @param {Object|String} color
+	 * @param {Number} multiplier
+	 * @param {Object|String} background
+	 * @returns {Object|Null}
+	 */
+	function increaseOpacity(color, multiplier, background) {
+		return adjustOpacity(color, multiplier, background, 'increase');
+	}
+
+	/**
+	 * Decrease color opacity via a multiplier
+	 * @param {Object|String} color
+	 * @param {Number} multiplier
+	 * @param {Object|String} background
+	 * @returns {Object|Null}
+	 */
+	$.increaseOpacity = increaseOpacity;
+
+	function decreaseOpacity(color, multiplier, background) {
+		return adjustOpacity(color, multiplier, background, 'decrease');
+	}
+
+	$.decreaseOpacity = decreaseOpacity;
+
+	/**
 	 * Basic adjustment of the lightness of a color
 	 * @private
 	 * @param {Object|String} color
 	 * @param {Number} multiplier
 	 * @param {String} adjustment Option to either darken or lighten
-	 * @returns {Object}
+	 * @returns {Object|Null}
 	 */
 	function adjustLightness(color, multiplier, adjustment) {
 		if (color && Type.isNumber(multiplier) && (adjustment === 'darken' || adjustment === 'lighten')) {
@@ -2604,11 +2713,7 @@
 				if (color !== undefined && color.isSet()) {
 					var change = color.lightness * multiplier;
 
-					if (adjustment === 'darken') {
-						color.lightness -= change;
-					} else {
-						color.lightness += change;
-					}
+					color.lightness += adjustment === 'darken' ? -change : change;
 
 					if (color.lightness > 100) {
 						color.lightness = 100;
@@ -2628,7 +2733,7 @@
 	 * Darkens a color by a multiplier value, e.g. 0.25 darkens by 25%
 	 * @param {Object|String} color
 	 * @param {Number} multiplier
-	 * @returns {Object}
+	 * @returns {Object|Null}
 	 */
 	function darken(color, multiplier) {
 		return adjustLightness(color, multiplier, 'darken');
@@ -2640,7 +2745,7 @@
 	 * Lightens a color by a multiplier value, e.g. 0.25 lightens by 25%
 	 * @param {Object|String} color
 	 * @param {Number} multiplier
-	 * @returns {Object}
+	 * @returns {Object|Null}
 	 */
 	function lighten(color, multiplier) {
 		return adjustLightness(color, multiplier, 'lighten');
@@ -2650,7 +2755,7 @@
 
 	/**
 	 * Produce a gradient between 2 or more colors. If the last argument is a number it is assumed to be the number of steps between colors.
-	 * @returns {Array.<Object>} Gradient colors in a array
+	 * @returns {Array.<Object>|Null} Gradient colors in a array
 	 */
 	function gradient() {
 		var len = arguments.length;
@@ -2723,7 +2828,7 @@
 
 	/**
 	 * Shift the color's hue by a give number of degrees
-	 * @returns {Object}
+	 * @returns {Object|Null}
 	 */
 	function shiftHue() {
 		var len = arguments.length;
@@ -2758,7 +2863,7 @@
 	/**
 	 * Return the complement of the given color
 	 * @param {Object|String} color
-	 * @returns {Object} complementary color
+	 * @returns {Object|Null} complementary color
 	 */
 	function complement(color) {
 		if (color) {
@@ -2777,7 +2882,7 @@
 	/**
 	 * Return the analogous colors of the given color
 	 * @param {Object|String} color
-	 * @returns {Array.<Object>}
+	 * @returns {Array.<Object>|Null}
 	 */
 	function analogous(color) {
 		return shiftHue(color, -30, 60);
@@ -2788,7 +2893,7 @@
 	/**
 	 * Return the split colors of the given color
 	 * @param {Object|String} color
-	 * @returns {Array.<Object>}
+	 * @returns {Array.<Object>|Null}
 	 */
 	function split(color) {
 		return shiftHue(color, -150, 300);
@@ -2799,7 +2904,7 @@
 	/**
 	 * Return the triad colors of the given color
 	 * @param {Object|String} color
-	 * @returns {Array.<Object>}
+	 * @returns {Array.<Object>|Null}
 	 */
 	function triad(color) {
 		return shiftHue(color, -120, 240);
@@ -2810,7 +2915,7 @@
 	/**
 	 * Return the square colors of the given color
 	 * @param {Object|String} color
-	 * @returns {Array.<Object>}
+	 * @returns {Array.<Object>|Null}
 	 */
 	function square(color) {
 		return shiftHue(color, 90, 90, 90);
@@ -2821,7 +2926,7 @@
 	/**
 	 * Return the tetradic colors of the given color
 	 * @param {Object|String} color
-	 * @returns {Array.<Object>}
+	 * @returns {Array.<Object>|Null}
 	 */
 	function tetradic(color) {
 		return shiftHue(color, 60, 120, 60);
@@ -2876,7 +2981,7 @@
 	 * @param {Object|String} background Color object / value
 	 * @param {Object|String} foreground Color object / value - optional, if not supplied a color complementary to the background will be used
 	 * @param {Number} difference
-	 * @returns {Object|String} Foreground color with high readability
+	 * @returns {Object|Null} Foreground color with high readability
 	 */
 	function selectForeground(background, foreground, difference) {
 		if (background) {
