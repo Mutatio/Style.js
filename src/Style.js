@@ -3405,7 +3405,8 @@
 		borderRadiusTopRight: ['-webkit-border-top-right-radius', '-moz-border-radius-topright', 'border-top-right-radius'],
 		gradientLinear: ['-moz-linear-gradient', '-webkit-linear-gradient', '-o-linear-gradient', '-ms-linear-gradient', 'linear-gradient'],
 		gradientRadial: ['-moz-radial-gradient', '-webkit-radial-gradient', '-o-radial-gradient', '-ms-radial-gradient', 'radial-gradient'],
-		boxShadow: ['-moz-box-shadow', '-webkit-box-shadow', 'box-shadow']
+		boxShadow: ['-moz-box-shadow', '-webkit-box-shadow', 'box-shadow'],
+		transition: ['-webkit-transition', '-moz-transition', '-o-transition', 'transition']
 	};
 
 	/**
@@ -3436,6 +3437,25 @@
 
 			for (var i = 0; i < len; ++i) {
 				out[CSS.properties[property][i]] = value;
+			}
+		}
+
+		return out;
+	};
+
+	/**
+	 * Returns cross browser transition properties
+	 * @param {String} transition
+	 * @returns {Object}
+	 */
+	CSS.transition = function (transition) {
+		var out = {};
+
+		if (transition) {
+			var len = CSS.properties.transition.length;
+
+			for (var i = 0; i < len; ++i) {
+				out[CSS.properties.transition[i]] = transition;
 			}
 		}
 
