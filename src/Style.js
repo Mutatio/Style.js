@@ -197,6 +197,13 @@
 	 * @constant
 	 * @type {String}
 	 */
+	Color.XYY = 'xyY';
+
+	/**
+	 * @static
+	 * @constant
+	 * @type {String}
+	 */
 	Color.CIELAB = 'CIELab';
 
 	/**
@@ -522,6 +529,7 @@
 				case Color.HSLA:
 				case Color.HSV:
 				case Color.XYZ:
+				case Color.XYY:
 				case Color.CIELAB:
 					return toColorSpace(color, type);
 			}
@@ -843,7 +851,7 @@
 	function RGB(red, green, blue) {
 		if (red !== undefined && ((green === undefined && blue === undefined) || (Type.isNumber(green) && Type.isNumber(blue) && green.between(0, 255) && blue.between(0, 255)))) {
 			if (green === undefined) {
-				if (Type.isObject(red) && red instanceof this.constructor) {
+				if (red instanceof this.constructor) {
 					this.red = red.red;
 					this.green = red.green;
 					this.blue = red.blue;
@@ -1010,6 +1018,14 @@
 	};
 
 	/**
+	 * Convert to xyY color
+	 * @returns {xyY}
+	 */
+	RGB.prototype.toxyY = function () {
+		return this.isSet() ? this.toXYZ().toxyY() : null;
+	};
+
+	/**
 	 * Convert to CIELab color
 	 * @returns {CIELab}
 	 */
@@ -1071,7 +1087,7 @@
 	function RGBA(red, green, blue, alpha) {
 		if (red !== undefined && ((green === undefined && blue === undefined) || (Type.isNumber(green) && Type.isNumber(blue) && green.between(0, 255) && blue.between(0, 255)))) {
 			if (green === undefined) {
-				if (Type.isObject(red) && red instanceof this.constructor) {
+				if (red instanceof this.constructor) {
 					this.red = red.red;
 					this.green = red.green;
 					this.blue = red.blue;
@@ -1211,6 +1227,15 @@
 	};
 
 	/**
+	 * Convert to xyY color
+	 * @param {Object} background
+	 * @returns {xyY}
+	 */
+	RGBA.prototype.toxyY = function (background) {
+		return this.isSet() ? this.toRGB(background).toxyY() : null;
+	};
+
+	/**
 	 * Convert to CIELab color
 	 * @returns {CIELab}
 	 */
@@ -1252,7 +1277,7 @@
 	function Hex(value) {
 		if (Type.isString(value)) {
 			this.setValue(value);
-		} else if (Type.getType(value) === 'Hex') {
+		} else if (value instanceof this.constructor) {
 			this.setValue(value.value);
 		} else {
 			return toColorSpace(value, Color.HEX);
@@ -1348,6 +1373,14 @@
 	};
 
 	/**
+	 * Convert to xyY color
+	 * @returns {xyY}
+	 */
+	Hex.prototype.toxyY = function () {
+		return this.isSet() ? this.toRGB().toxyY() : null;
+	};
+
+	/**
 	 * Convert to CIELab color
 	 * @returns {CIELab}
 	 */
@@ -1436,14 +1469,10 @@
 			this.hue = hue;
 			this.saturation = saturation;
 			this.lightness = lightness;
-		} else if (Type.isObject(hue)) {
-			if (hue instanceof this.constructor) {
-				this.hue = hue.hue;
-				this.saturation = hue.saturation;
-				this.lightness = hue.lightness;
-			} else {
-				return toColorSpace(hue, Color.HSL);
-			}
+		} else if (hue instanceof this.constructor) {
+			this.hue = hue.hue;
+			this.saturation = hue.saturation;
+			this.lightness = hue.lightness;
 		} else {
 			return toColorSpace(hue, Color.HSL);
 		}
@@ -1539,6 +1568,14 @@
 	};
 
 	/**
+	 * Convert to xyY color
+	 * @returns {xyY}
+	 */
+	HSL.prototype.toxyY = function () {
+		return this.isSet() ? this.toRGB().toxyY() : null;
+	};
+
+	/**
 	 * Convert to CIELab color
 	 * @returns {CIELab}
 	 */
@@ -1585,15 +1622,11 @@
 			this.saturation = saturation;
 			this.lightness = lightness;
 			this.alpha = Type.isNumber(alpha) && alpha.between(0, 1) ? alpha : 1;
-		} else if (Type.isObject(hue)) {
-			if (hue instanceof this.constructor) {
-				this.hue = hue.hue;
-				this.saturation = hue.saturation;
-				this.lightness = hue.lightness;
-				this.alpha = hue.alpha;
-			} else {
-				return toColorSpace(hue, Color.HSLA);
-			}
+		} else if (hue instanceof this.constructor) {
+			this.hue = hue.hue;
+			this.saturation = hue.saturation;
+			this.lightness = hue.lightness;
+			this.alpha = hue.alpha;
 		} else {
 			return toColorSpace(hue, Color.HSLA);
 		}
@@ -1690,6 +1723,15 @@
 	};
 
 	/**
+	 * Convert to xyY color
+	 * @param {Object} background
+	 * @returns {xyY}
+	 */
+	HSLA.prototype.toxyY = function (background) {
+		return this.isSet() ? this.toRGBA(background).toxyY() : null;
+	};
+
+	/**
 	 * Convert to CIELab color
 	 * @param {Object} background
 	 * @returns {CIELab}
@@ -1743,14 +1785,10 @@
 			this.hue = hue;
 			this.saturation = saturation;
 			this.value = value;
-		} else if (Type.isObject(hue)) {
-			if (hue instanceof this.constructor) {
-				this.hue = hue.hue;
-				this.saturation = hue.saturation;
-				this.value = hue.value;
-			} else {
-				return toColorSpace(hue, Color.HSV);
-			}
+		} else if (hue instanceof this.constructor) {
+			this.hue = hue.hue;
+			this.saturation = hue.saturation;
+			this.value = hue.value;
 		} else {
 			return toColorSpace(hue, Color.HSV);
 		}
@@ -1890,6 +1928,14 @@
 	};
 
 	/**
+	 * Convert to xyY color
+	 * @returns {xyY}
+	 */
+	HSV.prototype.toxyY = function () {
+		return this.isSet() ? this.toRGB().toxyY() : null;
+	};
+
+	/**
 	 * Convert to CIELab color
 	 * @returns {CIELab}
 	 */
@@ -1926,14 +1972,10 @@
 			this.X = X;
 			this.Y = Y;
 			this.Z = Z;
-		} else if (Type.isObject(X)) {
-			if (X instanceof this.constructor) {
-				this.X = X.X;
-				this.Y = X.Y;
-				this.Z = X.Z;
-			} else {
-				return toColorSpace(X, Color.XYZ);
-			}
+		} else if (X instanceof this.constructor) {
+			this.X = X.X;
+			this.Y = X.Y;
+			this.Z = X.Z;
 		} else {
 			return toColorSpace(X, Color.XYZ);
 		}
@@ -2019,6 +2061,18 @@
 	};
 
 	/**
+	 * Convert to xyY color
+	 * @returns {xyY}
+	 */
+	XYZ.prototype.toxyY = function () {
+		if (this.isSet()) {
+			var sum = this.X + this.Y + this.Z;
+
+			return new xyY(this.X / sum, this.Y / sum, this.Y);
+		}
+	};
+
+	/**
 	 * Convert to CIELab color
 	 * @returns {CIELab}
 	 */
@@ -2060,6 +2114,135 @@
 	};
 
 	/**
+	 * xyY color class
+	 * @constructor
+	 * @param {Number|Object} x x value / color object
+	 * @param {Number} y
+	 * @param {Number} Y
+	 */
+	function xyY(x, y, Y) {
+		if (Type.isNumber(x) && Type.isNumber(y) && Type.isNumber(Y)) {
+			this.x = x;
+			this.y = y;
+			this.Y = Y;
+		} else if (x instanceof this.constructor) {
+			this.x = x.x;
+			this.y = x.y;
+			this.Y = x.Y;
+		} else {
+			return toColorSpace(x, Color.XYY);
+		}
+
+		return this;
+	}
+
+	$.xyY = xyY;
+
+	xyY.prototype.x = undefined;
+	xyY.prototype.y = undefined;
+	xyY.prototype.Y = undefined;
+
+	/**
+	 * Check whether the xyY object values are set
+	 * @returns {Boolean}
+	 */
+	xyY.prototype.isSet = function () {
+		return Type.isNumber(this.x) && Type.isNumber(this.y) && Type.isNumber(this.Y);
+	};
+
+	/**
+	 * Convert to RGB color
+	 * @returns {RGB}
+	 */
+	xyY.prototype.toRGB = function () {
+		return this.isSet() ? this.toXYZ().toRGB() : null;
+	};
+
+	/**
+	 * Convert to RGBA color
+	 * @returns {RGBA}
+	 */
+	xyY.prototype.toRGBA = function () {
+		return this.isSet() ? this.toXYZ().toRGBA() : null;
+	};
+
+	/**
+	 * Convert to Hex color
+	 * @returns {Hex}
+	 */
+	xyY.prototype.toHex = function () {
+		return this.isSet() ? this.toXYZ().toHex() : null;
+	};
+
+	/**
+	 * Convert to HSL color
+	 * @returns {HSL}
+	 */
+	xyY.prototype.toHSL = function () {
+		return this.isSet() ? this.toXYZ().toHSL() : null;
+	};
+
+	/**
+	 * Convert to HSLA color
+	 * @returns {HSLA}
+	 */
+	xyY.prototype.toHSLA = function () {
+		return this.isSet() ? this.toXYZ().toHSLA() : null;
+	};
+
+	/**
+	 * Convert to HSV color
+	 * @returns {HSV}
+	 */
+	xyY.prototype.toHSV = function () {
+		return this.isSet() ? this.toXYZ().toHSV() : null;
+	};
+
+	/**
+	 * Convert to XYZ color
+	 * @returns {XYZ}
+	 */
+	xyY.prototype.toXYZ = function () {
+		if (this.isSet()) {
+			if (this.y === 0) {
+				return new XYZ(0, 0, 0);
+			} else {
+				var X = (this.x * this.Y) / this.y;
+				var Z = ((1 - this.x - this.y) * this.Y) / this.y;
+
+				return new XYZ(X, this.Y, Z);
+			}
+		}
+
+		return null;
+	};
+
+	/**
+	 * Convert to CIELab color
+	 * @returns {CIELab}
+	 */
+	xyY.prototype.toCIELab = function () {
+		return this.isSet() ? this.toXYZ().toCIELab() : null;
+	};
+
+	/**
+	 * Convert to CMYK color
+	 * @returns {CMYK}
+	 */
+	xyY.prototype.toCMYK = function () {
+		return this.isSet() ? this.toXYZ().toCMYK() : null;
+	};
+
+	/**
+	 * Get a random xyY color
+	 * @static
+	 * @returns {xyY}
+	 */
+	xyY.random = function () {
+		return XYZ.random().toxyY();
+	};
+
+	/**
 	 * CIELab color class
 	 * @constructor
 	 * @param {Number|Object} L L value / color object
@@ -2071,14 +2254,10 @@
 			this.L = L;
 			this.a = a;
 			this.b = b;
-		} else if (Type.isObject(L)) {
-			if (L instanceof this.constructor) {
-				this.L = L.L;
-				this.a = L.a;
-				this.b = L.b;
-			} else {
-				return toColorSpace(L, Color.CIELAB);
-			}
+		} else if (L instanceof this.constructor) {
+			this.L = L.L;
+			this.a = L.a;
+			this.b = L.b;
 		} else {
 			return toColorSpace(L, Color.CIELAB);
 		}
@@ -2172,6 +2351,14 @@
 	};
 
 	/**
+	 * Convert to xyY color
+	 * @returns {xyY}
+	 */
+	CIELab.prototype.toxyY = function () {
+		return this.isSet() ? this.toXYZ().toxyY() : null;
+	};
+
+	/**
 	 * Convert to CMYK color
 	 * @returns {CMYK}
 	 */
@@ -2202,15 +2389,11 @@
 			this.magenta = magenta;
 			this.yellow = yellow;
 			this.key = key;
-		} else if (Type.isObject(cyan)) {
-			if (cyan instanceof this.constructor) {
-				this.cyan = cyan.cyan;
-				this.magenta = cyan.magenta;
-				this.yellow = cyan.yellow;
-				this.key = cyan.key;
-			} else {
-				return toColorSpace(cyan, Color.CMYK);
-			}
+		} else if (cyan instanceof this.constructor) {
+			this.cyan = cyan.cyan;
+			this.magenta = cyan.magenta;
+			this.yellow = cyan.yellow;
+			this.key = cyan.key;
 		} else {
 			return toColorSpace(cyan, Color.CMYK);
 		}
@@ -2296,6 +2479,14 @@
 	 */
 	CMYK.prototype.toXYZ = function () {
 		return this.isSet() ? this.toRGB().toXYZ() : null;
+	};
+
+	/**
+	 * Convert to xyY color
+	 * @returns {xyY}
+	 */
+	CMYK.prototype.toxyY = function () {
+		return this.isSet() ? this.toRGB().toxyY() : null;
 	};
 
 	/**
