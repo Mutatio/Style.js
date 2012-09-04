@@ -32,13 +32,13 @@ string Compiler::compile(string javascript) {
 	context.Dispose();
 
 	// Convert the result to an ASCII string and print it.
-	v8::String::AsciiValue ascii(result);
+	v8::String::Utf8Value utf8(result);
 
-	return *ascii;
+	return *utf8;
 }
 
 // Reusable global file stream, used in File::getContents
-ifstream fileStream;
+ifstream fileStream(NULL, ios::in | ios::binary);
 
 /**
  * Returns the contents of the given file
