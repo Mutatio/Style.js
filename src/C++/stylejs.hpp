@@ -35,40 +35,58 @@ namespace stylejs {
 	static bool useEmbeddedStyleJS = true;
 
 	/**
+	 * @return Copy of embedded Type.js
+	 */
+	static string getEmbeddedTypeJS() {
+		char* c;
+		stringstream ss(stringstream::in | stringstream::out);
+
+		for (c = _binary_Type_js_start; c != _binary_Type_js_end; ++c) {
+			ss << *c;
+		}
+
+		return ss.str();
+	}
+
+	/**
+	 * @return Copy of embedded Util.js
+	 */
+	static string getEmbeddedUtilJS() {
+		char* c;
+		stringstream ss(stringstream::in | stringstream::out);
+
+		for (c = _binary_Util_js_start; c != _binary_Util_js_end; ++c) {
+			ss << *c;
+		}
+
+		return ss.str();
+	}
+
+	/**
 	 * @return Copy of embedded Style.js
+	 */
+	static string getEmbeddedStyleJS() {
+		char* c;
+		stringstream ss(stringstream::in | stringstream::out);
+
+		for (c = _binary_Style_js_start; c != _binary_Style_js_end; ++c) {
+			ss << *c;
+		}
+
+		return ss.str();
+	}
+
+	/**
+	 * @return Copy of embedded JavaScript
 	 */
 	static string getEmbeddedJavaScript(string TypeJS, string UtilJS, string StyleJS) {
 		char* c;
 
 		stringstream ss(stringstream::in | stringstream::out);
 
-		if (useEmbeddedTypeJS) {
-			for (c = _binary_Type_js_start; c != _binary_Type_js_end; ++c) {
-				ss << *c;
-			}
-		} else {
-			ss << TypeJS;
-		}
-
-		ss << "\n\n";
-
-		if (useEmbeddedUtilJS) {
-			for (c = _binary_Util_js_start; c != _binary_Util_js_end; ++c) {
-				ss << *c;
-			}
-		} else {
-			ss << UtilJS;
-		}
-
-		ss << "\n\n";
-
-		if (useEmbeddedStyleJS) {
-			for (c = _binary_Style_js_start; c != _binary_Style_js_end; ++c) {
-				ss << *c;
-			}
-		} else {
-			ss << StyleJS;
-		}
+		ss << (useEmbeddedTypeJS ? getEmbeddedTypeJS() : TypeJS) << "\n\n";
+		ss << (useEmbeddedUtilJS ? getEmbeddedUtilJS() : UtilJS) << "\n\n";
+		ss << (useEmbeddedStyleJS ? getEmbeddedStyleJS() : StyleJS);
 
 		return ss.str();
 	}
