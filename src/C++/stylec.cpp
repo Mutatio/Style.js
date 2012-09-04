@@ -24,7 +24,7 @@ int main(int argc, char* argv[]) {
 						CSSFilename = optarg;
 
 						// Open file file writing and truncate contents
-						CSSFile.open(CSSFilename, ios::out | ios::trunc);
+						CSSFile.open(CSSFilename, ios::out | ios::binary);
 
 						saveOutput = CSSFile.is_open();
 
