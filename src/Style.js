@@ -277,6 +277,24 @@
 	};
 
 	/**
+	 * Common color depths
+	 * @static
+	 * @constant
+	 * @type {Object}
+	 */
+	Color.depth = {
+		3: [1, 1, 1],
+		6: [2, 2, 2],
+		9: [3, 3, 3],
+		12: [4, 4, 4],
+		15: [5, 5, 5],
+		16: [5, 6, 5],
+		18: [6, 6, 6],
+		21: [7, 7, 7],
+		24: [8, 8, 8]
+	};
+
+	/**
 	 * @static
 	 * @constant
 	 * @type {Object.<String, String>}
@@ -734,14 +752,14 @@
 					if (type === 'string' || Color.isValidCSSType(type)) {
 						output[parent].push(x.replace(/\_/g, '-') + ": " + obj[x]);
 					} else if (type === 'number') {
-						output[parent].push(x.replace(/\_/g, '-') + ": " + obj[x] + defaultUnit);
+						output[parent].push(x.replace(/\_/g, '-') + ": " + obj[x] + (obj[x] !== 0 ? defaultUnit : ''));
 					} else if (type === 'array') {
 						for (var y in obj[x]) {
 							if ((type = Type.getType(obj[x][y])) !== 'function') {
 								if (type === 'string' || Color.isValidCSSType(type)) {
 									output[parent].push(x.replace(/\_/g, '-') + ": " + obj[x][y]);
 								} else if (type === 'number') {
-									output[parent].push(x.replace(/\_/g, '-') + ": " + obj[x][y] + defaultUnit);
+									output[parent].push(x.replace(/\_/g, '-') + ": " + obj[x][y] + (obj[x][y] !== 0 ? defaultUnit : ''));
 								}
 							}
 						}
@@ -813,7 +831,7 @@
 				if (type === 'string' || Color.isValidCSSType(type)) {
 					out.push(name + '-' + x + ': ' + this.self[x]);
 				} else if (type === 'number') {
-					out.push(name + '-' + x + ': ' + this.self[x] + defaultUnit);
+					out.push(name + '-' + x + ': ' + this.self[x] + (this.self[x] !== 0 ? defaultUnit : ''));
 				} else if (type === 'array') {
 					for (var y in this.self[x]) {
 						type = Type.getType(this.self[x][y]);
@@ -821,7 +839,7 @@
 						if (type === 'string' || Color.isValidCSSType(type)) {
 							out.push(name + '-' + x + ': ' + this.self[x][y]);
 						} else if (type === 'number') {
-							out.push(name + '-' + x + ': ' + this.self[x][y] + defaultUnit);
+							out.push(name + '-' + x + ': ' + this.self[x][y] + (this.self[x][y] !== 0 ? defaultUnit : ''));
 						}
 					}
 				}
@@ -2070,6 +2088,8 @@
 
 			return new xyY(this.X / sum, this.Y / sum, this.Y);
 		}
+
+		return null;
 	};
 
 	/**
@@ -2774,6 +2794,45 @@
 	$.grayscale = grayscale;
 
 	/**
+	 * Set the bit depth of the color relative to 24bit
+	 * @param {Object|String} color
+	 * @param {Number} red
+	 * @param {Number} green
+	 * @param {Number} blue
+	 * @returns {Array|Null}
+	 */
+	function setColorDepth(color, red, green, blue) {
+		if (color && red && Type.isInteger(red) && red > 0) {
+			// Get defined color depth
+			if (green === undefined && blue === undefined) {
+				var depth = Color.depth[red];
+
+				if (depth) {
+					red = depth[0];
+					green = depth[1];
+					blue = depth[2];
+				}
+			}
+
+			if (Type.isInteger(green) && Type.isInteger(blue) && green > 0 && blue > 0) {
+				color = new RGB(color);
+
+				if (color !== undefined && color.isSet()) {
+					red = (Math.pow(2, red) - 1) / 255;
+					green = (Math.pow(2, green) - 1) / 255;
+					blue = (Math.pow(2, blue) - 1) / 255;
+
+					return [Math.round(color.red * red), Math.round(color.green * green), Math.round(color.blue * blue)];
+				}
+			}
+		}
+
+		return null;
+	}
+
+	$.setColorDepth = setColorDepth;
+
+	/**
 	 * Set color opacity.
 	 * @param {Object|String} color
 	 * @param {Number} opacity
@@ -2837,7 +2896,7 @@
 
 						return color;
 					} else {
-						color = color.toRGBA();
+						color = new RGBA(color);
 						change = color.alpha * multiplier;
 						color.alpha += adjustment === 'increase' ? change : -change;
 
