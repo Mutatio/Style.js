@@ -306,7 +306,7 @@
 	Color.Comparators = {};
 
 	/**
-	 * Sort color array by red value
+	 * Sort color array by absolute red value
 	 * @static
 	 * @param {Object|String} a
 	 * @param {Object|String} b
@@ -344,7 +344,7 @@
 	};
 
 	/**
-	 * Sort color array by green value
+	 * Sort color array by absolute green value
 	 * @static
 	 * @param {Object|String} a
 	 * @param {Object|String} b
@@ -382,7 +382,7 @@
 	};
 
 	/**
-	 * Sort color array by blue value
+	 * Sort color array by absolute blue value
 	 * @static
 	 * @param {Object|String} a
 	 * @param {Object|String} b
@@ -410,6 +410,114 @@
 					}
 				} else {
 					return a.blue < b.blue ? 1 : -1;
+				}
+			}
+
+			return -1
+		}
+
+		return validB ? 1 : 0;
+	};
+
+	/**
+	 * Sort color array by relative red value
+	 * @static
+	 * @param {Object|String} a
+	 * @param {Object|String} b
+	 * @returns {Number}
+	 */
+	Color.Comparators.sortByRedRelative = function (a, b) {
+		a = new RGB(a);
+		b = new RGB(b);
+
+		var validA = a && a.isSet();
+		var validB = b && b.isSet();
+
+		if (validA) {
+			if (validB) {
+				var totalA = a.red - (a.green + a.blue);
+				var totalB = b.red - (b.green + b.blue);
+
+				if (totalA === totalB) {
+					if (a.red === b.red) {
+						return 0;
+					} else {
+						return a.red < b.red ? 1 : -1;
+					}
+				} else {
+					return totalA < totalB ? 1 : -1;
+				}
+			}
+
+			return -1
+		}
+
+		return validB ? 1 : 0;
+	};
+
+	/**
+	 * Sort color array by relative green value
+	 * @static
+	 * @param {Object|String} a
+	 * @param {Object|String} b
+	 * @returns {Number}
+	 */
+	Color.Comparators.sortByGreenRelative = function (a, b) {
+		a = new RGB(a);
+		b = new RGB(b);
+
+		var validA = a && a.isSet();
+		var validB = b && b.isSet();
+
+		if (validA) {
+			if (validB) {
+				var totalA = a.green - (a.red + a.blue);
+				var totalB = b.green - (b.red + b.blue);
+
+				if (totalA === totalB) {
+					if (a.green === b.green) {
+						return 0;
+					} else {
+						return a.green < b.green ? 1 : -1;
+					}
+				} else {
+					return totalA < totalB ? 1 : -1;
+				}
+			}
+
+			return -1
+		}
+
+		return validB ? 1 : 0;
+	};
+
+	/**
+	 * Sort color array by relative blue value
+	 * @static
+	 * @param {Object|String} a
+	 * @param {Object|String} b
+	 * @returns {Number}
+	 */
+	Color.Comparators.sortByBlueRelative = function (a, b) {
+		a = new RGB(a);
+		b = new RGB(b);
+
+		var validA = a && a.isSet();
+		var validB = b && b.isSet();
+
+		if (validA) {
+			if (validB) {
+				var totalA = a.blue - (a.red + a.green);
+				var totalB = b.blue - (b.red + b.green);
+
+				if (totalA === totalB) {
+					if (a.blue === b.blue) {
+						return 0;
+					} else {
+						return a.blue < b.blue ? 1 : -1;
+					}
+				} else {
+					return totalA < totalB ? 1 : -1;
 				}
 			}
 
