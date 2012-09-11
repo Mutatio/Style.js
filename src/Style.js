@@ -4295,6 +4295,24 @@
 	};
 
 	/**
+	 * Mix the canvas colors with a given color
+	 * @static
+	 * @param {Object} canvas
+	 * @param {Object|String} color
+	 */
+	Canvas.mix = function (canvas, color) {
+		var image = canvas;
+		canvas = new Canvas(canvas);
+
+		if (canvas !== null) {
+			// mix() uses RGB for calculations, improve performance by passing RGB object
+			color = new RGB(color);
+
+			Canvas.filter(image, mix, color);
+		}
+	};
+
+	/**
 	 * Swap pixel colors with their complementary
 	 * @static
 	 * @param {Object} canvas
