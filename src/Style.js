@@ -4129,20 +4129,13 @@
 		return out;
 	};
 
-	/*$.Image = $.Image || function () {};
-
-	Image.prototype.toCanvas = function (obj) {
-		if (obj && obj.nodeName == 'CANVAS') {
-			obj.width = this.width;
-			obj.height = this.height;
-
-			var context = obj.getContext('2d');
-
-			context.drawImage(this, 0, 0, this.width, this.height);
-		}
-	};
-
-	function toCanvas(image, canvas) {
+	/**
+	 * Draw image onto canvas
+	 * @param {String|Image} image
+	 * @param {Object} canvas
+	 * @param {Function} func
+	 */
+	function toCanvas(image, canvas, func) {
 		if (Type.isElement(canvas) && canvas.nodeName == 'CANVAS') {
 			if (Type.isString(image)) {
 				var src = image;
@@ -4152,19 +4145,23 @@
 			}
 
 			if (Type.isImage(image)) {
-				//image.onload = function () {
-				canvas.width = image.width;
-				canvas.height = image.height;
+				image.onload = function () {
+					canvas.width = image.width;
+					canvas.height = image.height;
 
-				var context = canvas.getContext('2d');
+					var context = canvas.getContext('2d');
 
-				context.drawImage(image, 0, 0, image.width, image.height);
-			//};
+					context.drawImage(image, 0, 0, image.width, image.height);
+
+					if (func !== undefined && Type.isFunction(func)) {
+						func();
+					}
+				};
 			}
 		}
 	}
 
-	$.toCanvas = toCanvas;*/
+	$.toCanvas = toCanvas;
 
 	/**
 	 * Canvas object constructor
@@ -4234,7 +4231,9 @@
 	 * @param {Number} passes
 	 */
 	Canvas.blur = function (canvas, passes) {
-		if (!passes || !Type.isInteger(passes))  passes = 1;
+		if (!passes || !Type.isInteger(passes)) {
+			passes = 1;
+		}
 
 		var image = canvas;
 		canvas = new Canvas(canvas);
@@ -4251,6 +4250,47 @@
 			}
 
 			canvas.context.globalAlpha = 1.0;
+		}
+	};
+
+	/**
+	 * Add noise by mutating pixels
+	 * @static
+	 * @param {Object} canvas
+	 * @param {Number} decay The magnitude at which pixels can decay away from their origin
+	 * @param {Number} passes
+	 */
+	Canvas.noise = function (canvas, decay, passes) {
+		if (!decay || !Type.isNumber(decay)) {
+			decay = 0.025;
+		}
+
+		if (!passes || !Type.isInteger(passes)) {
+			passes = 1;
+		}
+
+		var image = canvas;
+		canvas = new Canvas(canvas);
+
+		if (canvas !== null) {
+			for (var i = 0; i < passes; i++) {
+				Canvas.filter(image, mutate, decay);
+			}
+		}
+	};
+
+	/**
+	 * Primitive function to make a image look "old"
+	 * @static
+	 * @param {Object} canvas
+	 */
+	Canvas.age = function (canvas) {
+		var image = canvas;
+		canvas = new Canvas(canvas);
+
+		if (canvas !== null) {
+			Canvas.filter(image, mutate, .05);
+			Canvas.blur(image, 1);
 		}
 	};
 
@@ -4301,7 +4341,7 @@
 		Canvas.filter(canvas, grayscale);
 	};
 
-	/**Canvas.getColors = function (canvas) {
+/**Canvas.getColors = function (canvas) {
 		canvas = new Canvas(canvas);
 
 		if (canvas !== null) {
