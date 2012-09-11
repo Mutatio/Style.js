@@ -871,16 +871,6 @@
 	};
 
 	/**
-	 * Checks if value is Poperty type
-	 * @private
-	 * @param {mixed} value
-	 * @returns {Boolean}
-	 */
-	function isProperty(value) {
-		return value instanceof Property;
-	}
-
-	/**
 	 * RGB color class
 	 * @constructor
 	 * @param {Number|Object} red Red value / color object
@@ -4136,7 +4126,7 @@
 	 * @param {Function} func
 	 */
 	function toCanvas(image, canvas, func) {
-		if (Type.isElement(canvas) && canvas.nodeName == 'CANVAS') {
+		if (Type.isElement(canvas) && canvas.nodeName === 'CANVAS') {
 			if (Type.isString(image)) {
 				var src = image;
 
@@ -4170,7 +4160,7 @@
 	 * @return {Canvas|null}
 	 */
 	function Canvas(canvas) {
-		if (Type.isElement(canvas) && canvas.nodeName == 'CANVAS') {
+		if (Type.isElement(canvas) && canvas.nodeName === 'CANVAS') {
 			this.context = canvas.getContext('2d');
 			this.content = this.context.getImageData(0, 0, canvas.width, canvas.height);
 			this.data = this.content.data;
@@ -4289,7 +4279,7 @@
 		canvas = new Canvas(canvas);
 
 		if (canvas !== null) {
-			Canvas.filter(image, mutate, .05);
+			Canvas.filter(image, mutate, 0.05);
 			Canvas.blur(image, 1);
 		}
 	};
