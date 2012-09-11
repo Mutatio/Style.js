@@ -298,6 +298,128 @@
 	};
 
 	/**
+	 * Color array comparators
+	 * @static
+	 * @constant
+	 * @type {Object.<String, Function>}
+	 */
+	Color.Comparators = {};
+
+	/**
+	 * Sort color array by red value
+	 * @static
+	 * @param {Object|String} a
+	 * @param {Object|String} b
+	 * @returns {Number}
+	 */
+	Color.Comparators.sortByRed = function (a, b) {
+		a = new RGB(a);
+		b = new RGB(b);
+
+		var validA = a && a.isSet();
+		var validB = b && b.isSet();
+
+		if (validA) {
+			if (validB) {
+				if (a.red === b.red) {
+					var totalA = a.green + a.blue;
+					var totalB = b.green + b.blue;
+
+					if (totalA === totalB) {
+						return 0;
+					} else if (totalA < totalB) {
+						return -1;
+					} else {
+						return 1;
+					}
+				} else {
+					return a.red < b.red ? 1 : -1;
+				}
+			}
+
+			return -1
+		}
+
+		return validB ? 1 : 0;
+	};
+
+	/**
+	 * Sort color array by green value
+	 * @static
+	 * @param {Object|String} a
+	 * @param {Object|String} b
+	 * @returns {Number}
+	 */
+	Color.Comparators.sortByGreen = function (a, b) {
+		a = new RGB(a);
+		b = new RGB(b);
+
+		var validA = a && a.isSet();
+		var validB = b && b.isSet();
+
+		if (validA) {
+			if (validB) {
+				if (a.green === b.green) {
+					var totalA = a.red + a.blue;
+					var totalB = b.red + b.blue;
+
+					if (totalA === totalB) {
+						return 0;
+					} else if (totalA < totalB) {
+						return -1;
+					} else {
+						return 1;
+					}
+				} else {
+					return a.green < b.green ? 1 : -1;
+				}
+			}
+
+			return -1
+		}
+
+		return validB ? 1 : 0;
+	};
+
+	/**
+	 * Sort color array by blue value
+	 * @static
+	 * @param {Object|String} a
+	 * @param {Object|String} b
+	 * @returns {Number}
+	 */
+	Color.Comparators.sortByBlue = function (a, b) {
+		a = new RGB(a);
+		b = new RGB(b);
+
+		var validA = a && a.isSet();
+		var validB = b && b.isSet();
+
+		if (validA) {
+			if (validB) {
+				if (a.blue === b.blue) {
+					var totalA = a.red + a.green;
+					var totalB = b.red + b.green;
+
+					if (totalA === totalB) {
+						return 0;
+					} else if (totalA < totalB) {
+						return -1;
+					} else {
+						return 1;
+					}
+				} else {
+					return a.blue < b.blue ? 1 : -1;
+				}
+			}
+
+			return -1
+		}
+
+		return validB ? 1 : 0;
+	};
+
+	/**
 	 * Common color depths
 	 * @static
 	 * @constant
