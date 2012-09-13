@@ -3758,11 +3758,13 @@
 	 * @returns {String}
 	 */
 	function toNamed(color, approximate, disableBias) {
-		if (color) {
+		var type = Color.getType(color);
+
+		if (type) {
 			color = new Hex(color);
 
 			if (color !== undefined && color.isSet()) {
-				var value = '#' + color.getValue().toLowerCase();
+				var value = color.value.toLowerCase();
 				var current;
 				var hex;
 
@@ -3776,7 +3778,7 @@
 							}
 
 							if (Type.isString(current) && hex === value) {
-								return current;
+								return Color.toType('#' + value, type);
 							}
 						}
 					}
@@ -3794,12 +3796,15 @@
 
 							if (Type.isString(current)) {
 								if (hex === value) {
-									return current;
+									out = '#' + value;
+
+									break;
 								} else {
+									hex = '#' + hex;
 									dist = distance(color, hex, disableBias);
 
 									if (!last || dist < last) {
-										out = current;
+										out = hex;
 										last = dist;
 									}
 								}
@@ -3807,7 +3812,7 @@
 						}
 					}
 
-					return out;
+					return Color.toType(out, type);
 				}
 			}
 		}
@@ -4348,259 +4353,4 @@
 
 		return out;
 	};
-
-	/**
-	 * Draw image onto canvas
-	 * @param {String|Image} image
-	 * @param {Object} canvas
-	 * @param {Function} func
-	 */
-	function toCanvas(image, canvas, func) {
-		if (Type.isElement(canvas) && canvas.nodeName === 'CANVAS') {
-			if (Type.isString(image)) {
-				var src = image;
-
-				image = new Image();
-				image.src = src;
-			}
-
-			if (Type.isImage(image)) {
-				image.onload = function () {
-					canvas.width = image.width;
-					canvas.height = image.height;
-
-					var context = canvas.getContext('2d');
-
-					context.drawImage(image, 0, 0, image.width, image.height);
-
-					if (func !== undefined && Type.isFunction(func)) {
-						func();
-					}
-				};
-			}
-		}
-	}
-
-	$.toCanvas = toCanvas;
-
-	/**
-	 * Canvas object constructor
-	 * @constructor
-	 * @param {Object} canvas
-	 * @return {Canvas|null}
-	 */
-	function Canvas(canvas) {
-		if (Type.isElement(canvas) && canvas.nodeName === 'CANVAS') {
-			this.context = canvas.getContext('2d');
-			this.content = this.context.getImageData(0, 0, canvas.width, canvas.height);
-			this.data = this.content.data;
-			this.width = canvas.width;
-			this.height = canvas.height;
-			this.length = canvas.width * canvas.height;
-
-			return this;
-		}
-
-		return null;
-	}
-
-	Canvas.prototype.context = undefined;
-	Canvas.prototype.content = undefined;
-	Canvas.prototype.data = undefined;
-	Canvas.prototype.width = undefined;
-	Canvas.prototype.height = undefined;
-	Canvas.prototype.length = undefined;
-
-	$.Canvas = Canvas;
-
-	/**
-	 * Apply filter to canvas
-	 * @static
-	 * @param {Object} canvas
-	 * @param {Function|String} func
-	 * @param {Array} args
-	 */
-	Canvas.filter = function (canvas, func, args) {
-		func = Type.isFunction(func) ? func : $[func];
-
-		if (Type.isFunction(func)) {
-			canvas = new Canvas(canvas);
-
-			if (canvas !== null) {
-				var len = canvas.length;
-				var px, color;
-
-				while (--len) {
-					px = 4 * len;
-					color = func.apply(null, [new RGBA(canvas.data[px], canvas.data[px + 1], canvas.data[px + 2], canvas.data[px + 3] / 255)].concat(args));
-					canvas.data[px] = color.red;
-					canvas.data[px + 1] = color.green;
-					canvas.data[px + 2] = color.blue;
-					canvas.data[px + 3] = Math.round(color.alpha * 255);
-				}
-
-				canvas.context.putImageData(canvas.content, 0, 0);
-			}
-		}
-	};
-
-	/**
-	 * Blur canvas contents
-	 * @static
-	 * @param {Object} canvas
-	 * @param {Number} passes
-	 */
-	Canvas.blur = function (canvas, passes) {
-		if (!passes || !Type.isInteger(passes)) {
-			passes = 1;
-		}
-
-		var image = canvas;
-		canvas = new Canvas(canvas);
-
-		if (canvas !== null) {
-			canvas.context.globalAlpha = 0.125;
-
-			for (var i = 0; i < passes; i++) {
-				for (var x = -1; x < 2; x++) {
-					for (var y = -1; y < 2; y++) {
-						canvas.context.drawImage(image, x, y);
-					}
-				}
-			}
-
-			canvas.context.globalAlpha = 1.0;
-		}
-	};
-
-	/**
-	 * Add noise by mutating pixels
-	 * @static
-	 * @param {Object} canvas
-	 * @param {Number} decay The magnitude at which pixels can decay away from their origin
-	 * @param {Number} passes
-	 */
-	Canvas.noise = function (canvas, decay, passes) {
-		if (!decay || !Type.isNumber(decay)) {
-			decay = 0.025;
-		}
-
-		if (!passes || !Type.isInteger(passes)) {
-			passes = 1;
-		}
-
-		var image = canvas;
-		canvas = new Canvas(canvas);
-
-		if (canvas !== null) {
-			for (var i = 0; i < passes; i++) {
-				Canvas.filter(image, mutate, decay);
-			}
-		}
-	};
-
-	/**
-	 * Primitive function to make a image look "old"
-	 * @static
-	 * @param {Object} canvas
-	 */
-	Canvas.age = function (canvas) {
-		var image = canvas;
-		canvas = new Canvas(canvas);
-
-		if (canvas !== null) {
-			Canvas.filter(image, mutate, 0.05);
-			Canvas.blur(image, 1);
-		}
-	};
-
-	/**
-	 * Mix the canvas colors with a given color
-	 * @static
-	 * @param {Object} canvas
-	 * @param {Object|String} color
-	 */
-	Canvas.mix = function (canvas, color) {
-		var image = canvas;
-		canvas = new Canvas(canvas);
-
-		if (canvas !== null) {
-			// mix() uses RGB for calculations, improve performance by passing RGB object
-			color = new RGB(color);
-
-			Canvas.filter(image, mix, color);
-		}
-	};
-
-	/**
-	 * Swap pixel colors with their complementary
-	 * @static
-	 * @param {Object} canvas
-	 */
-	Canvas.complement = function (canvas) {
-		Canvas.filter(canvas, complement);
-	};
-
-	/**
-	 * Invert canvas colors
-	 * @static
-	 * @param {Object} canvas
-	 */
-	Canvas.invert = function (canvas) {
-		Canvas.filter(canvas, invert);
-	};
-
-	/**
-	 * Saturate canvas colors
-	 * @static
-	 * @param {Object} canvas
-	 * @param {Number} multiplier
-	 */
-	Canvas.saturate = function (canvas, multiplier) {
-		Canvas.filter(canvas, saturate, multiplier);
-	};
-
-	/**
-	 * Desaturate canvas colors
-	 * @static
-	 * @param {Object} canvas
-	 * @param {Number} multiplier
-	 */
-	Canvas.desaturate = function (canvas, multiplier) {
-		Canvas.filter(canvas, desaturate, multiplier);
-	};
-
-	/**
-	 * Grayscale (fully desaturate) canvas colors
-	 * @static
-	 * @param {Object} canvas
-	 */
-	Canvas.grayscale = function (canvas) {
-		Canvas.filter(canvas, grayscale);
-	};
-
-/**Canvas.getColors = function (canvas) {
-		canvas = new Canvas(canvas);
-
-		if (canvas !== null) {
-			var len = canvas.length;
-			var out = {
-				red: 0,
-				green: 0,
-				blue: 0
-			};
-			var tmp;
-
-			while (--len) {
-				tmp = 4 * len;
-				tmp = new RGBA(canvas.data[tmp], canvas.data[tmp + 1], canvas.data[tmp + 2], canvas.data[tmp + 3]).toRGB();
-
-				out.red += tmp.red;
-				out.green += tmp.green;
-				out.blue += tmp.blue;
-			}
-
-			alert(new RGB(out.red / canvas.length, out.green / canvas.length, out.blue / canvas.length).toHex());
-		}
-	};**/
 })(this);
