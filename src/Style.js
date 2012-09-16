@@ -765,10 +765,43 @@
 					return this.HSLA;
 				}
 			} else {
-				var type = Type.getType(color);
+				switch (true) {
+					case color instanceof RGB:
+						return this.RGB;
 
-				if (type && this[type.toUpperCase()]) {
-					return type;
+					case color instanceof RGBA:
+						return this.RGBA;
+
+					case color instanceof Hex:
+						return this.HEX;
+
+					case color instanceof HSL:
+						return this.HSL;
+
+					case color instanceof HSLA:
+						return this.HSLA;
+
+					case color instanceof HSV:
+						return this.HSV;
+
+					case color instanceof xyY:
+						return this.XYY;
+
+					case color instanceof XYZ:
+						return this.XYZ;
+
+					case color instanceof CIELab:
+						return this.CIELAB;
+
+					case color instanceof CYMK:
+						return this.CYMK;
+
+					default:
+						var type = Type.getType(color);
+
+						if (type && this[type.toUpperCase()]) {
+							return type;
+						}
 				}
 			}
 		}
