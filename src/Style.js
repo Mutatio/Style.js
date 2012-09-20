@@ -1561,7 +1561,6 @@
 	 */
 	RGBA.prototype.getComponent = function(component, background) {
 		if (this.isSet()) {
-			alert('is');
 			var color = background === false ? this : this.toRGB(background);
 
 			switch (component) {
@@ -1578,6 +1577,46 @@
 
 		return null;
 	};
+
+	/**
+	 * Randomly mutate the RGB object
+	 */
+	RGBA.prototype.mutate = function (change) {
+		if (change && Type.isNumber(change) && change.between(0, 1) && this.isSet()) {
+			change *= 255;
+
+			// Mutated red
+			var red = Math.random() * 2 > 1 ? this.red + change : this.red - change;
+
+			if (red > 255) {
+				red = this.red - change;
+			} else if (red < 0) {
+				red = this.red + change;
+			}
+
+			// Mutated green
+			var green = Math.random() * 2 > 1 ? this.green + change : this.green - change;
+
+			if (green > 255) {
+				green = this.green - change;
+			} else if (green < 0) {
+				green = this.green + change;
+			}
+
+			// Mutated blue
+			var blue = Math.random() * 2 > 1 ? this.blue + change : this.blue - change;
+
+			if (blue > 255) {
+				blue = this.blue - change;
+			} else if (blue < 0) {
+				blue = this.blue + change;
+			}
+
+			this.red = red;
+			this.green = green;
+			this.blue = blue;
+		}
+	}
 
 	/**
 	 * Get a random RGBA color
@@ -3037,39 +3076,12 @@
 			var type = Color.getType(color);
 
 			if (type) {
-				color = new RGB(color);
-				change *= 255;
+				color = new RGBA(color);
 
-				if (color !== undefined && color.isSet()) {
-					// Mutated red
-					var red = Math.random() * 2 > 1 ? color.red + change : color.red - change;
+				// Mutate RGB
+				color.mutate(change);
 
-					if (red > 255) {
-						red = color.red - change;
-					} else if (red < 0) {
-						red = color.red + change;
-					}
-
-					// Mutated green
-					var green = Math.random() * 2 > 1 ? color.green + change : color.green - change;
-
-					if (green > 255) {
-						green = color.green - change;
-					} else if (green < 0) {
-						green = color.green + change;
-					}
-
-					// Mutated blue
-					var blue = Math.random() * 2 > 1 ? color.blue + change : color.blue - change;
-
-					if (blue > 255) {
-						blue = color.blue - change;
-					} else if (blue < 0) {
-						blue = color.blue + change;
-					}
-
-					return Color.toType(new RGB(red, green, blue), type);
-				}
+				return Color.toType(color, type);
 			}
 		}
 
