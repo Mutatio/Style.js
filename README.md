@@ -70,3 +70,10 @@ Any valid JavaScript code should work. It's easy to mix in your own functionalit
             color: '#fff'
         }
     });
+
+Result:
+
+    .randomRed {
+        background-color: #bd4028;
+        color: #fff
+    }
