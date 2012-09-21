@@ -45,7 +45,7 @@ Result:
 Any valid JavaScript code should work. It's easy to mix in your own functionality:
 
 	// Returns a random color with a high red value, as a hex color code
-    function getRandomRedColor() {
+    function **getRandomRedColor**() {
 		// Generate random RGB color
 		var out = RGB.random();
 
@@ -66,7 +66,7 @@ Any valid JavaScript code should work. It's easy to mix in your own functionalit
 
     new Style({
         '.randomRed': {
-            background_color: getRandomRedColor(),
+            background_color: **getRandomRedColor**(),
             color: '#fff'
         }
     });
@@ -126,7 +126,7 @@ Result:
 
 Example:
 
-    function align(width) {
+    function **align**(width) {
         if (!width || !Type.isInteger(width)) {
             width = 700;
         }
@@ -147,19 +147,19 @@ Example:
             header: {
                 background_color: '#06c'.toRGB()
             }.extend(
-                align(pageWidth)
+                **align(pageWidth)**
             ),
 
             div: {
                 background_color: '#ccc'.toRGB()
             }.extend(
-                align(pageWidth)
+                **align(pageWidth)**
             ),
 
             footer: {
                 background_color: '#f30'.toRGB()
             }.extend(
-                align(pageWidth)
+                **align(pageWidth)**
             )
         }
     });
@@ -215,7 +215,7 @@ Example:
     };
 
     new Style(
-        singularity.extend(A, B)
+        singularity.**extend(A, B)**
     );
 
 Result:
