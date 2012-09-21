@@ -190,3 +190,42 @@ Result:
         margin: 0 auto;
         text-align: left
     }
+
+### Inheritance
+
+Example:
+
+    // In the beginning, there was nothing
+    var singularity = {};
+
+    var A = {
+        body: {
+            font: "12px/14px 'Helvetica Neue', Helvetica, Arial, sans-serif",
+            color: '#000'.toRGB()
+        }
+    };
+
+    var B = {
+        header: {
+            h1: {
+                font_size: 24,
+                color: darken(Hex.random(), 0.3)
+            }
+        }
+    };
+
+    new Style(
+        {}.extend(A, B)
+    );
+
+Result:
+
+    body {
+        font: 12px/14px 'Helvetica Neue', Helvetica, Arial, sans-serif;
+        color: rgb(0, 0, 0)
+    }
+
+    header h1 {
+        font-size: 24px;
+        color: #206502
+    }
