@@ -215,7 +215,7 @@ Example:
     };
 
     new Style(
-        {}.extend(A, B)
+        singularity.extend(A, B)
     );
 
 Result:
