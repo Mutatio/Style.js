@@ -77,3 +77,47 @@ Result:
         background-color: #bd4028;
         color: #fff
     }
+
+### Nested Styles
+
+Example:
+
+    new Style({
+        html: {
+            body: {
+                header: {
+                    div: {
+                        ul: {
+                            li: {
+                                p: {
+                                    color: new RGBA(new Hex('#666')),
+
+                                    'a, strong': {
+                                        font_weight: 'bold'
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+
+                footer: {
+                    'background-color': new HSL(new Hex('#ccc'))
+                }
+            }
+        }
+    });
+
+Result:
+
+    html body header div ul li p {
+        color: rgba(102, 102, 102, 1)
+    }
+
+    html body header div ul li p a, html body header div ul li p strong {
+        font-weight: bold
+    }
+
+    html body footer {
+        background-color: hsl(0, 0%, 80%)
+    }
