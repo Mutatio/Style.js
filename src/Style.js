@@ -100,9 +100,7 @@
 		if (len > 0) {
 			for (var i = 0; i < len; ++i) {
 				if (Type.isObject(arguments[i])) {
-					var property;
-
-					for (property in arguments[i]) {
+					for (var property in arguments[i]) {
 						this[property] = arguments[i][property];
 					}
 				}
@@ -337,7 +335,7 @@
 				}
 			}
 
-			return -1
+			return -1;
 		}
 
 		return validB ? 1 : 0;
@@ -375,7 +373,7 @@
 				}
 			}
 
-			return -1
+			return -1;
 		}
 
 		return validB ? 1 : 0;
@@ -413,7 +411,7 @@
 				}
 			}
 
-			return -1
+			return -1;
 		}
 
 		return validB ? 1 : 0;
@@ -449,7 +447,7 @@
 				}
 			}
 
-			return -1
+			return -1;
 		}
 
 		return validB ? 1 : 0;
@@ -485,7 +483,7 @@
 				}
 			}
 
-			return -1
+			return -1;
 		}
 
 		return validB ? 1 : 0;
@@ -521,7 +519,7 @@
 				}
 			}
 
-			return -1
+			return -1;
 		}
 
 		return validB ? 1 : 0;
@@ -793,8 +791,8 @@
 					case color instanceof CIELab:
 						return this.CIELAB;
 
-					case color instanceof CYMK:
-						return this.CYMK;
+					case color instanceof CMYK:
+						return this.CMYK;
 
 					default:
 						var type = Type.getType(color);
@@ -1557,7 +1555,7 @@
 	 * Get component color
 	 * @param {String} component
 	 * @param {Object} background
-	 * @returns {Number}
+	 * @returns {Null|Number}
 	 */
 	RGBA.prototype.getComponent = function(component, background) {
 		if (this.isSet()) {
@@ -1616,7 +1614,7 @@
 			this.green = green;
 			this.blue = blue;
 		}
-	}
+	};
 
 	/**
 	 * Get a random RGBA color
@@ -1654,7 +1652,7 @@
 	 * Get green component
 	 * @param {Object} color
 	 * @param {Object} background
-	 * @returns {Number}
+	 * @returns {Null|Number}
 	 */
 	function green(color, background) {
 		if (color && (color = new RGBA(color)) !== undefined) {
@@ -1670,7 +1668,7 @@
 	 * Get blue component
 	 * @param {Object} color
 	 * @param {Object} background
-	 * @returns {Number}
+	 * @returns {Null|Number}
 	 */
 	function blue(color, background) {
 		if (color && (color = new RGBA(color)) !== undefined) {
@@ -3467,7 +3465,7 @@
 
 	/**
 	 * Shift the color's hue by a give number of degrees
-	 * @returns {Object|Null}
+	 * @returns {Array|Null}
 	 */
 	function shiftHue() {
 		var len = arguments.length;
@@ -3757,7 +3755,7 @@
 	 * Convert color to its nearest web safe equivalent
 	 * @param {Object|String} color
 	 * @param {Boolean} disableBias If false include eye sensitivity bias
-	 * @returns {String}
+	 * @returns {Object|String}
 	 */
 	function toWebSafe(color, disableBias) {
 		if (color) {
@@ -3800,7 +3798,7 @@
 	 * @param {Object|String} color
 	 * @param {Boolean} approximate If true return closest named color
 	 * @param {Boolean} disableBias If false include eye sensitivity bias
-	 * @returns {String}
+	 * @returns {String|Object}
 	 */
 	function toNamed(color, approximate, disableBias) {
 		var type = Color.getType(color);
@@ -3810,8 +3808,7 @@
 
 			if (color !== undefined && color.isSet()) {
 				var value = color.value.toLowerCase();
-				var current;
-				var hex;
+				var current, hex;
 
 				if (approximate !== true) {
 					for (hex in Color.list) {
@@ -3829,7 +3826,7 @@
 					}
 				} else {
 					var dist = 0;
-					var out, last;
+					var out = null, last = null;
 
 					for (hex in Color.list) {
 						if (!Type.isFunction(Color.list[hex])) {
