@@ -1,14 +1,12 @@
-Style.js
-========
+# Style.js
 
 An easy to use JavaScript library providing CSS preprocessing and a myriad of color manipulation functions.
 
-CSS Preprocessing
------------------
+## CSS Preprocessing
 
 Style.js allows developers to utilize the full power of JavaScript to generate CSS.
 
-Example:
+### Example
 
     var color = '#06c';
 
@@ -43,3 +41,32 @@ Result:
         -moz-border-radius: 8px;
         border-radius: 8px
     }
+
+Any valid JavaScript code should work. It's easy to mix in your own functionality:
+
+	// Returns a random color with a high red value, as a hex color code
+    function getRandomRedColor() {
+		// Generate random RGB color
+		var out = RGB.random();
+
+		// Minimum red value of 180
+		while (out.red < 180) {
+			out = RGB.random();
+		}
+
+		// Convert to HSL color space
+		out = new HSL(out);
+
+		// Adjust the lightness of the color, note: this might reduce the red value
+		out.lightness = 45;
+
+		// Return as hexidecimal
+		return out.toHex();
+	}
+
+    new Style({
+        '.randomRed': {
+            background_color: getRandomRedColor(),
+            color: '#fff'
+        }
+    });
