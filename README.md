@@ -121,3 +121,72 @@ Result:
     html body footer {
         background-color: hsl(0, 0%, 80%)
     }
+
+### "Mixins"
+
+Example:
+
+    function align(width) {
+        if (!width || !Type.isInteger(width)) {
+            width = 700;
+        }
+
+        return {
+            width: width, // Numeric values automatically converted to "px" or the unit set by setDefaultUnit()
+            margin: '0 auto',
+            text_align: 'left'
+        };
+    }
+
+    var pageWidth = 800;
+
+    new Style({
+        body: {
+            text_align: 'center',
+
+            header: {
+                background_color: '#06c'.toRGB()
+            }.extend(
+                align(pageWidth)
+            ),
+
+            div: {
+                background_color: '#ccc'.toRGB()
+            }.extend(
+                align(pageWidth)
+            ),
+
+            footer: {
+                background_color: '#f30'.toRGB()
+            }.extend(
+                align(pageWidth)
+            )
+        }
+    });
+
+Result:
+
+    body {
+        text-align: center
+    }
+
+    body header {
+        background-color: rgb(0, 102, 204);
+        width: 800px;
+        margin: 0 auto;
+        text-align: left
+    }
+
+    body div {
+        background-color: rgb(204, 204, 204);
+        width: 800px;
+        margin: 0 auto;
+        text-align: left
+    }
+
+    body footer {
+        background-color: rgb(255, 51, 0);
+        width: 800px;
+        margin: 0 auto;
+        text-align: left
+    }
