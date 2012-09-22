@@ -8,7 +8,7 @@ Style.js allows developers to utilize the full power of JavaScript to generate C
 
 Example:
 
-<code>var color = '#06c';
+<pre>var color = '#06c';
 
 new Style({
 	p: {
@@ -17,11 +17,11 @@ new Style({
 	}.extend(
 		CSS.borderRadius(Math.floor(Math.random() * 11) + 0)
 		)
-});</code>
+});</pre>
 
 ''Alternative syntax'':
 
-<code>var color = '#06c';
+<pre>var color = '#06c';
 
 ({
 	p: {
@@ -30,14 +30,14 @@ new Style({
 	}.extend(
 		CSS.borderRadius(Math.floor(Math.random() * 11) + 0)
 		)
-}.toStyle());</code>
+}.toStyle());</pre>
 
 Result:
 
-<code>p {
+<pre>p {
 	background-color: hsla(210, 100%, 40%, 1);
 	color: hsla(30, 100%, 85%, 1);
 	-webkit-border-radius: 8px;
 	-moz-border-radius: 8px;
 	border-radius: 8px
-}</code>
+}</pre>
