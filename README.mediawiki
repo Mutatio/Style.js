@@ -134,7 +134,8 @@ Example:
 	}
 
 	return {
-		width: width, // Numeric values automatically converted to "px" or the unit set by setDefaultUnit()
+		// Numeric values automatically converted to "px" or the unit set by setDefaultUnit()
+		width: width,
 		margin: '0 auto',
 		text_align: 'left',
 		background_color: color.toRGB()
@@ -226,3 +227,60 @@ header h1 {
 	font-size: 24px;
 	color: #206502
 }</pre>
+
+== Color Functionality ==
+
+All color spaces are interchangeable:
+
+<pre>var color = Hex.random();
+
+console.log('INPUT: ' + color.toString());
+
+color = new RGB(color);
+
+console.log(color.toString());
+
+color = new XYZ(color);
+
+// Color spaces NOT supported in CSS have no .toString() method
+console.log(color);
+
+color = new HSL(color);
+
+console.log(color.toString());
+
+color = new CIELab(color);
+
+console.log(color);
+
+color = new RGBA(color);
+
+console.log(color.toString());
+
+color = new CMYK(color);
+
+console.log(color);
+
+color = new HSLA(color);
+
+console.log(color.toString());
+
+/*
+ * NOTE: Due to the precision of the JavaScript number type
+ * the output might not be *exactly* equal to the input
+ *
+ * e.g. #ff3300 => #fe3300
+ */
+console.log('OUTPUT: ' + color.toHex().toString());</pre>
+
+Result:
+
+<pre>INPUT: #6cb84b example.css.js:3
+rgb(108, 184, 75) example.css.js:7
+XYZ {X: 24.59483120679862, Y: 37.97712451767409, Z: 12.690646072857769} example.css.js:12
+hsl(102, 43%, 51%) example.css.js:16
+CIELab {L: 68.00495079484631, a: -43.46726006781837, b: 47.13923110320886} example.css.js:20
+rgba(108, 184, 75, 1) example.css.js:24
+CMYK {cyan: 0.4130662167488027, magenta: 0, yellow: 0.5923735991444304, key: 0.2784016469309353} example.css.js:28
+hsla(102, 43%, 51%, 1) example.css.js:32
+OUTPUT: #6cb84b</pre>
