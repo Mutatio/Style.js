@@ -41,3 +41,190 @@ Result:
 	-moz-border-radius: 8px;
 	border-radius: 8px
 }</pre>
+
+Any valid JavaScript code should work. It's easy to mix in your own functionality:
+
+<pre>// Returns a random color with a high red value, as a hex color code
+function getRandomRedColor() {
+	// Generate random RGB color
+	var out = RGB.random();
+
+	// Minimum red value of 180
+	while (out.red < 180) {
+		out = RGB.random();
+	}
+
+	// Convert to HSL color space
+	out = new HSL(out);
+
+	// Adjust the lightness of the color, note: this might reduce the red value
+	out.lightness = 45;
+
+	// Return as hexidecimal
+	return out.toHex();
+}
+
+new Style({
+	'.randomRed': {
+		background_color: getRandomRedColor(),
+		color: '#fff'
+	}
+});</pre>
+
+Result:
+
+<pre>.randomRed {
+	background-color: #bd4028;
+	color: #fff
+}</pre>
+
+=== Nested Styles ===
+
+Example:
+
+<pre>new Style({
+	html: {
+		body: {
+			header: {
+				div: {
+					ul: {
+						li: {
+							p: {
+								color: new RGBA(new Hex('#666')),
+
+								'a, strong': {
+									font_weight: 'bold'
+								}
+							}
+						}
+					}
+				}
+			},
+
+			footer: {
+				'background-color': new HSL(new Hex('#ccc'))
+			}
+		}
+	}
+});</pre>
+
+Result:
+
+<pre>html body header div ul li p {
+	color: rgba(102, 102, 102, 1)
+}
+
+html body header div ul li p a, html body header div ul li p strong {
+	font-weight: bold
+}
+
+html body footer {
+	background-color: hsl(0, 0%, 80%)
+}</pre>
+
+=== "Mixins" ===
+
+Example:
+
+<pre>function myStyle(width, color) {
+	if (!width || !Type.isInteger(width)) {
+		width = 700;
+	}
+
+	if (!Color.isValid(color)) {
+		color = Hex.random();
+	}
+
+	return {
+		width: width, // Numeric values automatically converted to "px" or the unit set by setDefaultUnit()
+		margin: '0 auto',
+		text_align: 'left',
+		background_color: color.toRGB()
+	};
+}
+
+var pageWidth = 800;
+
+new Style({
+	body: {
+		text_align: 'center',
+
+		header: {}.extend(
+			myStyle(pageWidth, '#06c')
+		),
+
+		div: {}.extend(
+			myStyle(Math.floor(pageWidth / 2), '#ccc')
+		),
+
+		footer: {}.extend(
+			myStyle(Math.floor(pageWidth / 3), '#f30')
+		)
+	}
+});</pre>
+
+Result:
+
+<pre>body {
+	text-align: center
+}
+
+body header {
+	width: 800px;
+	margin: 0 auto;
+	text-align: left;
+	background-color: rgb(0, 102, 204)
+}
+
+body div {
+	width: 400px;
+	margin: 0 auto;
+	text-align: left;
+	background-color: rgb(204, 204, 204)
+}
+
+body footer {
+	width: 266px;
+	margin: 0 auto;
+	text-align: left;
+	background-color: rgb(255, 51, 0)
+}</pre>
+
+=== Inheritance ===
+
+Example:
+
+<pre>// In the beginning, there was nothing
+var singularity = {};
+
+var A = {
+	body: {
+		font: "12px/14px 'Helvetica Neue', Helvetica, Arial, sans-serif",
+		color: '#000'.toRGB()
+	}
+};
+
+var B = {
+	header: {
+		h1: {
+			font_size: 24,
+			color: darken(Hex.random(), 0.3)
+		}
+	}
+};
+
+new Style(
+	singularity.extend(A, B)
+);</pre>
+
+Result:
+
+<pre>body {
+	font: 12px/14px 'Helvetica Neue', Helvetica, Arial, sans-serif;
+	color: rgb(0, 0, 0)
+}
+
+header h1 {
+	font-size: 24px;
+	color: #206502
+}</pre>
