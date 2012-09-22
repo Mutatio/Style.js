@@ -2,7 +2,7 @@
 
 An easy to use JavaScript library providing CSS preprocessing and a myriad of color manipulation functions.
 
-=== CSS Preprocessing ===
+== CSS Preprocessing ==
 
 Style.js allows developers to utilize the full power of JavaScript to generate CSS.
 
@@ -127,9 +127,7 @@ html body footer {
 Example:
 
 <pre>function myStyle(width, color) {
-	if (!width || !Type.isInteger(width)) {
-		width = 700;
-	}
+	width = !width || !Type.isNumber(width) ? 700 : Math.floor(width);
 
 	if (!Color.isValid(color)) {
 		color = Hex.random();
@@ -154,11 +152,11 @@ new Style({
 		),
 
 		div: {}.extend(
-			myStyle(Math.floor(pageWidth / 2), '#ccc')
+			myStyle(pageWidth / 2, '#ccc')
 		),
 
 		footer: {}.extend(
-			myStyle(Math.floor(pageWidth / 3), '#f30')
+			myStyle(pageWidth / 3, '#f30')
 		)
 	}
 });</pre>
