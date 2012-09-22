@@ -295,4 +295,64 @@ console.log(color.toString() + ' => ' + complement(color).toString());</pre>
 
 Result:
 
-<code style="background-color: #ff3300">#ff3300</code> => <code style="background-color: #00cbff">#00cbff</code>
+<pre>#ff3300 => #00cbff</pre>
+
+=== analogous() ===
+
+Example:
+
+<pre>var color = new Hex('#f30');
+
+console.log(color.toString() + ' => ' + analogous(color));</pre>
+
+Result:
+
+<pre>#ff3300 => #ff004c,#ffb200</pre>
+
+=== split() ===
+
+Example:
+
+<pre>var color = new Hex('#f30');
+
+console.log(color.toString() + ' => ' + split(color));</pre>
+
+Result:
+
+<pre>#ff3300 => #004cff,#00ffb2</pre>
+
+=== square() ===
+
+Example:
+
+<pre>var color = new Hex('#f30');
+
+console.log(color.toString() + ' => ' + square(color));</pre>
+
+Result:
+
+<pre>#ff3300 => #4cff00,#00cbff,#b200ff</pre>
+
+=== triad() ===
+
+Example:
+
+<pre>var color = new Hex('#f30');
+
+console.log(color.toString() + ' => ' + triad(color));</pre>
+
+Result:
+
+<pre>#ff3300 => #3200ff,#00ff32</pre>
+
+=== tetradic() ===
+
+Example:
+
+<pre>var color = new Hex('#f30');
+
+console.log(color.toString() + ' => ' + tetradic(color));</pre>
+
+Result:
+
+<pre>#ff3300 => #cbff00,#00cbff,#3200ff</pre>
