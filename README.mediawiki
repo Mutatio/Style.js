@@ -275,12 +275,12 @@ console.log('OUTPUT: ' + color.toHex().toString());</pre>
 
 Result:
 
-<pre>INPUT: #6cb84b example.css.js:3
-rgb(108, 184, 75) example.css.js:7
-XYZ {X: 24.59483120679862, Y: 37.97712451767409, Z: 12.690646072857769} example.css.js:12
-hsl(102, 43%, 51%) example.css.js:16
-CIELab {L: 68.00495079484631, a: -43.46726006781837, b: 47.13923110320886} example.css.js:20
-rgba(108, 184, 75, 1) example.css.js:24
-CMYK {cyan: 0.4130662167488027, magenta: 0, yellow: 0.5923735991444304, key: 0.2784016469309353} example.css.js:28
-hsla(102, 43%, 51%, 1) example.css.js:32
+<pre>INPUT: #6cb84b
+rgb(108, 184, 75)
+XYZ {X: 24.59483120679862, Y: 37.97712451767409, Z: 12.690646072857769}
+hsl(102, 43%, 51%)
+CIELab {L: 68.00495079484631, a: -43.46726006781837, b: 47.13923110320886}
+rgba(108, 184, 75, 1)
+CMYK {cyan: 0.4130662167488027, magenta: 0, yellow: 0.5923735991444304, key: 0.2784016469309353}
+hsla(102, 43%, 51%, 1)
 OUTPUT: #6cb84b</pre>
