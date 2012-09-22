@@ -230,7 +230,7 @@ header h1 {
 
 == Color Functionality ==
 
-All color spaces are interchangeable:
+Color spaces are interchangeable:
 
 <pre>var color = Hex.random();
 
@@ -284,3 +284,15 @@ rgba(108, 184, 75, 1)
 CMYK {cyan: 0.4130662167488027, magenta: 0, yellow: 0.5923735991444304, key: 0.2784016469309353}
 hsla(102, 43%, 51%, 1)
 OUTPUT: #6cb84b</pre>
+
+=== complement() ===
+
+Example:
+
+<pre>var color = new Hex('#f30');
+
+console.log(color.toString() + ' => ' + complement(color).toString());</pre>
+
+Result:
+
+<code style="background-color: #ff3300">#ff3300</code> => <code style="background-color: #00cbff">#00cbff</code>
