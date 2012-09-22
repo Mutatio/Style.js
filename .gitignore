@@ -4,6 +4,7 @@ tmp/*
 # Ignore project files
 *.project
 *.pydevproject
+org.eclipse.*
 
 # Ignore binaries / object files
 stylec
