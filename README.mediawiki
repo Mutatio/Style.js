@@ -8,36 +8,36 @@ Style.js allows developers to utilize the full power of JavaScript to generate C
 
 Example:
 
-<code>var color = '#06c';
-
-new Style({
-	p: {
-		background_color: color.toHSLA(),
-		color: selectForeground(color).toHSLA()
-	}.extend(
-		CSS.borderRadius(Math.floor(Math.random() * 11) + 0)
-		)
+<code>var color = '#06c';<br>
+<br>
+new Style({<br>
+	p: {<br>
+		background_color: color.toHSLA(),<br>
+		color: selectForeground(color).toHSLA()<br>
+	}.extend(<br>
+		CSS.borderRadius(Math.floor(Math.random() * 11) + 0)<br>
+		)<br>
 });</code>
 
 ''Alternative syntax'':
 
-<code>var color = '#06c';
-
-({
-	p: {
-		background_color: color.toHSLA(),
-		color: selectForeground(color).toHSLA()
-	}.extend(
-		CSS.borderRadius(Math.floor(Math.random() * 11) + 0)
-		)
+<code>var color = '#06c';<br>
+<br>
+({<br>
+	p: {<br>
+		background_color: color.toHSLA(),<br>
+		color: selectForeground(color).toHSLA()<br>
+	}.extend(<br>
+		CSS.borderRadius(Math.floor(Math.random() * 11) + 0)<br>
+		)<br>
 }.toStyle());</code>
 
 Result:
 
-<code>p {
-	background-color: hsla(210, 100%, 40%, 1);
-	color: hsla(30, 100%, 85%, 1);
-	-webkit-border-radius: 8px;
-	-moz-border-radius: 8px;
-	border-radius: 8px
+<code>p {<br>
+	background-color: hsla(210, 100%, 40%, 1);<br>
+	color: hsla(30, 100%, 85%, 1);<br>
+	-webkit-border-radius: 8px;<br>
+	-moz-border-radius: 8px;<br>
+	border-radius: 8px<br>
 }</code>
