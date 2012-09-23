@@ -1367,8 +1367,8 @@
 			var green = this.green * x;
 			var blue = this.blue * x;
 			var Y = 0.299 * red + 0.587 * green + 0.114 * blue;
-			var I = 0.596 * red - 0.275 * green - 0.321 * blue;
-			var Q = 0.212 * red - 0.523 * green + 0.311 * blue;
+			var I = 0.595716 * red - 0.274453 * green - 0.321263 * blue;
+			var Q = 0.211456 * red - 0.522591 * green + 0.311135 * blue;
 
 			return new YIQ(Y, I, Q);
 		}
@@ -3028,7 +3028,7 @@
 			this.Y = Y;
 			this.I = I;
 			this.Q = Q;
-		} else if (x instanceof this.constructor) {
+		} else if (Y instanceof this.constructor) {
 			this.Y = Y.Y;
 			this.I = Y.I;
 			this.Q = Y.Q;
@@ -3059,9 +3059,21 @@
 	 */
 	YIQ.prototype.toRGB = function () {
 		if (this.isSet()) {
-			var red = (this.Y + 0.956 * this.I + 0.621 * this.Q) * 255;
-			var green = (this.Y - 0.272 * this.I - 0.647 * this.Q) * 255;
-			var blue = (this.Y - 1.105 * this.I + 1.702 * this.Q) * 255;
+			var red = (this.Y + 0.9563 * this.I + 0.621 * this.Q) * 255;
+			var green = (this.Y - 0.2721 * this.I - 0.6474 * this.Q) * 255;
+			var blue = (this.Y - 1.107 * this.I + 1.7046 * this.Q) * 255;
+
+			if (red < 0) {
+				red = 0;
+			}
+
+			if (green < 0) {
+				green = 0;
+			}
+
+			if (blue < 0) {
+				blue = 0;
+			}
 
 			return new RGB(red, green, blue);
 		}
