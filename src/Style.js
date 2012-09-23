@@ -242,6 +242,13 @@
 	/**
 	 * @static
 	 * @constant
+	 * @type {String}
+	 */
+	Color.YUV = 'YUV';
+
+	/**
+	 * @static
+	 * @constant
 	 * @type {Object.<String, Boolean>}
 	 */
 	Color.types = {};
@@ -1362,15 +1369,27 @@
 	 */
 	RGB.prototype.toYIQ = function () {
 		if (this.isSet()) {
-			var x = 1 / 255;
-			var red = this.red * x;
-			var green = this.green * x;
-			var blue = this.blue * x;
-			var Y = 0.299 * red + 0.587 * green + 0.114 * blue;
-			var I = 0.595716 * red - 0.274453 * green - 0.321263 * blue;
-			var Q = 0.211456 * red - 0.522591 * green + 0.311135 * blue;
+			var Y = 0.299 * this.red + 0.587 * this.green + 0.114 * this.blue;
+			var I = 0.595716 * this.red - 0.274453 * this.green - 0.321263 * this.blue;
+			var Q = 0.211456 * this.red - 0.522591 * this.green + 0.311135 * this.blue;
 
 			return new YIQ(Y, I, Q);
+		}
+
+		return null;
+	};
+
+	/**
+	 * Convert to YUV color
+	 * @returns {YUV}
+	 */
+	RGB.prototype.toYUV = function () {
+		if (this.isSet()) {
+			var Y = 0.299 * this.red + 0.587 * this.green + 0.114 * this.blue;
+			var U = -0.14713 * this.red - 0.28886 * this.green + 0.436 * this.blue;
+			var V = 0.615 * this.red - 0.51499 * this.green - 0.10001 * this.blue;
+
+			return new YUV(Y, U, V);
 		}
 
 		return null;
@@ -1577,6 +1596,14 @@
 	 */
 	RGBA.prototype.toYIQ = function (background) {
 		return this.isSet() ? this.toRGB(background).toYIQ() : null;
+	};
+
+	/**
+	 * Convert to YUV color
+	 * @returns {YUV}
+	 */
+	RGBA.prototype.toYUV = function (background) {
+		return this.isSet() ? this.toRGB(background).toYUV() : null;
 	};
 
 	/**
@@ -1848,6 +1875,14 @@
 	};
 
 	/**
+	 * Convert to YUV color
+	 * @returns {YUV}
+	 */
+	Hex.prototype.toYUV = function () {
+		return this.isSet() ? this.toRGB().toYUV() : null;
+	};
+
+	/**
 	 * Convert to CSS string
 	 * @returns {String}
 	 */
@@ -2051,6 +2086,14 @@
 	};
 
 	/**
+	 * Convert to YUV color
+	 * @returns {YUV}
+	 */
+	HSL.prototype.toYUV = function () {
+		return this.isSet() ? this.toRGB().toYUV() : null;
+	};
+
+	/**
 	 * Convert to CSS string
 	 * @returns {String}
 	 */
@@ -2215,6 +2258,14 @@
 	 */
 	HSLA.prototype.toYIQ = function (background) {
 		return this.isSet() ? this.toRGBA(background).toYIQ() : null;
+	};
+
+	/**
+	 * Convert to YUV color
+	 * @returns {YUV}
+	 */
+	HSLA.prototype.toYUV = function (background) {
+		return this.isSet() ? this.toRGBA(background).toYUV() : null;
 	};
 
 	/**
@@ -2428,6 +2479,14 @@
 	};
 
 	/**
+	 * Convert to YUV color
+	 * @returns {YUV}
+	 */
+	HSV.prototype.toYUV = function () {
+		return this.isSet() ? this.toRGB().toYUV() : null;
+	};
+
+	/**
 	 * Get a random HSV color
 	 * @static
 	 * @returns {HSV}
@@ -2591,6 +2650,14 @@
 	};
 
 	/**
+	 * Convert to YUV color
+	 * @returns {YUV}
+	 */
+	XYZ.prototype.toYUV = function () {
+		return this.isSet() ? this.toRGB().toYUV() : null;
+	};
+
+	/**
 	 * Get a random XYZ color
 	 * @static
 	 * @returns {XYZ}
@@ -2725,6 +2792,14 @@
 	 */
 	xyY.prototype.toYIQ = function () {
 		return this.isSet() ? this.toXYZ().toYIQ() : null;
+	};
+
+	/**
+	 * Convert to YUV color
+	 * @returns {YUV}
+	 */
+	xyY.prototype.toYUV = function () {
+		return this.isSet() ? this.toXYZ().toYUV() : null;
 	};
 
 	/**
@@ -2869,6 +2944,14 @@
 	};
 
 	/**
+	 * Convert to YUV color
+	 * @returns {YUV}
+	 */
+	CIELab.prototype.toYUV = function () {
+		return this.isSet() ? this.toXYZ().toYUV() : null;
+	};
+
+	/**
 	 * Get a random CIELab color
 	 * @static
 	 * @returns {CIELab}
@@ -3008,6 +3091,14 @@
 	};
 
 	/**
+	 * Convert to YUV color
+	 * @returns {YUV}
+	 */
+	CMYK.prototype.toYUV = function () {
+		return this.isSet() ? this.toRGB().toYUV() : null;
+	};
+
+	/**
 	 * Get a random CMYK color
 	 * @static
 	 * @returns {CMYK}
@@ -3059,9 +3150,9 @@
 	 */
 	YIQ.prototype.toRGB = function () {
 		if (this.isSet()) {
-			var red = (this.Y + 0.9563 * this.I + 0.621 * this.Q) * 255;
-			var green = (this.Y - 0.2721 * this.I - 0.6474 * this.Q) * 255;
-			var blue = (this.Y - 1.107 * this.I + 1.7046 * this.Q) * 255;
+			var red = this.Y + 0.9563 * this.I + 0.621 * this.Q;
+			var green = this.Y - 0.2721 * this.I - 0.6474 * this.Q;
+			var blue = this.Y - 1.107 * this.I + 1.7046 * this.Q;
 
 			if (red < 0) {
 				red = 0;
@@ -3154,12 +3245,174 @@
 	};
 
 	/**
+	 * Convert to YUV color
+	 * @returns {YUV}
+	 */
+	YIQ.prototype.toYUV = function () {
+		return this.isSet() ? this.toRGB().toYUV() : null;
+	};
+
+	/**
 	 * Get a random YIQ color
 	 * @static
 	 * @returns {YIQ}
 	 */
 	YIQ.random = function () {
 		return RGB.random().toYIQ();
+	};
+
+	/**
+	 * YUV color class
+	 * @constructor
+	 * @param {Number|Object} Y Y value / color object
+	 * @param {Number} U
+	 * @param {Number} V
+	 */
+	function YUV(Y, U, V) {
+		if (Type.isNumber(Y) && Type.isNumber(U) && Type.isNumber(V)) {
+			this.Y = Y;
+			this.U = U;
+			this.V = V;
+		} else if (Y instanceof this.constructor) {
+			this.Y = Y.Y;
+			this.U = Y.U;
+			this.V = Y.V;
+		} else {
+			return toColorSpace(Y, Color.YUV);
+		}
+
+		return this;
+	}
+
+	$.YUV = YUV;
+
+	YUV.prototype.Y = undefined;
+	YUV.prototype.U = undefined;
+	YUV.prototype.V = undefined;
+
+	/**
+	 * Check whether the YUV object values are set
+	 * @returns {Boolean}
+	 */
+	YUV.prototype.isSet = function () {
+		return Type.isNumber(this.Y) && Type.isNumber(this.U) && Type.isNumber(this.V);
+	};
+
+	/**
+	 * Convert to RGB color
+	 * @returns {RGB}
+	 */
+	YUV.prototype.toRGB = function () {
+		if (this.isSet()) {
+			var red = this.Y + 1.13983 * this.V;
+			var green = this.Y - 0.39456 * this.U - 0.58060 * this.V;
+			var blue = this.Y + 2.03211 * this.U;
+
+			if (red < 0) {
+				red = 0;
+			}
+
+			if (green < 0) {
+				green = 0;
+			}
+
+			if (blue < 0) {
+				blue = 0;
+			}
+
+			return new RGB(red, green, blue);
+		}
+
+		return null;
+	};
+
+	/**
+	 * Convert to RGBA color
+	 * @returns {RGBA}
+	 */
+	YUV.prototype.toRGBA = function () {
+		return this.isSet() ? this.toRGB().toRGBA() : null;
+	};
+
+	/**
+	 * Convert to Hex color
+	 * @returns {Hex}
+	 */
+	YUV.prototype.toHex = function () {
+		return this.isSet() ? this.toRGB().toHex() : null;
+	};
+
+	/**
+	 * Convert to HSL color
+	 * @returns {HSL}
+	 */
+	YUV.prototype.toHSL = function () {
+		return this.isSet() ? this.toRGB().toHSL() : null;
+	};
+
+	/**
+	 * Convert to HSLA color
+	 * @returns {HSLA}
+	 */
+	YUV.prototype.toHSLA = function () {
+		return this.isSet() ? this.toRGB().toHSLA() : null;
+	};
+
+	/**
+	 * Convert to HSV color
+	 * @returns {HSV}
+	 */
+	YUV.prototype.toHSV = function () {
+		return this.isSet() ? this.toRGB().toHSV() : null;
+	};
+
+	/**
+	 * Convert to XYZ color
+	 * @returns {XYZ}
+	 */
+	YUV.prototype.toXYZ = function () {
+		return this.isSet() ? this.toRGB().toXYZ() : null;
+	};
+
+	/**
+	 * Convert to xyY color
+	 * @returns {xyY}
+	 */
+	YUV.prototype.toxyY = function () {
+		return this.isSet() ? this.toRGB().toxyY() : null;
+	};
+
+	/**
+	 * Convert to CIELab color
+	 * @returns {CIELab}
+	 */
+	YUV.prototype.toCIELab = function () {
+		return this.isSet() ? this.toRGB().toCIELab() : null;
+	};
+
+	/**
+	 * Convert to CMYK color
+	 * @returns {CMYK}
+	 */
+	YUV.prototype.toCMYK = function () {
+		return this.isSet() ? this.toRGB().toCMYK() : null;
+	};
+
+	/**
+	 * Convert to YIQ color
+	 * @returns {YIQ}
+	 */
+	YUV.prototype.toYIQ = function () {
+		return this.isSet() ? this.toRGB().toYIQ() : null;
+	};
+
+	/**
+	 * Get a random YUV color
+	 * @static
+	 * @returns {YUV}
+	 */
+	YUV.random = function () {
+		return RGB.random().toYUV();
 	};
 
 	/**
