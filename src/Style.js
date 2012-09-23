@@ -146,13 +146,6 @@
 	 * @constant
 	 * @type {String}
 	 */
-	Color.HEX = 'Hex';
-
-	/**
-	 * @static
-	 * @constant
-	 * @type {String}
-	 */
 	Color.RED = 'red';
 
 	/**
@@ -182,6 +175,20 @@
 	 * @type {String}
 	 */
 	Color.RGBA = 'RGBA';
+
+	/**
+	 * @static
+	 * @constant
+	 * @type {String}
+	 */
+	Color.RYB = 'RYB';
+
+	/**
+	 * @static
+	 * @constant
+	 * @type {String}
+	 */
+	Color.HEX = 'Hex';
 
 	/**
 	 * @static
@@ -784,6 +791,9 @@
 					case color instanceof RGBA:
 						return this.RGBA;
 
+					case color instanceof RYB:
+						return this.RYB;
+
 					case color instanceof Hex:
 						return this.HEX;
 
@@ -807,6 +817,12 @@
 
 					case color instanceof CMYK:
 						return this.CMYK;
+
+					case color instanceof YIQ:
+						return this.YIQ;
+
+					case color instanceof YUV:
+						return this.YUV;
 
 					default:
 						var type = Type.getType(color);
@@ -839,12 +855,15 @@
 				case Color.HEX:
 				case Color.RGB:
 				case Color.RGBA:
+				case Color.RYB:
 				case Color.HSL:
 				case Color.HSLA:
 				case Color.HSV:
 				case Color.XYZ:
 				case Color.XYY:
 				case Color.CIELAB:
+				case Color.YIQ:
+				case Color.YUV:
 					return toColorSpace(color, type);
 			}
 		}
@@ -1211,6 +1230,47 @@
 	};
 
 	/**
+	 * Convert to RYB color
+	 * @returns {RYB}
+	 */
+	RGB.prototype.toRYB = function () {
+		if (this.isSet()) {
+			var white = Math.min(this.red, this.green, this.blue);
+			var red = this.red - white;
+			var green = this.green - white;
+			var blue = this.blue - white;
+			var yellow = Math.min(red, green);
+			var x = Math.max(red, green, blue);
+			red -= yellow;
+			green -= yellow;
+
+			if (green && blue) {
+				green /= 2;
+				blue /= 2;
+			}
+
+			yellow += green;
+			blue += green;
+			var y = Math.max(red, yellow, blue);
+
+			if (y) {
+				var n = x / y;
+				red *= n;
+				yellow *= n;
+				blue *= n;
+			}
+
+			red += white;
+			yellow += white;
+			blue += white;
+
+			return new RYB(red, yellow, blue);
+		}
+
+		return null;
+	};
+
+	/**
 	 * Convert to Hex color
 	 * @returns {Hex}
 	 */
@@ -1509,6 +1569,15 @@
 	};
 
 	/**
+	 * Convert to RYB color
+	 * @param {Object} background
+	 * @returns {RYB}
+	 */
+	RGBA.prototype.toRYB = function (background) {
+		return this.isSet() ? this.toRGB(background).toRYB() : null;
+	};
+
+	/**
 	 * Convert to Hex color
 	 * @param {Object} background
 	 * @returns {Hex}
@@ -1740,6 +1809,186 @@
 	$.blue = blue;
 
 	/**
+	 * RYB color class
+	 * @constructor
+	 * @param {Number|Object} red Red value / color object
+	 * @param {Number} yellow
+	 * @param {Number} blue
+	 */
+	function RYB(red, yellow, blue) {
+		if (red !== undefined && ((yellow === undefined && blue === undefined) || (Type.isNumber(yellow) && Type.isNumber(blue) && yellow.between(0, 255) && blue.between(0, 255)))) {
+			if (yellow === undefined) {
+				if (red instanceof this.constructor) {
+					this.red = red.red;
+					this.green = red.green;
+					this.blue = red.blue;
+				} else {
+					return toColorSpace(red, Color.RYB);
+				}
+			} else if (Type.isNumber(red) && red.between(0, 255)) {
+				this.red = red;
+				this.yellow = yellow;
+				this.blue = blue;
+			}
+		}
+
+		return this;
+	}
+
+	$.RYB = RYB;
+
+	RYB.prototype.red = undefined;
+	RYB.prototype.yellow = undefined;
+	RYB.prototype.blue = undefined;
+
+	/**
+	 * Check whether the RGBA object values are set
+	 * @returns {Boolean}
+	 */
+	RYB.prototype.isSet = function () {
+		return Type.isNumber(this.red) && Type.isNumber(this.yellow) && Type.isNumber(this.blue);
+	};
+
+	/**
+	 * Convert to RGB color
+	 * @returns {RGB}
+	 */
+	RYB.prototype.toRGB = function () {
+		if (this.isSet()) {
+			var white = Math.min(this.red, this.yellow, this.blue);
+			var red = this.red - white;
+			var yellow = this.yellow - white;
+			var blue = this.blue - white;
+			var green = Math.min(yellow, blue);
+			var x = Math.max(red, yellow, blue);
+
+			yellow -= green;
+			blue -= green;
+
+			if (blue && green) {
+				blue *= 2;
+				green *= 2;
+			}
+
+			red += yellow;
+			green += yellow;
+			var z = Math.max(red, green, blue);
+
+			if (z) {
+				var n = x / z;
+				red *= n;
+				green *= n;
+				blue *= n;
+			}
+
+			red += white;
+			green += white;
+			blue += white;
+
+			return new RGB(red, green, blue);
+		}
+
+		return null;
+	};
+
+	/**
+	 * Convert to RGBA color
+	 * @returns {RGBA}
+	 */
+	RYB.prototype.toRGBA = function () {
+		return this.isSet() ? this.toRGB().toRGBA() : null;
+	};
+
+	/**
+	 * Convert to Hex color
+	 * @returns {Hex}
+	 */
+	RYB.prototype.toHex = function () {
+		return this.isSet() ? this.toRGB().toHex() : null;
+	};
+
+	/**
+	 * Convert to HSL color
+	 * @returns {HSL}
+	 */
+	RYB.prototype.toHSL = function () {
+		return this.isSet() ? this.toRGB().toHSL() : null;
+	};
+
+	/**
+	 * Convert to HSLA color
+	 * @returns {HSLA}
+	 */
+	RYB.prototype.toHSLA = function () {
+		return this.isSet() ? this.toRGB().toHSLA() : null;
+	};
+
+	/**
+	 * Convert to HSV color
+	 * @returns {HSV}
+	 */
+	RYB.prototype.toHSV = function () {
+		return this.isSet() ? this.toRGB().toHSV() : null;
+	};
+
+	/**
+	 * Convert to XYZ color
+	 * @returns {XYZ}
+	 */
+	RYB.prototype.toXYZ = function () {
+		return this.isSet() ? this.toRGB().toXYZ() : null;
+	};
+
+	/**
+	 * Convert to xyY color
+	 * @returns {xyY}
+	 */
+	RYB.prototype.toxyY = function () {
+		return this.isSet() ? this.toRGB().toxyY() : null;
+	};
+
+	/**
+	 * Convert to CIELab color
+	 * @returns {CIELab}
+	 */
+	RYB.prototype.toCIELab = function () {
+		return this.isSet() ? this.toRGB().toCIELab() : null;
+	};
+
+	/**
+	 * Convert to CMYK color
+	 * @returns {CMYK}
+	 */
+	RYB.prototype.toCMYK = function () {
+		return this.isSet() ? this.toRGB().toCMYK() : null;
+	};
+
+	/**
+	 * Convert to YIQ color
+	 * @returns {YIQ}
+	 */
+	RYB.prototype.toYIQ = function () {
+		return this.isSet() ? this.toRGB().toYIQ() : null;
+	};
+
+	/**
+	 * Convert to YUV color
+	 * @returns {YUV}
+	 */
+	RYB.prototype.toYUV = function () {
+		return this.isSet() ? this.toRGB().toYUV() : null;
+	};
+
+	/**
+	 * Get a random RYB color
+	 * @static
+	 * @returns {RYB}
+	 */
+	RYB.random = function () {
+		return RGB.random().toRYB();
+	};
+
+	/**
 	 * Hex color class
 	 * @constructor
 	 * @param {String|Object} value Hex valid / color object
@@ -1808,6 +2057,14 @@
 	 */
 	Hex.prototype.toRGBA = function () {
 		return this.isSet() ? this.toRGB().toRGBA() : null;
+	};
+
+	/**
+	 * Convert to RYB color
+	 * @returns {RYB}
+	 */
+	Hex.prototype.toRYB = function () {
+		return this.isSet() ? this.toRGB().toRYB() : null;
 	};
 
 	/**
@@ -2018,6 +2275,14 @@
 	};
 
 	/**
+	 * Convert to RYB color
+	 * @returns {RYB}
+	 */
+	HSL.prototype.toRYB = function () {
+		return this.isSet() ? this.toRGB().toRYB() : null;
+	};
+
+	/**
 	 * Convert to Hex color
 	 * @returns {Hex}
 	 */
@@ -2176,6 +2441,15 @@
 		}
 
 		return out;
+	};
+
+	/**
+	 * Convert to RYB color
+	 * @param {Object} background
+	 * @returns {RYB}
+	 */
+	HSLA.prototype.toRYB = function (background) {
+		return this.isSet() ? this.toRGBA(background).toRYB() : null;
 	};
 
 	/**
@@ -2415,6 +2689,14 @@
 	};
 
 	/**
+	 * Convert to RYB color
+	 * @returns {RYB}
+	 */
+	HSV.prototype.toRYB = function () {
+		return this.isSet() ? this.toRGB().toRYB() : null;
+	};
+
+	/**
 	 * Convert to Hex color
 	 * @returns {Hex}
 	 */
@@ -2561,6 +2843,14 @@
 	 */
 	XYZ.prototype.toRGBA = function () {
 		return this.isSet() ? this.toRGB().toRGBA() : null;
+	};
+
+	/**
+	 * Convert to RYB color
+	 * @returns {RYB}
+	 */
+	XYZ.prototype.toRYB = function () {
+		return this.isSet() ? this.toRGB().toRYB() : null;
 	};
 
 	/**
@@ -2720,6 +3010,14 @@
 	};
 
 	/**
+	 * Convert to RYB color
+	 * @returns {RYB}
+	 */
+	xyY.prototype.toRYB = function () {
+		return this.isSet() ? this.toXYZ().toRYB() : null;
+	};
+
+	/**
 	 * Convert to Hex color
 	 * @returns {Hex}
 	 */
@@ -2862,6 +3160,14 @@
 	 */
 	CIELab.prototype.toRGBA = function () {
 		return this.isSet() ? this.toXYZ().toRGBA() : null;
+	};
+
+	/**
+	 * Convert to RYB color
+	 * @returns {RYB}
+	 */
+	CIELab.prototype.toRYB = function () {
+		return this.isSet() ? this.toXYZ().toRYB() : null;
 	};
 
 	/**
@@ -3027,6 +3333,14 @@
 	};
 
 	/**
+	 * Convert to RYB color
+	 * @returns {RYB}
+	 */
+	CMYK.prototype.toRYB = function () {
+		return this.isSet() ? this.toRGB().toRYB() : null;
+	};
+
+	/**
 	 * Convert to Hex color
 	 * @returns {Hex}
 	 */
@@ -3181,6 +3495,14 @@
 	};
 
 	/**
+	 * Convert to RYB color
+	 * @returns {RYB}
+	 */
+	YIQ.prototype.toRYB = function () {
+		return this.isSet() ? this.toRGB().toRYB() : null;
+	};
+
+	/**
 	 * Convert to Hex color
 	 * @returns {Hex}
 	 */
@@ -3332,6 +3654,14 @@
 	 */
 	YUV.prototype.toRGBA = function () {
 		return this.isSet() ? this.toRGB().toRGBA() : null;
+	};
+
+	/**
+	 * Convert to RYB color
+	 * @returns {RYB}
+	 */
+	YUV.prototype.toRYB = function () {
+		return this.isSet() ? this.toRGB().toRYB() : null;
 	};
 
 	/**
