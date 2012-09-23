@@ -235,6 +235,13 @@
 	/**
 	 * @static
 	 * @constant
+	 * @type {String}
+	 */
+	Color.YIQ = 'YIQ';
+
+	/**
+	 * @static
+	 * @constant
 	 * @type {Object.<String, Boolean>}
 	 */
 	Color.types = {};
@@ -1350,6 +1357,26 @@
 	};
 
 	/**
+	 * Convert to YIQ color
+	 * @returns {YIQ}
+	 */
+	RGB.prototype.toYIQ = function () {
+		if (this.isSet()) {
+			var x = 1 / 255;
+			var red = this.red * x;
+			var green = this.green * x;
+			var blue = this.blue * x;
+			var Y = 0.299 * red + 0.587 * green + 0.114 * blue;
+			var I = 0.596 * red - 0.275 * green - 0.321 * blue;
+			var Q = 0.212 * red - 0.523 * green + 0.311 * blue;
+
+			return new YIQ(Y, I, Q);
+		}
+
+		return null;
+	};
+
+	/**
 	 * Convert to string
 	 * @returns {String}
 	 */
@@ -1544,6 +1571,15 @@
 	};
 
 	/**
+	 * Convert to YIQ color
+	 * @param {Object} background
+	 * @returns {YIQ}
+	 */
+	RGBA.prototype.toYIQ = function (background) {
+		return this.isSet() ? this.toRGB(background).toYIQ() : null;
+	};
+
+	/**
 	 * Convert to string
 	 * @returns {String}
 	 */
@@ -1635,11 +1671,7 @@
 	function red(color, background) {
 		color = new RGBA(color);
 
-		alert(color);
-
 		if (color && (color = new RGBA(color)) !== undefined) {
-			alert(color);
-
 			return color.getComponent(Color.RED, background);
 		}
 
@@ -1805,6 +1837,14 @@
 	 */
 	Hex.prototype.toCMYK = function () {
 		return this.isSet() ? this.toRGB().toCMYK() : null;
+	};
+
+	/**
+	 * Convert to YIQ color
+	 * @returns {YIQ}
+	 */
+	Hex.prototype.toYIQ = function () {
+		return this.isSet() ? this.toRGB().toYIQ() : null;
 	};
 
 	/**
@@ -2003,6 +2043,14 @@
 	};
 
 	/**
+	 * Convert to YIQ color
+	 * @returns {YIQ}
+	 */
+	HSL.prototype.toYIQ = function () {
+		return this.isSet() ? this.toRGB().toYIQ() : null;
+	};
+
+	/**
 	 * Convert to CSS string
 	 * @returns {String}
 	 */
@@ -2158,6 +2206,15 @@
 	 */
 	HSLA.prototype.toCMYK = function (background) {
 		return this.isSet() ? this.toRGBA(background).toCMYK() : null;
+	};
+
+	/**
+	 * Convert to YIQ color
+	 * @param {Object} background
+	 * @returns {YIQ}
+	 */
+	HSLA.prototype.toYIQ = function (background) {
+		return this.isSet() ? this.toRGBA(background).toYIQ() : null;
 	};
 
 	/**
@@ -2363,6 +2420,14 @@
 	};
 
 	/**
+	 * Convert to YIQ color
+	 * @returns {YIQ}
+	 */
+	HSV.prototype.toYIQ = function () {
+		return this.isSet() ? this.toRGB().toYIQ() : null;
+	};
+
+	/**
 	 * Get a random HSV color
 	 * @static
 	 * @returns {HSV}
@@ -2518,6 +2583,14 @@
 	};
 
 	/**
+	 * Convert to YIQ color
+	 * @returns {YIQ}
+	 */
+	XYZ.prototype.toYIQ = function () {
+		return this.isSet() ? this.toRGB().toYIQ() : null;
+	};
+
+	/**
 	 * Get a random XYZ color
 	 * @static
 	 * @returns {XYZ}
@@ -2644,6 +2717,14 @@
 	 */
 	xyY.prototype.toCMYK = function () {
 		return this.isSet() ? this.toXYZ().toCMYK() : null;
+	};
+
+	/**
+	 * Convert to YIQ color
+	 * @returns {YIQ}
+	 */
+	xyY.prototype.toYIQ = function () {
+		return this.isSet() ? this.toXYZ().toYIQ() : null;
 	};
 
 	/**
@@ -2780,6 +2861,14 @@
 	};
 
 	/**
+	 * Convert to YIQ color
+	 * @returns {YIQ}
+	 */
+	CIELab.prototype.toYIQ = function () {
+		return this.isSet() ? this.toXYZ().toYIQ() : null;
+	};
+
+	/**
 	 * Get a random CIELab color
 	 * @static
 	 * @returns {CIELab}
@@ -2911,12 +3000,154 @@
 	};
 
 	/**
+	 * Convert to YIQ color
+	 * @returns {YIQ}
+	 */
+	CMYK.prototype.toYIQ = function () {
+		return this.isSet() ? this.toRGB().toYIQ() : null;
+	};
+
+	/**
 	 * Get a random CMYK color
 	 * @static
 	 * @returns {CMYK}
 	 */
 	CMYK.random = function () {
-		return new CMYK(Math.random(), Math.random(), Math.random(), Math.random());
+		return RGB.random().toCMYK();
+	};
+
+	/**
+	 * YIQ color class
+	 * @constructor
+	 * @param {Number|Object} Y Y value / color object
+	 * @param {Number} I
+	 * @param {Number} Q
+	 */
+	function YIQ(Y, I, Q) {
+		if (Type.isNumber(Y) && Type.isNumber(I) && Type.isNumber(Q)) {
+			this.Y = Y;
+			this.I = I;
+			this.Q = Q;
+		} else if (x instanceof this.constructor) {
+			this.Y = Y.Y;
+			this.I = Y.I;
+			this.Q = Y.Q;
+		} else {
+			return toColorSpace(Y, Color.YIQ);
+		}
+
+		return this;
+	}
+
+	$.YIQ = YIQ;
+
+	YIQ.prototype.Y = undefined;
+	YIQ.prototype.I = undefined;
+	YIQ.prototype.Q = undefined;
+
+	/**
+	 * Check whether the YIQ object values are set
+	 * @returns {Boolean}
+	 */
+	YIQ.prototype.isSet = function () {
+		return Type.isNumber(this.Y) && Type.isNumber(this.I) && Type.isNumber(this.Q);
+	};
+
+	/**
+	 * Convert to RGB color
+	 * @returns {RGB}
+	 */
+	YIQ.prototype.toRGB = function () {
+		if (this.isSet()) {
+			var red = (this.Y + 0.956 * this.I + 0.621 * this.Q) * 255;
+			var green = (this.Y - 0.272 * this.I - 0.647 * this.Q) * 255;
+			var blue = (this.Y - 1.105 * this.I + 1.702 * this.Q) * 255;
+
+			return new RGB(red, green, blue);
+		}
+
+		return null;
+	};
+
+	/**
+	 * Convert to RGBA color
+	 * @returns {RGBA}
+	 */
+	YIQ.prototype.toRGBA = function () {
+		return this.isSet() ? this.toRGB().toRGBA() : null;
+	};
+
+	/**
+	 * Convert to Hex color
+	 * @returns {Hex}
+	 */
+	YIQ.prototype.toHex = function () {
+		return this.isSet() ? this.toRGB().toHex() : null;
+	};
+
+	/**
+	 * Convert to HSL color
+	 * @returns {HSL}
+	 */
+	YIQ.prototype.toHSL = function () {
+		return this.isSet() ? this.toRGB().toHSL() : null;
+	};
+
+	/**
+	 * Convert to HSLA color
+	 * @returns {HSLA}
+	 */
+	YIQ.prototype.toHSLA = function () {
+		return this.isSet() ? this.toRGB().toHSLA() : null;
+	};
+
+	/**
+	 * Convert to HSV color
+	 * @returns {HSV}
+	 */
+	YIQ.prototype.toHSV = function () {
+		return this.isSet() ? this.toRGB().toHSV() : null;
+	};
+
+	/**
+	 * Convert to XYZ color
+	 * @returns {XYZ}
+	 */
+	YIQ.prototype.toXYZ = function () {
+		return this.isSet() ? this.toRGB().toXYZ() : null;
+	};
+
+	/**
+	 * Convert to xyY color
+	 * @returns {xyY}
+	 */
+	YIQ.prototype.toxyY = function () {
+		return this.isSet() ? this.toRGB().toxyY() : null;
+	};
+
+	/**
+	 * Convert to CIELab color
+	 * @returns {CIELab}
+	 */
+	YIQ.prototype.toCIELab = function () {
+		return this.isSet() ? this.toRGB().toCIELab() : null;
+	};
+
+	/**
+	 * Convert to CMYK color
+	 * @returns {CMYK}
+	 */
+	YIQ.prototype.toCMYK = function () {
+		return this.isSet() ? this.toRGB().toCMYK() : null;
+	};
+
+	/**
+	 * Get a random YIQ color
+	 * @static
+	 * @returns {YIQ}
+	 */
+	YIQ.random = function () {
+		return RGB.random().toYIQ();
 	};
 
 	/**
@@ -3744,7 +3975,11 @@
 			if (type && Type.isFunction($[type])) {
 				color = new $[type](color);
 
-				return color['to' + space]();
+				var func = 'to' + space;
+
+				if (color[func] !== undefined) {
+					return color[func]();
+				}
 			}
 		}
 
