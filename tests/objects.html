@@ -30,7 +30,7 @@
 			var functions = [];
 
 			for (var i in Color) {
-				if (Type.isString(Color[i]) && Color[i] !== 'Named') {
+				if (Type.isString(Color[i]) && Color[i] !== 'Named' && Color[i] !== 'red' && Color[i] !== 'green' && Color[i] !== 'blue') {
 					functions.push(Color[i]);
 				}
 			}
@@ -44,7 +44,7 @@
 				for (var y = 0; y < len; ++y) {
 					out += '<h2>Random ' + functions[y] + ' color</h2>';
 
-					if (Type.isFunction(this[functions[y]]['random'])) {
+					if (this[functions[y]] !== undefined && Type.isFunction(this[functions[y]]['random'])) {
 						++countPass;
 
 						color = this[functions[y]]['random']();
@@ -53,38 +53,44 @@
 							++countPass;
 
 							for (var i = 0; i < len; ++i) {
-								var obj = new this[functions[i]](color);
+								if (this[functions[i]] !== undefined) {
+									var obj = new this[functions[i]](color);
 
-								if (obj.isSet()) {
-									++countPass;
+									if (obj.isSet()) {
+										++countPass;
 
-									out += '<span class="ok" style="font-weight: bold; font-size: 14px">' + functions[i] + ' creation success</span>\n';
+										out += '<span class="ok" style="font-weight: bold; font-size: 14px">' + functions[i] + ' creation success</span>\n';
 
-									for (var x = 0; x < len; ++x) {
-										if (functions[x] !== functions[i]) {
-											func = 'to' + functions[x];
+										for (var x = 0; x < len; ++x) {
+											if (functions[x] !== functions[i]) {
+												func = 'to' + functions[x];
 
-											if (Type.isFunction(obj[func])) {
-												tmp = obj[func]();
+												if (Type.isFunction(obj[func])) {
+													tmp = obj[func]();
 
-												if (tmp !== undefined && functions[x] === Type.getType(tmp) && tmp.isSet()) {
-													++countPass;
+													if (tmp !== undefined && functions[x] === Type.getType(tmp) && tmp.isSet()) {
+														++countPass;
 
-													out += '-&gt; <span class="ok">PASS: ' + functions[i] + '.' + func + '()</span>\n';
+														out += '-&gt; <span class="ok">PASS: ' + functions[i] + '.' + func + '()</span>\n';
+													} else {
+														++countFail;
+
+														out += '-&gt; <span class="er">FAIL: ' + functions[i] + '.' + func + '()</span>\n';
+													}
 												} else {
 													++countFail;
 
 													out += '-&gt; <span class="er">FAIL: ' + functions[i] + '.' + func + '()</span>\n';
 												}
-											} else {
-												++countFail;
-
-												out += '-&gt; <span class="er">FAIL: ' + functions[i] + '.' + func + '()</span>\n';
 											}
 										}
-									}
 
-									out += '\n';
+										out += '\n';
+									} else {
+										countFail += len;
+
+										out += '<span class="er" style="font-weight: bold; font-size: 14px">' + functions[i] + ' creation failure</span>\n';
+									}
 								} else {
 									countFail += len;
 
