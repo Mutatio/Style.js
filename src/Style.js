@@ -3932,6 +3932,29 @@
 	$.temperature = temperature;
 
 	/**
+	 * Alter the "black point" of a color
+	 * @param {Object|String} color
+	 * @param {Number} multiplier
+	 * @returns {Object|Null}
+	 */
+	function blackPoint(color, multiplier) {
+		if (color && Type.isNumber(multiplier)) {
+			var type = Color.getType(color);
+
+			if (type) {
+				color = new YIQ(color);
+				color.Y = (1 + multiplier) * color.Y - multiplier;
+
+				return Color.toType(color, type);
+			}
+		}
+
+		return null;
+	}
+
+	$.blackPoint = blackPoint;
+
+	/**
 	 * Adjust the saturation of a color
 	 * @private
 	 * @param {Object|String} color
@@ -4339,6 +4362,27 @@
 	}
 
 	$.shiftHue = shiftHue;
+
+	/**
+	 * Adjust the hue of a color
+	 * @param {Object|String} color
+	 * @param {Number} angle
+	 * @returns {Object|Null}
+	 */
+	function adjustHue(color, angle) {
+		if (color && Type.isNumber(angle) && angle > 0 && angle < 360) {
+			var type = Color.getType(color);
+
+			color = new HSL(color);
+			color.hue = Hue.shift(color.hue, angle);
+
+			return Color.toType(color, type);
+		}
+
+		return null;
+	}
+
+	$.adjustHue = adjustHue;
 
 	/**
 	 * Return the complement of the given color
