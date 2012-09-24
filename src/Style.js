@@ -4343,17 +4343,23 @@
 				var color = new HSL(arguments[0]);
 
 				if (color !== undefined && color.isSet()) {
-					var out = [];
+					if (len === 2) {
+						color.hue = Hue.shift(color.hue, arguments[1]);
 
-					for (var i = 1; i < len; ++i) {
-						if (Type.isNumber(arguments[i])) {
-							color.hue = Hue.shift(color.hue, arguments[i]);
+						return Color.toType(color, type);
+					} else {
+						var out = [];
 
-							out.push(Color.toType(color, type));
+						for (var i = 1; i < len; ++i) {
+							if (Type.isNumber(arguments[i])) {
+								color.hue = Hue.shift(color.hue, arguments[i]);
+
+								out.push(Color.toType(color, type));
+							}
 						}
-					}
 
-					return out;
+						return out;
+					}
 				}
 			}
 		}
@@ -4364,41 +4370,12 @@
 	$.shiftHue = shiftHue;
 
 	/**
-	 * Adjust the hue of a color
-	 * @param {Object|String} color
-	 * @param {Number} angle
-	 * @returns {Object|Null}
-	 */
-	function adjustHue(color, angle) {
-		if (color && Type.isNumber(angle) && angle > 0 && angle < 360) {
-			var type = Color.getType(color);
-
-			color = new HSL(color);
-			color.hue = Hue.shift(color.hue, angle);
-
-			return Color.toType(color, type);
-		}
-
-		return null;
-	}
-
-	$.adjustHue = adjustHue;
-
-	/**
 	 * Return the complement of the given color
 	 * @param {Object|String} color
 	 * @returns {Object|Null} complementary color
 	 */
 	function complement(color) {
-		if (color) {
-			color = shiftHue(color, 180);
-
-			if (!Util.empty(color)) {
-				return color[0];
-			}
-		}
-
-		return null;
+		return shiftHue(color, 180);
 	}
 
 	$.complement = complement;
