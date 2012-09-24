@@ -3451,14 +3451,20 @@
 
 			if (red < 0) {
 				red = 0;
+			} else if (red > 255) {
+				red = 255;
 			}
 
 			if (green < 0) {
 				green = 0;
+			} else if (green > 255) {
+				green = 255;
 			}
 
 			if (blue < 0) {
 				blue = 0;
+			} else if (blue > 255) {
+				blue = 255;
 			}
 
 			return new RGB(red, green, blue);
@@ -3894,6 +3900,36 @@
 	}
 
 	$.mutate = mutate;
+
+	/**
+	 * Alter the "temperature" of a color
+	 * @param {Object|String} color
+	 * @param {Number} multiplier
+	 * @returns {Object|Null}
+	 */
+	function temperature(color, multiplier) {
+		if (color && Type.isNumber(multiplier)) {
+			var type = Color.getType(color);
+
+			if (type) {
+				color = new YIQ(color);
+				var temperature = (multiplier * 20000) / 2000;
+
+				if (temperature > 0) {
+					temperature *= 2;
+				}
+
+				color.I += temperature;
+				color.Q -= temperature;
+
+				return Color.toType(color, type);
+			}
+		}
+
+		return null;
+	}
+
+	$.temperature = temperature;
 
 	/**
 	 * Adjust the saturation of a color
