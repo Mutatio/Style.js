@@ -784,52 +784,33 @@
 					return this.HSLA;
 				}
 			} else {
-				switch (true) {
-					case color instanceof RGB:
-						return this.RGB;
-
-					case color instanceof RGBA:
-						return this.RGBA;
-
-					case color instanceof RYB:
-						return this.RYB;
-
-					case color instanceof Hex:
-						return this.HEX;
-
-					case color instanceof HSL:
-						return this.HSL;
-
-					case color instanceof HSLA:
-						return this.HSLA;
-
-					case color instanceof HSV:
-						return this.HSV;
-
-					case color instanceof xyY:
-						return this.XYY;
-
-					case color instanceof XYZ:
-						return this.XYZ;
-
-					case color instanceof CIELab:
-						return this.CIELAB;
-
-					case color instanceof CMYK:
-						return this.CMYK;
-
-					case color instanceof YIQ:
-						return this.YIQ;
-
-					case color instanceof YUV:
-						return this.YUV;
-
-					default:
-						var type = Type.getType(color);
-
-						if (type && this[type.toUpperCase()]) {
-							return type;
-						}
+				// Long in the tooth, but "instanceof" is very quick vs. Type.getType()
+				if (color instanceof RGB) {
+					return this.RGB;
+				} else if (color instanceof RGBA) {
+					return this.RGBA;
+				} else if (color instanceof RYB) {
+					return this.RYB;
+				} else if (color instanceof Hex) {
+					return this.HEX;
+				} else if (color instanceof HSL) {
+					return this.HSL;
+				} else if (color instanceof HSLA) {
+					return this.HSLA;
+				} else if (color instanceof HSV) {
+					return this.HSV;
+				} else if (color instanceof XYZ) {
+					return this.XYZ;
+				} else if (color instanceof xyY) {
+					return this.XYY;
+				} else if (color instanceof CIELab) {
+					return this.CIELAB;
+				} else if (color instanceof CMYK) {
+					return this.CMYK;
+				} else if (color instanceof YIQ) {
+					return this.YIQ;
+				} else if (color instanceof YUV) {
+					return this.YUV;
 				}
 			}
 		}
@@ -1820,7 +1801,7 @@
 			if (yellow === undefined) {
 				if (red instanceof this.constructor) {
 					this.red = red.red;
-					this.green = red.green;
+					this.yellow = red.yellow;
 					this.blue = red.blue;
 				} else {
 					return toColorSpace(red, Color.RYB);
@@ -4954,8 +4935,6 @@
 			for (var i = 0; i < len; ++i) {
 				out[CSS.properties.borderRadius[i]] = topLeft;
 			}
-
-			return out;
 		} else if (topLeft || bottomLeft || bottomRight || topRight) {
 			if (topLeft) {
 				if (Type.isNumber(topLeft)) {
@@ -4988,8 +4967,6 @@
 
 				out.extend(CSS.getProperty('borderRadiusTopRight', topRight));
 			}
-
-			return out;
 		}
 
 		return out;
@@ -5108,7 +5085,7 @@
 			};
 		}
 
-		return null;
+		return {};
 	};
 
 	/**
@@ -5122,6 +5099,8 @@
 	 * @returns {Object}
 	 */
 	CSS.boxShadow = function (horizontalLength, verticalLength, blurRadius, spread, color, set) {
+		var out = {};
+
 		if (horizontalLength !== undefined && verticalLength !== undefined) {
 			var value = [];
 
@@ -5167,16 +5146,12 @@
 
 			value = value.join(' ');
 
-			var out = {};
-
 			for (var i = 0; i < CSS.properties.boxShadow.length; ++i) {
 				out[CSS.properties.boxShadow[i]] = value;
 			}
-
-			return out;
 		}
 
-		return null;
+		return out;
 	};
 
 	/**
