@@ -3740,6 +3740,9 @@
 
 	$.Hue = Hue;
 
+	var _2_3rd = 2 / 3;
+	var _1_6th = 1 / 6;
+
 	/**
 	 * Convert hue to RGB value
 	 * @static
@@ -3757,16 +3760,16 @@
 			t -= 1;
 		}
 
-		if (t < 1 / 6) {
+		if (t < _1_6th) {
 			return p + (q - p) * 6 * t;
 		}
 
-		if (t < 1 / 2) {
+		if (t < 0.5) {
 			return q;
 		}
 
-		if (t < 2 / 3) {
-			return p + (q - p) * (2 / 3 - t) * 6;
+		if (t < _2_3rd) {
+			return p + (q - p) * (_2_3rd - t) * 6;
 		}
 
 		return p;
@@ -4331,7 +4334,7 @@
 
 	/**
 	 * Shift the color's hue by a give number of degrees
-	 * @returns {Array|Null}
+	 * @returns {Object|Array|Null}
 	 */
 	function shiftHue() {
 		var len = arguments.length;
