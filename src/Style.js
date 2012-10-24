@@ -950,7 +950,7 @@
 	 * Disable Style.js branding
 	 * @static
 	 */
-	Style.disbaleBranding = function () {
+	Style.disableBranding = function () {
 		branding = false;
 	};
 
