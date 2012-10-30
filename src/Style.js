@@ -4918,7 +4918,10 @@
 		gradientLinear: ['-moz-linear-gradient', '-webkit-linear-gradient', '-o-linear-gradient', '-ms-linear-gradient', 'linear-gradient'],
 		gradientRadial: ['-moz-radial-gradient', '-webkit-radial-gradient', '-o-radial-gradient', '-ms-radial-gradient', 'radial-gradient'],
 		boxShadow: ['-moz-box-shadow', '-webkit-box-shadow', 'box-shadow'],
-		transition: ['-webkit-transition', '-moz-transition', '-o-transition', 'transition']
+		transition: ['-webkit-transition', '-moz-transition', '-o-transition', 'transition'],
+		transform: ['-webkit-transform', '-moz-transform', '-o-transform', 'transform'],
+		transformOrigin: ['-webkit-transform-origin', '-moz-transform-origin', '-o-transform-origin', 'transform-origin'],
+		boxSizing: ['-webkit-box-sizing', '-moz-box-sizing']
 	};
 
 	/**
@@ -4941,7 +4944,7 @@
 	 * @param {String|Number} value
 	 * @returns {Object}
 	 */
-	CSS.getProperty = function (property, value) {
+	function getProperty(property, value) {
 		var out = {};
 
 		if (property && value && CSS.properties.hasOwnProperty(property)) {
@@ -4953,25 +4956,42 @@
 		}
 
 		return out;
-	};
+	}
 
 	/**
 	 * Returns cross browser transition properties
 	 * @param {String} transition
-	 * @returns {Object}
+	 * @returns {Object|Null}
 	 */
 	CSS.transition = function (transition) {
-		var out = {};
+		return getProperty('transition', transition);
+	};
 
-		if (transition) {
-			var len = CSS.properties.transition.length;
+	/**
+	 * Returns cross browser transform properties
+	 * @param {String} transform
+	 * @returns {Object|Null}
+	 */
+	CSS.transform = function (transform) {
+		return getProperty('transform', transform);
+	};
 
-			for (var i = 0; i < len; ++i) {
-				out[CSS.properties.transition[i]] = transition;
-			}
-		}
+	/**
+	 * Returns cross browser transform-origin properties
+	 * @param {String} transformOrigin
+	 * @returns {Object|Null}
+	 */
+	CSS.transformOrigin = function (transformOrigin) {
+		return getProperty('transformOrigin', transformOrigin);
+	};
 
-		return out;
+	/**
+	 * Returns cross browser box-sizing properties
+	 * @param {String} boxSizing
+	 * @returns {Object|Null}
+	 */
+	CSS.boxSizing = function (boxSizing) {
+		return getProperty('boxSizing', boxSizing);
 	};
 
 	/**
@@ -5001,7 +5021,7 @@
 					topLeft += defaultUnit;
 				}
 
-				out.extend(CSS.getProperty('borderRadiusTopLeft', topLeft));
+				out.extend(getProperty('borderRadiusTopLeft', topLeft));
 			}
 
 			if (bottomLeft) {
@@ -5009,7 +5029,7 @@
 					bottomLeft += defaultUnit;
 				}
 
-				out.extend(CSS.getProperty('borderRadiusBottomLeft', bottomLeft));
+				out.extend(getProperty('borderRadiusBottomLeft', bottomLeft));
 			}
 
 			if (bottomRight) {
@@ -5017,7 +5037,7 @@
 					bottomRight += defaultUnit;
 				}
 
-				out.extend(CSS.getProperty('borderRadiusBottomRight', bottomRight));
+				out.extend(getProperty('borderRadiusBottomRight', bottomRight));
 			}
 
 			if (topRight) {
@@ -5025,7 +5045,7 @@
 					topRight += defaultUnit;
 				}
 
-				out.extend(CSS.getProperty('borderRadiusTopRight', topRight));
+				out.extend(getProperty('borderRadiusTopRight', topRight));
 			}
 		}
 
