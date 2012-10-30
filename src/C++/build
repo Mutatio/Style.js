@@ -18,4 +18,4 @@ rm -f Type.js Util.js Style.js
 
 echo "... Compiling ..."
 
-g++ -O3 -Werror stylejs.cpp stylec.cpp Type.js.o Util.js.o Style.js.o -o bin/stylec /projects/Software/v8/libv8.a -lpthread && strip bin/stylec && bin/stylec -v
+g++ -march=native -O3 -Werror stylejs.cpp stylec.cpp Type.js.o Util.js.o Style.js.o -o bin/stylec /projects/Software/v8/libv8.a -lpthread && strip bin/stylec && bin/stylec -v
