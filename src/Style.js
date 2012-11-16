@@ -4480,6 +4480,17 @@
 	$.tetradic = tetradic;
 
 	/**
+	 * Return the pentadic colors of the given color
+	 * @param {Object|String} color
+	 * @returns {Array.<Object>|Null}
+	 */
+	function pentadic(color) {
+		return shiftHue(color, 72, 72, 72, 72);
+	}
+
+	$.pentadic = pentadic;
+
+	/**
 	 * Perceieved brightness, if value is greater than 125 chose black foreground text, otherwise white
 	 * @see http://www.w3.org/WAI/ER/WD-AERT/#color-contrast
 	 * @param {Object|String} color
