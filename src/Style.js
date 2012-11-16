@@ -906,6 +906,24 @@
 	};
 
 	/**
+	 * Checks if the color is grayscale
+	 * @static
+	 * @param {Object} color
+	 * @returns {Boolean|Null} Null if invalid color
+	 */
+	Color.isGrayscale = function (color) {
+		if (color) {
+			color = new RGB(color);
+
+			if (color && color.isSet()) {
+				return color.red === color.green && color.red === color.blue;
+			}
+		}
+
+		return null;
+	};
+
+	/**
 	 * "Compile" Styles to CSS
 	 * @param {Array} styles Style array
 	 * @returns {String}
@@ -4644,6 +4662,43 @@
 
 		return null;
 	}
+
+	/**
+	 * Get the root shade for the given color
+	 * @param {Object|String} color
+	 * @returns {String}
+	 */
+	function getShade(color) {
+		if (color) {
+			color = new HSL(color);
+
+			if (color && color.isSet()) {
+				if (Color.isGrayscale(color)) {
+					return 'gray';
+				} else {
+					if (color.hue.between(340, 360) || color.hue.between(0, 10)) {
+						return 'red';
+					} else if (color.hue.between(10, 30)) {
+						return 'orange';
+					} else if (color.hue.between(31, 40)) {
+						return 'brown';
+					} else if (color.hue.between(41, 65)) {
+						return 'yellow';
+					} else if (color.hue.between(66, 160)) {
+						return 'green';
+					} else if (color.hue.between(161, 255)) {
+						return 'blue';
+					} else {
+						return 'magenta / purple';
+					}
+				}
+			}
+		}
+
+		return null;
+	}
+
+	$.getShade = getShade;
 
 	/**
 	 * Convert color to its nearest web safe equivalent
