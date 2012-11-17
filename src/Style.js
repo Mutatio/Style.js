@@ -85,7 +85,7 @@
 
 	/**
 	 * Push string value to Styles array
-	 *  @param {Array} styles
+	 * @param {Array} styles
 	 */
 	String.prototype.toStyle = function (styles) {
 		styles = styles === undefined ? Styles : styles;
@@ -264,6 +264,20 @@
 	 * @type {String}
 	 */
 	Color.YDBDR = 'YDbDr';
+
+	/**
+	 * @static
+	 * @constant
+	 * @type {String}
+	 */
+	Color.YCBCR = 'YCbCr';
+
+	/**
+	 * @static
+	 * @constant
+	 * @type {String}
+	 */
+	Color.YPBPR = 'YPbPr';
 
 	/**
 	 * @static
@@ -562,7 +576,7 @@
 	 * Common color depths
 	 * @static
 	 * @constant
-	 * @type {Object}
+	 * @type {Object.<Number, Array>}
 	 */
 	Color.depth = {
 		3: [1, 1, 1],
@@ -782,7 +796,7 @@
 	Color.getType = function (color) {
 		if (color) {
 			if (Type.isString(color)) {
-				if (!Util.empty(Color.listNamed[color.toLowerCase()])) {
+				if (!Util.empty(this.listNamed[color.toLowerCase()])) {
 					return this.NAMED;
 				} else if (this.regex.hex.test(color)) {
 					return this.HEX;
@@ -825,6 +839,10 @@
 					return this.YUV;
 				} else if (color instanceof YDbDr) {
 					return this.YDBDR;
+				} else if (color instanceof YCbCr) {
+					return this.YCBCR;
+				} else if (color instanceof YPbPr) {
+					return this.YPBPR;
 				}
 			}
 		}
@@ -842,23 +860,26 @@
 	Color.toType = function (color, type) {
 		if (color && type) {
 			switch (type) {
-				case Color.NAMED:
+				case this.NAMED:
 					color = color.toLowerCase().substr(1);
 
-					return !Util.empty(Color.list[color]) ? Color.list[color] : undefined;
+					return !Util.empty(this.list[color]) ? this.list[color] : undefined;
 
-				case Color.HEX:
-				case Color.RGB:
-				case Color.RGBA:
-				case Color.RYB:
-				case Color.HSL:
-				case Color.HSLA:
-				case Color.HSV:
-				case Color.XYZ:
-				case Color.XYY:
-				case Color.CIELAB:
-				case Color.YIQ:
-				case Color.YUV:
+				case this.HEX:
+				case this.RGB:
+				case this.RGBA:
+				case this.RYB:
+				case this.HSL:
+				case this.HSLA:
+				case this.HSV:
+				case this.XYZ:
+				case this.XYY:
+				case this.CIELAB:
+				case this.YIQ:
+				case this.YUV:
+				case this.YDBDR:
+				case this.YCBCR:
+				case this.YPBPR:
 					return toColorSpace(color, type);
 			}
 		}
@@ -873,7 +894,7 @@
 	 * @returns {Boolean}
 	 */
 	Color.isValid = function (color) {
-		return color && Color.getType(color) ? true : false;
+		return color && this.getType(color) ? true : false;
 	};
 
 	/**
@@ -884,7 +905,7 @@
 	 */
 	Color.isValidCSS = function (color) {
 		if (color) {
-			color = Color.getType(color);
+			color = this.getType(color);
 
 			if (color) {
 				return CSS.colorTypes.hasOwnProperty(color);
@@ -901,7 +922,7 @@
 	 * @returns {Boolean}
 	 */
 	Color.isValidType = function (type) {
-		return type ? Color.types.hasOwnProperty(type) : false;
+		return type ? this.types.hasOwnProperty(type) : false;
 	};
 
 	/**
@@ -1503,6 +1524,38 @@
 	};
 
 	/**
+	 * Convert to YCbCr color
+	 * @returns {YCbCr}
+	 */
+	RGB.prototype.toYCbCr = function () {
+		if (this.isSet()) {
+			var Y = 16 + (0.257 * this.red + 0.504 * this.green + 0.098 * this.blue);
+			var Cb = 128 + (-0.148 * this.red - 0.291 * this.green + 0.439 * this.blue);
+			var Cr = 128 + (0.439 * this.red - 0.368 * this.green - 0.071 * this.blue);
+
+			return new YCbCr(Y, Cb, Cr);
+		}
+
+		return null;
+	};
+
+	/**
+	 * Convert to YPbPr color (HDTV)
+	 * @returns {YPbPr}
+	 */
+	RGB.prototype.toYPbPr = function () {
+		if (this.isSet()) {
+			var Y = 0.213 * this.red + 0.715 * this.green + 0.072 * this.blue;
+			var Pb = -0.115 * this.red - 0.385 * this.green + 0.5 * this.blue;
+			var Pr = 0.5 * this.red - 0.454 * this.green - 0.046 * this.blue;
+
+			return new YPbPr(Y, Pb, Pr);
+		}
+
+		return null;
+	};
+
+	/**
 	 * Convert to string
 	 * @returns {String}
 	 */
@@ -1716,6 +1769,7 @@
 
 	/**
 	 * Convert to YUV color
+	 * @param {Object} background
 	 * @returns {YUV}
 	 */
 	RGBA.prototype.toYUV = function (background) {
@@ -1724,10 +1778,29 @@
 
 	/**
 	 * Convert to YDbDr color
+	 * @param {Object} background
 	 * @returns {YDbDr}
 	 */
 	RGBA.prototype.toYDbDr = function (background) {
 		return this.isSet() ? this.toRGB(background).toYDbDr() : null;
+	};
+
+	/**
+	 * Convert to YCbCr color
+	 * @param {Object} background
+	 * @returns {YCbCr}
+	 */
+	RGBA.prototype.toYCbCr = function (background) {
+		return this.isSet() ? this.toRGB(background).toYCbCr() : null;
+	};
+
+	/**
+	 * Convert to YPbPr color
+	 * @param {Object} background
+	 * @returns {YPbPr}
+	 */
+	RGBA.prototype.toYPbPr = function (background) {
+		return this.isSet() ? this.toRGB(background).toYPbPr() : null;
 	};
 
 	/**
@@ -2043,6 +2116,22 @@
 	};
 
 	/**
+	 * Convert to YCbCr color
+	 * @returns {YCbCr}
+	 */
+	RYB.prototype.toYCbCr = function () {
+		return this.isSet() ? this.toRGB().toYCbCr() : null;
+	};
+
+	/**
+	 * Convert to YPbPr color
+	 * @returns {YPbPr}
+	 */
+	RYB.prototype.toYPbPr = function () {
+		return this.isSet() ? this.toRGB().toYPbPr() : null;
+	};
+
+	/**
 	 * Get a random RYB color
 	 * @static
 	 * @returns {RYB}
@@ -2208,6 +2297,22 @@
 	 */
 	Hex.prototype.toYDbDr = function () {
 		return this.isSet() ? this.toRGB().toYDbDr() : null;
+	};
+
+	/**
+	 * Convert to YCbCr color
+	 * @returns {YCbCr}
+	 */
+	Hex.prototype.toYCbCr = function () {
+		return this.isSet() ? this.toRGB().toYCbCr() : null;
+	};
+
+	/**
+	 * Convert to YPbPr color
+	 * @returns {YPbPr}
+	 */
+	Hex.prototype.toYPbPr = function () {
+		return this.isSet() ? this.toRGB().toYPbPr() : null;
 	};
 
 	/**
@@ -2438,6 +2543,22 @@
 	};
 
 	/**
+	 * Convert to YCbCr color
+	 * @returns {YCbCr}
+	 */
+	HSL.prototype.toYCbCr = function () {
+		return this.isSet() ? this.toRGB().toYCbCr() : null;
+	};
+
+	/**
+	 * Convert to YPbPr color
+	 * @returns {YPbPr}
+	 */
+	HSL.prototype.toYPbPr = function () {
+		return this.isSet() ? this.toRGB().toYPbPr() : null;
+	};
+
+	/**
 	 * Convert to CSS string
 	 * @returns {String}
 	 */
@@ -2615,6 +2736,7 @@
 
 	/**
 	 * Convert to YUV color
+	 * @param {Object} background
 	 * @returns {YUV}
 	 */
 	HSLA.prototype.toYUV = function (background) {
@@ -2623,10 +2745,29 @@
 
 	/**
 	 * Convert to YDbDr color
+	 * @param {Object} background
 	 * @returns {YDbDr}
 	 */
 	HSLA.prototype.toYDbDr = function (background) {
 		return this.isSet() ? this.toRGBA(background).toYDbDr() : null;
+	};
+
+	/**
+	 * Convert to YCbCr color
+	 * @param {Object} background
+	 * @returns {YCbCr}
+	 */
+	HSLA.prototype.toYCbCr = function (background) {
+		return this.isSet() ? this.toRGBA(background).toYCbCr() : null;
+	};
+
+	/**
+	 * Convert to YPbPr color
+	 * @param {Object} background
+	 * @returns {YPbPr}
+	 */
+	HSLA.prototype.toYPbPr = function (background) {
+		return this.isSet() ? this.toRGB(background).toYPbPr() : null;
 	};
 
 	/**
@@ -2864,6 +3005,22 @@
 	};
 
 	/**
+	 * Convert to YCbCr color
+	 * @returns {YCbCr}
+	 */
+	HSV.prototype.toYCbCr = function () {
+		return this.isSet() ? this.toRGB().toYCbCr() : null;
+	};
+
+	/**
+	 * Convert to YPbPr color
+	 * @returns {YPbPr}
+	 */
+	HSV.prototype.toYPbPr = function () {
+		return this.isSet() ? this.toRGB().toYPbPr() : null;
+	};
+
+	/**
 	 * Get a random HSV color
 	 * @static
 	 * @returns {HSV}
@@ -3051,6 +3208,22 @@
 	};
 
 	/**
+	 * Convert to YCbCr color
+	 * @returns {YCbCr}
+	 */
+	XYZ.prototype.toYCbCr = function () {
+		return this.isSet() ? this.toRGB().toYCbCr() : null;
+	};
+
+	/**
+	 * Convert to YPbPr color
+	 * @returns {YPbPr}
+	 */
+	XYZ.prototype.toYPbPr = function () {
+		return this.isSet() ? this.toRGB().toYPbPr() : null;
+	};
+
+	/**
 	 * Get a random XYZ color
 	 * @static
 	 * @returns {XYZ}
@@ -3209,6 +3382,22 @@
 	 */
 	xyY.prototype.toYDbDr = function () {
 		return this.isSet() ? this.toXYZ().toYDbDr() : null;
+	};
+
+	/**
+	 * Convert to YCbCr color
+	 * @returns {YCbCr}
+	 */
+	xyY.prototype.toYCbCr = function () {
+		return this.isSet() ? this.toRGB().toYCbCr() : null;
+	};
+
+	/**
+	 * Convert to YPbPr color
+	 * @returns {YPbPr}
+	 */
+	xyY.prototype.toYPbPr = function () {
+		return this.isSet() ? this.toRGB().toYPbPr() : null;
 	};
 
 	/**
@@ -3377,6 +3566,22 @@
 	};
 
 	/**
+	 * Convert to YCbCr color
+	 * @returns {YCbCr}
+	 */
+	CIELab.prototype.toYCbCr = function () {
+		return this.isSet() ? this.toXYZ().toYCbCr() : null;
+	};
+
+	/**
+	 * Convert to YPbPr color
+	 * @returns {YPbPr}
+	 */
+	CIELab.prototype.toYPbPr = function () {
+		return this.isSet() ? this.toXYZ().toYPbPr() : null;
+	};
+
+	/**
 	 * Get a random CIELab color
 	 * @static
 	 * @returns {CIELab}
@@ -3537,6 +3742,22 @@
 	 */
 	CMYK.prototype.toYDbDr = function () {
 		return this.isSet() ? this.toRGB().toYDbDr() : null;
+	};
+
+	/**
+	 * Convert to YCbCr color
+	 * @returns {YCbCr}
+	 */
+	CMYK.prototype.toYCbCr = function () {
+		return this.isSet() ? this.toRGB().toYCbCr() : null;
+	};
+
+	/**
+	 * Convert to YPbPr color
+	 * @returns {YPbPr}
+	 */
+	CMYK.prototype.toYPbPr = function () {
+		return this.isSet() ? this.toRGB().toYPbPr() : null;
 	};
 
 	/**
@@ -3713,6 +3934,22 @@
 	 */
 	YIQ.prototype.toYDbDr = function () {
 		return this.isSet() ? this.toRGB().toYDbDr() : null;
+	};
+
+	/**
+	 * Convert to YCbCr color
+	 * @returns {YCbCr}
+	 */
+	YIQ.prototype.toYCbCr = function () {
+		return this.isSet() ? this.toRGB().toYCbCr() : null;
+	};
+
+	/**
+	 * Convert to YPbPr color
+	 * @returns {YPbPr}
+	 */
+	YIQ.prototype.toYPbPr = function () {
+		return this.isSet() ? this.toRGB().toYPbPr() : null;
 	};
 
 	/**
@@ -3893,6 +4130,22 @@
 	};
 
 	/**
+	 * Convert to YCbCr color
+	 * @returns {YCbCr}
+	 */
+	YUV.prototype.toYCbCr = function () {
+		return this.isSet() ? this.toRGB().toYCbCr() : null;
+	};
+
+	/**
+	 * Convert to YPbPr color
+	 * @returns {YPbPr}
+	 */
+	YUV.prototype.toYPbPr = function () {
+		return this.isSet() ? this.toRGB().toYPbPr() : null;
+	};
+
+	/**
 	 * Get a random YUV color
 	 * @static
 	 * @returns {YUV}
@@ -3904,7 +4157,7 @@
 	/**
 	 * YDbDr color class
 	 * @constructor
-	 * @param {Number|Object} Y Y value / YDbDr color object
+	 * @param {Number|Object} Y Y value / color object
 	 * @param {Number} Db
 	 * @param {Number} Dr
 	 */
@@ -4063,12 +4316,403 @@
 	};
 
 	/**
+	 * Convert to YCbCr color
+	 * @returns {YCbCr}
+	 */
+	YDbDr.prototype.toYCbCr = function () {
+		return this.isSet() ? this.toRGB().toYCbCr() : null;
+	};
+
+	/**
+	 * Convert to YPbPr color
+	 * @returns {YPbPr}
+	 */
+	YDbDr.prototype.toYPbPr = function () {
+		return this.isSet() ? this.toRGB().toYPbPr() : null;
+	};
+
+	/**
 	 * Get a random YDbDr color
 	 * @static
 	 * @returns {YDbDr}
 	 */
 	YDbDr.random = function () {
 		return RGB.random().toYDbDr();
+	};
+
+	/**
+	 * YCbCr color class
+	 * @constructor
+	 * @param {Number|Object} Y Y value / color object
+	 * @param {Number} Cb
+	 * @param {Number} Cr
+	 */
+	function YCbCr(Y, Cb, Cr) {
+		if (Type.isNumber(Y) && Type.isNumber(Cb) && Type.isNumber(Cr)) {
+			this.Y = Y;
+			this.Cb = Cb;
+			this.Cr = Cr;
+		} else if (Y instanceof this.constructor) {
+			this.Y = Y.Y;
+			this.Cb = Y.Cb;
+			this.Cr = Y.Cr;
+		} else {
+			return toColorSpace(Y, Color.YCBCR);
+		}
+
+		return this;
+	}
+
+	$.YCbCr = YCbCr;
+
+	YCbCr.prototype.Y = undefined;
+	YCbCr.prototype.Cb = undefined;
+	YCbCr.prototype.Cr = undefined;
+
+	/**
+	 * Check whether the object values are set
+	 * @returns {Boolean}
+	 */
+	YCbCr.prototype.isSet = function () {
+		return Type.isNumber(this.Y) && Type.isNumber(this.Cb) && Type.isNumber(this.Cr);
+	};
+
+	/**
+	 * Convert to RGB color
+	 * @returns {RGB}
+	 */
+	YCbCr.prototype.toRGB = function () {
+		if (this.isSet()) {
+			var Y = 1.164 * (this.Y - 16);
+			var Cb = this.Cb - 128;
+			var Cr = this.Cr - 128;
+			var red = Y + 1.596 * Cr;
+			var green = Y - 0.392 * Cb - 0.813 * Cr;
+			var blue = Y + 2.017 * Cb;
+
+			if (red < 0) {
+				red = 0;
+			}
+
+			if (green < 0) {
+				green = 0;
+			}
+
+			if (blue < 0) {
+				blue = 0;
+			}
+
+			return new RGB(red, green, blue);
+		}
+
+		return null;
+	};
+
+	/**
+	 * Convert to RGBA color
+	 * @returns {RGBA}
+	 */
+	YCbCr.prototype.toRGBA = function () {
+		return this.isSet() ? this.toRGB().toRGBA() : null;
+	};
+
+	/**
+	 * Convert to RYB color
+	 * @returns {RYB}
+	 */
+	YCbCr.prototype.toRYB = function () {
+		return this.isSet() ? this.toRGB().toRYB() : null;
+	};
+
+	/**
+	 * Convert to Hex color
+	 * @returns {Hex}
+	 */
+	YCbCr.prototype.toHex = function () {
+		return this.isSet() ? this.toRGB().toHex() : null;
+	};
+
+	/**
+	 * Convert to HSL color
+	 * @returns {HSL}
+	 */
+	YCbCr.prototype.toHSL = function () {
+		return this.isSet() ? this.toRGB().toHSL() : null;
+	};
+
+	/**
+	 * Convert to HSLA color
+	 * @returns {HSLA}
+	 */
+	YCbCr.prototype.toHSLA = function () {
+		return this.isSet() ? this.toRGB().toHSLA() : null;
+	};
+
+	/**
+	 * Convert to HSV color
+	 * @returns {HSV}
+	 */
+	YCbCr.prototype.toHSV = function () {
+		return this.isSet() ? this.toRGB().toHSV() : null;
+	};
+
+	/**
+	 * Convert to XYZ color
+	 * @returns {XYZ}
+	 */
+	YCbCr.prototype.toXYZ = function () {
+		return this.isSet() ? this.toRGB().toXYZ() : null;
+	};
+
+	/**
+	 * Convert to xyY color
+	 * @returns {xyY}
+	 */
+	YCbCr.prototype.toxyY = function () {
+		return this.isSet() ? this.toRGB().toxyY() : null;
+	};
+
+	/**
+	 * Convert to CIELab color
+	 * @returns {CIELab}
+	 */
+	YCbCr.prototype.toCIELab = function () {
+		return this.isSet() ? this.toRGB().toCIELab() : null;
+	};
+
+	/**
+	 * Convert to CMYK color
+	 * @returns {CMYK}
+	 */
+	YCbCr.prototype.toCMYK = function () {
+		return this.isSet() ? this.toRGB().toCMYK() : null;
+	};
+
+	/**
+	 * Convert to YIQ color
+	 * @returns {YIQ}
+	 */
+	YCbCr.prototype.toYIQ = function () {
+		return this.isSet() ? this.toRGB().toYIQ() : null;
+	};
+
+	/**
+	 * Convert to YUV color
+	 * @returns {YUV}
+	 */
+	YCbCr.prototype.toYUV = function () {
+		return this.isSet() ? this.toRGB().toYUV() : null;
+	};
+
+	/**
+	 * Convert to YUV color
+	 * @returns {YUV}
+	 */
+	YCbCr.prototype.toYDbDr = function () {
+		return this.isSet() ? this.toRGB().toYDbDr() : null;
+	};
+
+	/**
+	 * Convert to YPbPr color
+	 * @returns {YPbPr}
+	 */
+	YCbCr.prototype.toYPbPr = function () {
+		return this.isSet() ? this.toRGB().toYPbPr() : null;
+	};
+
+	/**
+	 * Get a random YDbDr color
+	 * @static
+	 * @returns {YDbDr}
+	 */
+	YCbCr.random = function () {
+		return RGB.random().toYDbDr();
+	};
+
+	/**
+	 * YPbPr color class
+	 * @constructor
+	 * @param {Number|Object} Y Y value / color object
+	 * @param {Number} Pb
+	 * @param {Number} Pr
+	 */
+	function YPbPr(Y, Pb, Pr) {
+		if (Type.isNumber(Y) && Type.isNumber(Pb) && Type.isNumber(Pr)) {
+			this.Y = Y;
+			this.Pb = Pb;
+			this.Pr = Pr;
+		} else if (Y instanceof this.constructor) {
+			this.Y = Y.Y;
+			this.Pb = Y.Pb;
+			this.Pr = Y.Pr;
+		} else {
+			return toColorSpace(Y, Color.YPBPR);
+		}
+
+		return this;
+	}
+
+	$.YPbPr = YPbPr;
+
+	YPbPr.prototype.Y = undefined;
+	YPbPr.prototype.Pb = undefined;
+	YPbPr.prototype.Pr = undefined;
+
+	/**
+	 * Check whether the object values are set
+	 * @returns {Boolean}
+	 */
+	YPbPr.prototype.isSet = function () {
+		return Type.isNumber(this.Y) && Type.isNumber(this.Pb) && Type.isNumber(this.Pr);
+	};
+
+	/**
+	 * Convert to RGB color
+	 * @returns {RGB}
+	 */
+	YPbPr.prototype.toRGB = function () {
+		if (this.isSet()) {
+			var red = this.Y + 1.575 * this.Pr;
+			var green = this.Y - 0.187 * this.Pb - 0.468 * this.Pr;
+			var blue = this.Y + 1.856 * this.Pb;
+
+			if (red < 0) {
+				red = 0;
+			}
+
+			if (green < 0) {
+				green = 0;
+			}
+
+			if (blue < 0) {
+				blue = 0;
+			}
+
+			return new RGB(red, green, blue);
+		}
+
+		return null;
+	};
+
+	/**
+	 * Convert to RGBA color
+	 * @returns {RGBA}
+	 */
+	YPbPr.prototype.toRGBA = function () {
+		return this.isSet() ? this.toRGB().toRGBA() : null;
+	};
+
+	/**
+	 * Convert to RYB color
+	 * @returns {RYB}
+	 */
+	YPbPr.prototype.toRYB = function () {
+		return this.isSet() ? this.toRGB().toRYB() : null;
+	};
+
+	/**
+	 * Convert to Hex color
+	 * @returns {Hex}
+	 */
+	YPbPr.prototype.toHex = function () {
+		return this.isSet() ? this.toRGB().toHex() : null;
+	};
+
+	/**
+	 * Convert to HSL color
+	 * @returns {HSL}
+	 */
+	YPbPr.prototype.toHSL = function () {
+		return this.isSet() ? this.toRGB().toHSL() : null;
+	};
+
+	/**
+	 * Convert to HSLA color
+	 * @returns {HSLA}
+	 */
+	YPbPr.prototype.toHSLA = function () {
+		return this.isSet() ? this.toRGB().toHSLA() : null;
+	};
+
+	/**
+	 * Convert to HSV color
+	 * @returns {HSV}
+	 */
+	YPbPr.prototype.toHSV = function () {
+		return this.isSet() ? this.toRGB().toHSV() : null;
+	};
+
+	/**
+	 * Convert to XYZ color
+	 * @returns {XYZ}
+	 */
+	YPbPr.prototype.toXYZ = function () {
+		return this.isSet() ? this.toRGB().toXYZ() : null;
+	};
+
+	/**
+	 * Convert to xyY color
+	 * @returns {xyY}
+	 */
+	YPbPr.prototype.toxyY = function () {
+		return this.isSet() ? this.toRGB().toxyY() : null;
+	};
+
+	/**
+	 * Convert to CIELab color
+	 * @returns {CIELab}
+	 */
+	YPbPr.prototype.toCIELab = function () {
+		return this.isSet() ? this.toRGB().toCIELab() : null;
+	};
+
+	/**
+	 * Convert to CMYK color
+	 * @returns {CMYK}
+	 */
+	YPbPr.prototype.toCMYK = function () {
+		return this.isSet() ? this.toRGB().toCMYK() : null;
+	};
+
+	/**
+	 * Convert to YIQ color
+	 * @returns {YIQ}
+	 */
+	YPbPr.prototype.toYIQ = function () {
+		return this.isSet() ? this.toRGB().toYIQ() : null;
+	};
+
+	/**
+	 * Convert to YUV color
+	 * @returns {YUV}
+	 */
+	YPbPr.prototype.toYUV = function () {
+		return this.isSet() ? this.toRGB().toYUV() : null;
+	};
+
+	/**
+	 * Convert to YUV color
+	 * @returns {YUV}
+	 */
+	YPbPr.prototype.toYDbDr = function () {
+		return this.isSet() ? this.toRGB().toYDbDr() : null;
+	};
+
+	/**
+	 * Convert to YCbCr color
+	 * @returns {YCbCr}
+	 */
+	YPbPr.prototype.toYCbCr = function () {
+		return this.isSet() ? this.toRGB().toYCbCr() : null;
+	};
+
+	/**
+	 * Get a random YPbPr color
+	 * @static
+	 * @returns {YPbPr}
+	 */
+	YPbPr.random = function () {
+		return RGB.random().toYPbPr();
 	};
 
 	/**
@@ -4787,6 +5431,39 @@
 	}
 
 	$.pentadic = pentadic;
+
+	/**
+	 * Return the hexadic colors of the given color
+	 * @param {Object|String} color
+	 * @returns {Array.<Object>|Null}
+	 */
+	function hexadic(color) {
+		return shiftHue(color, 60, 60, 60, 60, 60);
+	}
+
+	$.hexadic = hexadic;
+
+	/**
+	 * Return the octadic colors of the given color
+	 * @param {Object|String} color
+	 * @returns {Array.<Object>|Null}
+	 */
+	function octadic(color) {
+		return shiftHue(color, 45, 45, 45, 45, 45, 45, 45);
+	}
+
+	$.octadic = octadic;
+
+	/**
+	 * Return the decadic colors of the given color
+	 * @param {Object|String} color
+	 * @returns {Array.<Object>|Null}
+	 */
+	function decadic(color) {
+		return shiftHue(color, 36, 36, 36, 36, 36, 36, 36, 36, 36);
+	}
+
+	$.decadic = decadic;
 
 	/**
 	 * Perceieved brightness, if value is greater than 125 chose black foreground text, otherwise white
