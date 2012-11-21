@@ -800,7 +800,7 @@
 		'915c83': 'Antique fuchsia',
 		'841b2d': 'Antique ruby',
 		'faebd7': ['Antique white', 'Moccasin'],
-		'008000': ['Ao', 'Green (HTML/CSS color)', 'Office green'],
+		'008000': ['Ao', 'Green', 'Office green'],
 		'8db600': 'Apple green',
 		'fbceb1': 'Apricot',
 		'00ffff': ['Aqua', 'Cyan', 'Electric cyan'],
@@ -811,7 +811,7 @@
 		'b2beb5': 'Ash grey',
 		'87a96b': 'Asparagus',
 		'ff9966': ['Atomic tangerine', 'Pink-orange'],
-		'a52a2a': ['Auburn', 'Brown (web)', 'Red-brown'],
+		'a52a2a': ['Auburn', 'Brown', 'Red-brown'],
 		'fdee00': 'Aureolin',
 		'6e7f80': 'AuroMetalSaurus',
 		'568203': 'Avocado',
@@ -949,14 +949,14 @@
 		'232b2b': 'Charleston green',
 		'e68fac': ['Charm pink', 'Light Thulian pink'],
 		'dfff00': 'Chartreuse (traditional)',
-		'7fff00': 'Chartreuse (web)',
+		'7fff00': 'Chartreuse',
 		'ffb7c5': 'Cherry blossom pink',
 		'954535': 'Chestnut',
 		'de6fa1': ['China pink', 'Thulian pink'],
 		'a8516e': 'China rose',
 		'aa381e': 'Chinese red',
 		'7b3f00': 'Chocolate (traditional)',
-		'd2691e': ['Chocolate (web)', 'Cinnamon', 'Cocoa brown'],
+		'd2691e': ['Chocolate', 'Cinnamon', 'Cocoa brown'],
 		'ffa700': 'Chrome yellow',
 		'98817b': 'Cinereous',
 		'e34234': ['Cinnabar', 'Vermilion (cinnabar)'],
@@ -1080,7 +1080,7 @@
 		'1034a6': 'Egyptian blue',
 		'7df9ff': 'Electric blue',
 		'ff003f': 'Electric crimson',
-		'00ff00': ['Electric green', 'Green (color wheel) (X11 green)', 'Lime (web) (X11 green)'],
+		'00ff00': ['Electric green', 'Green (color wheel) (X11 green)', 'Lime (X11 green)'],
 		'6f00ff': ['Electric indigo', 'Indigo'],
 		'ccff00': ['Electric lime', 'Fluorescent yellow'],
 		'bf00ff': 'Electric purple',
@@ -1111,7 +1111,7 @@
 		'fffaf0': 'Floral white',
 		'ff004f': 'Folly',
 		'014421': ['Forest green (traditional)', 'UP Forest green'],
-		'228b22': 'Forest green (web)',
+		'228b22': 'Forest green',
 		'856d4d': 'French bistre',
 		'0072bb': 'French blue',
 		'86608e': ['French lilac', 'Pomp and Power'],
@@ -1135,7 +1135,7 @@
 		'e6e8fa': 'Glitter',
 		'00ab66': 'GO green',
 		'd4af37': 'Gold (metallic)',
-		'ffd700': 'Gold (web) (Golden)',
+		'ffd700': 'Gold (Golden)',
 		'85754e': 'Gold Fusion',
 		'996515': 'Golden brown',
 		'fcc200': 'Golden poppy',
@@ -1143,7 +1143,7 @@
 		'daa520': 'Goldenrod',
 		'a8e4a0': 'Granny Smith Apple',
 		'6f2da8': 'Grape',
-		'808080': ['Gray', 'Gray (HTML/CSS gray)', 'Trolley Grey'],
+		'808080': ['Gray', 'Gray', 'Trolley Grey'],
 		'bebebe': 'Gray (X11 gray)',
 		'465945': 'Gray-asparagus',
 		'1cac78': 'Green (Crayola)',
@@ -1177,7 +1177,7 @@
 		'138808': 'India green',
 		'cd5c5c': 'Indian red',
 		'e3a857': 'Indian yellow',
-		'4b0082': 'Indigo (web)',
+		'4b0082': 'Indigo',
 		'002fa7': 'International Klein Blue',
 		'ff4f00': 'International orange (aerospace)',
 		'ba160c': 'International orange (engineering)',
@@ -1198,7 +1198,7 @@
 		'29ab87': 'Jungle green',
 		'4cbb17': 'Kelly green',
 		'7c1c05': 'Kenyan copper',
-		'c3b091': 'Khaki (HTML/CSS) (Khaki)',
+		'c3b091': 'Khaki',
 		'f0e68c': ['Khaki (X11) (Light khaki)', 'Light khaki'],
 		'882d17': ['Kobe', 'Sienna'],
 		'e79fc4': 'Kobi',
@@ -1210,12 +1210,12 @@
 		'a9ba9d': 'Laurel green',
 		'cf1020': 'Lava',
 		'b57edc': 'Lavender (floral)',
-		'e6e6fa': ['Lavender (web)', 'Lavender mist'],
+		'e6e6fa': ['Lavender', 'Lavender mist'],
 		'ccccff': ['Lavender blue', 'Periwinkle'],
 		'fff0f5': 'Lavender blush',
 		'c4c3d0': 'Lavender gray',
 		'9457eb': ['Lavender indigo', 'Navy purple'],
-		'ee82ee': ['Lavender magenta', 'Violet (web)'],
+		'ee82ee': ['Lavender magenta', 'Violet'],
 		'fbaed2': 'Lavender pink',
 		'967bb6': 'Lavender purple',
 		'fba0e3': 'Lavender rose',
@@ -1271,7 +1271,7 @@
 		'ff8243': 'Mango Tango',
 		'74c365': 'Mantis',
 		'880085': 'Mardi Gras',
-		'800000': 'Maroon (HTML/CSS)',
+		'800000': 'Maroon',
 		'b03060': ['Maroon (X11)', 'Rich maroon'],
 		'e0b0ff': 'Mauve',
 		'915f6d': ['Mauve taupe', 'Raspberry glace'],
@@ -1285,7 +1285,7 @@
 		'f3e5ab': ['Medium champagne', 'Vanilla'],
 		'035096': 'Medium electric blue',
 		'1c352d': 'Medium jungle green',
-		'dda0dd': ['Medium lavender magenta', 'Pale plum', 'Plum (web)'],
+		'dda0dd': ['Medium lavender magenta', 'Pale plum', 'Plum'],
 		'ba55d3': 'Medium orchid',
 		'0067a5': ['Medium Persian blue', 'Sapphire blue'],
 		'9370db': 'Medium purple',
@@ -1343,7 +1343,7 @@
 		'796878': 'Old lavender',
 		'673147': ['Old mauve', 'Wine dregs'],
 		'c08081': 'Old rose',
-		'6b8e23': 'Olive Drab (web) (Olive Drab #3)',
+		'6b8e23': 'Olive Drab #3',
 		'3c341f': 'Olive Drab #7',
 		'9ab973': 'Olivine',
 		'353839': 'Onyx',
@@ -1392,7 +1392,7 @@
 		'ff6961': 'Pastel red',
 		'cb99c9': 'Pastel violet',
 		'fdfd96': 'Pastel yellow',
-		'800080': ['Patriarch', 'Purple (HTML/CSS)'],
+		'800080': ['Patriarch', 'Purple'],
 		'ffe5b4': 'Peach',
 		'ffcc99': 'Peach-orange',
 		'ffdab9': 'Peach puff',
@@ -1426,7 +1426,7 @@
 		'e5e4e2': 'Platinum',
 		'8e4585': 'Plum (traditional)',
 		'ff5a36': 'Portland Orange',
-		'b0e0e6': 'Powder blue (web)',
+		'b0e0e6': 'Powder blue',
 		'ff8f00': 'Princeton orange',
 		'003153': 'Prussian blue',
 		'cc8899': 'Puce',
@@ -1479,7 +1479,7 @@
 		'bc8f8f': 'Rosy brown',
 		'0038a8': 'Royal azure',
 		'002366': 'Royal blue (traditional)',
-		'4169e1': 'Royal blue (web)',
+		'4169e1': 'Royal blue',
 		'ca2c92': 'Royal fuchsia',
 		'7851a9': 'Royal purple',
 		'ce4676': 'Ruber',
@@ -6705,6 +6705,57 @@
 	}
 
 	$.toNamed = toNamed;
+
+	/**
+	 * Get array of closely matching colors
+	 * @param {Object|String} color
+	 * @param {Number} limit
+	 * @param {Object<String, String>} colors Color list, e.g. Color.websafe
+	 * @param {Boolean} disableBias If false include eye sensitivity bias
+	 * @returns {Array<String>}
+	 */
+	function nearest(color, limit, colors, disableBias) {
+		var out = [];
+
+		if (color) {
+			color = new Hex(color);
+
+			if (color && color.isSet()) {
+				if (limit !== null && !Type.isInteger(limit)) {
+					limit = 10;
+				}
+
+				if (!colors || !Type.isObject(colors)) {
+					colors = Color.listExtended;
+				}
+
+				for (var hex in colors) {
+					if (colors.hasOwnProperty(hex) && hex !== color.value) {
+						out.push(hex);
+					}
+				}
+
+				out = out.sort(function (a, b) {
+					var distA = distance('#' + a, color, disableBias);
+					var distB = distance('#' + b, color, disableBias);
+
+					if (distA === distB) {
+						return 0;
+					}
+
+					return distA - distB;
+				});
+
+				if (limit !== null) {
+					out = out.slice(0, limit);
+				}
+			}
+		}
+
+		return out;
+	}
+
+	$.nearest = nearest;
 
 	/**
 	 * Convert the matched colors in a string to the given color space
