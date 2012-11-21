@@ -777,7 +777,7 @@
 	 * @constant
 	 * @type {Object.<String, String|Array>}
 	 */
-	Colors.listExtended = {
+	Color.listExtended = {
 		'c9ffe5': 'Aero blue',
 		'5d8aa8': ['Air Force blue (RAF)', 'Rackley'],
 		'00308f': 'Air Force blue (USAF)',
