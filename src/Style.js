@@ -837,7 +837,7 @@
 		'3d2b1f': 'Bistre',
 		'967117': ['Bistre brown', 'Drab', 'Mode beige', 'Sand dune', 'Sandy taupe'],
 		'cae00d': 'Bitter lemon',
-		'bfff00': ['Bitter lime', 'Lime (color wheel)'],
+		'bfff00': ['Bitter lime', 'Lime'],
 		'fe6f5e': 'Bittersweet',
 		'bf4f51': 'Bittersweet shimmer',
 		'000000': 'Black',
@@ -1080,7 +1080,7 @@
 		'1034a6': 'Egyptian blue',
 		'7df9ff': 'Electric blue',
 		'ff003f': 'Electric crimson',
-		'00ff00': ['Electric green', 'Green (color wheel) (X11 green)', 'Lime (X11 green)'],
+		'00ff00': ['Electric green', 'Green (X11 green)', 'Lime (X11 green)'],
 		'6f00ff': ['Electric indigo', 'Indigo'],
 		'ccff00': ['Electric lime', 'Fluorescent yellow'],
 		'bf00ff': 'Electric purple',
@@ -1348,7 +1348,7 @@
 		'9ab973': 'Olivine',
 		'353839': 'Onyx',
 		'b784a7': 'Opera mauve',
-		'ff7f00': 'Orange (color wheel)',
+		'ff7f00': 'Orange',
 		'fb9902': 'Orange (RYB)',
 		'ffa500': 'Orange (web color)',
 		'ff9f00': 'Orange peel',
@@ -1612,7 +1612,7 @@
 		'c5b358': 'Vegas gold',
 		'c80815': 'Venetian red',
 		'43b3ae': 'Verdigris',
-		'7f00ff': 'Violet (color wheel)',
+		'7f00ff': 'Violet',
 		'8601af': 'Violet (RYB)',
 		'324ab2': 'Violet-blue',
 		'f75394': 'Violet-red',
@@ -6756,6 +6756,31 @@
 	}
 
 	$.nearest = nearest;
+
+	/**
+	 * Get array of most remotely matching colors
+	 * @param {Object|String} color
+	 * @param {Number} limit
+	 * @param {Object<String, String>} colors Color list, e.g. Color.websafe
+	 * @param {Boolean} disableBias If false include eye sensitivity bias
+	 * @returns {Array<String>}
+	 */
+	function distant(color, limit, colors, disableBias) {
+		var out = [];
+		var _nearest = nearest(color, null, colors, disableBias);
+
+		if (_nearest) {
+			out = _nearest.reverse();
+		}
+
+		if (limit !== null) {
+			out = out.slice(0, limit);
+		}
+
+		return out;
+	}
+
+	$.distant = distant;
 
 	/**
 	 * Convert the matched colors in a string to the given color space
