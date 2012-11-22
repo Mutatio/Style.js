@@ -2742,7 +2742,7 @@
 	 * @returns {String}
 	 */
 	RGBA.prototype.toString = function () {
-		return this.isSet() ? 'rgba(' + Math.round(this.red) + ', ' + Math.round(this.green) + ', ' + Math.round(this.blue) + ', ' + this.alpha.round(2) + ')' : null;
+		return this.isSet() ? 'rgba(' + Math.round(this.red) + ', ' + Math.round(this.green) + ', ' + Math.round(this.blue) + ', ' + (Type.isInteger(this.alpha) ? this.alpha + '.0' : this.alpha.round(2)) + ')' : null;
 	};
 
 	/**
