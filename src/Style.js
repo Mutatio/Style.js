@@ -242,6 +242,13 @@
 	 * @constant
 	 * @type {String}
 	 */
+	Color.HUNTERLAB = 'HunterLab';
+
+	/**
+	 * @static
+	 * @constant
+	 * @type {String}
+	 */
 	Color.CMYK = 'CMYK';
 
 	/**
@@ -1738,6 +1745,8 @@
 					return this.XYY;
 				} else if (color instanceof CIELab) {
 					return this.CIELAB;
+				} else if (color instanceof HunterLab) {
+					return this.HUNTERLAB;
 				} else if (color instanceof CMYK) {
 					return this.CMYK;
 				} else if (color instanceof YIQ) {
@@ -1782,6 +1791,7 @@
 				case this.XYZ:
 				case this.XYY:
 				case this.CIELAB:
+				case this.HUNTERLAB:
 				case this.YIQ:
 				case this.YUV:
 				case this.YDBDR:
@@ -2357,6 +2367,14 @@
 	};
 
 	/**
+	 * Convert to HunterLab color
+	 * @returns {HunterLab}
+	 */
+	RGB.prototype.toHunterLab = function () {
+		return this.isSet() ? this.toXYZ().toHunterLab() : null;
+	};
+
+	/**
 	 * Convert to CMYK color
 	 * @returns {CMYK}
 	 */
@@ -2654,6 +2672,15 @@
 	 */
 	RGBA.prototype.toCIELab = function (background) {
 		return this.isSet() ? this.toRGB(background).toCIELab() : null;
+	};
+
+	/**
+	 * Convert to HunterLab color
+	 * @param {Object} background
+	 * @returns {HunterLab}
+	 */
+	RGBA.prototype.toHunterLab = function (background) {
+		return this.isSet() ? this.toRGB(background).toHunterLab() : null;
 	};
 
 	/**
@@ -2991,6 +3018,14 @@
 	};
 
 	/**
+	 * Convert to HunterLab color
+	 * @returns {HunterLab}
+	 */
+	RYB.prototype.toHunterLab = function () {
+		return this.isSet() ? this.toRGB().toHunterLab() : null;
+	};
+
+	/**
 	 * Convert to CMYK color
 	 * @returns {CMYK}
 	 */
@@ -3172,6 +3207,14 @@
 	 */
 	Hex.prototype.toCIELab = function () {
 		return this.isSet() ? this.toRGB().toCIELab() : null;
+	};
+
+	/**
+	 * Convert to HunterLab color
+	 * @returns {HunterLab}
+	 */
+	Hex.prototype.toHunterLab = function () {
+		return this.isSet() ? this.toRGB().toHunterLab() : null;
 	};
 
 	/**
@@ -3418,6 +3461,14 @@
 	};
 
 	/**
+	 * Convert to HunterLab color
+	 * @returns {HunterLab}
+	 */
+	HSL.prototype.toHunterLab = function () {
+		return this.isSet() ? this.toRGB().toHunterLab() : null;
+	};
+
+	/**
 	 * Convert to CMYK color
 	 * @returns {CMYK}
 	 */
@@ -3621,6 +3672,15 @@
 	 */
 	HSLA.prototype.toCIELab = function (background) {
 		return this.isSet() ? this.toRGBA(background).toCIELab() : null;
+	};
+
+	/**
+	 * Convert to HunterLab color
+	 * @param {Object} background
+	 * @returns {HunterLab}
+	 */
+	HSLA.prototype.toHunterLab = function (background) {
+		return this.isSet() ? this.toRGBA(background).toHunterLab() : null;
 	};
 
 	/**
@@ -3880,6 +3940,14 @@
 	};
 
 	/**
+	 * Convert to HunterLab color
+	 * @returns {HunterLab}
+	 */
+	HSV.prototype.toHunterLab = function () {
+		return this.isSet() ? this.toRGB().toHunterLab() : null;
+	};
+
+	/**
 	 * Convert to CMYK color
 	 * @returns {CMYK}
 	 */
@@ -4083,6 +4151,23 @@
 	};
 
 	/**
+	 * Convert to HunterLab color
+	 * @returns {HunterLab}
+	 */
+	XYZ.prototype.toHunterLab = function () {
+		if (this.isSet()) {
+			var sqrtY = Math.sqrt(this.Y);
+			var L = 10 * sqrtY;
+			var a = 17.5 * ((1.02 * this.X - this.Y) / sqrtY);
+			var b = 7 * ((this.Y - 0.847 * this.Z) / sqrtY);
+
+			return new HunterLab(L, a, b);
+		}
+
+		return null;
+	};
+
+	/**
 	 * Convert to CMYK color
 	 * @returns {CMYK}
 	 */
@@ -4257,6 +4342,14 @@
 	 */
 	xyY.prototype.toCIELab = function () {
 		return this.isSet() ? this.toXYZ().toCIELab() : null;
+	};
+
+	/**
+	 * Convert to HunterLab color
+	 * @returns {HunterLab}
+	 */
+	xyY.prototype.toHunterLab = function () {
+		return this.isSet() ? this.toXYZ().toHunterLab() : null;
 	};
 
 	/**
@@ -4441,6 +4534,14 @@
 	};
 
 	/**
+	 * Convert to HunterLab color
+	 * @returns {HunterLab}
+	 */
+	CIELab.prototype.toHunterLab = function () {
+		return this.isSet() ? this.toXYZ().toHunterLab() : null;
+	};
+
+	/**
 	 * Convert to CMYK color
 	 * @returns {CMYK}
 	 */
@@ -4495,6 +4596,188 @@
 	 */
 	CIELab.random = function () {
 		return XYZ.random().toCIELab();
+	};
+
+	/**
+	 * HunterLab color class
+	 * @constructor
+	 * @param {Number|Object} L L value / color object
+	 * @param {Number} a
+	 * @param {Number} b
+	 */
+	function HunterLab(L, a, b) {
+		if (Type.isNumber(L) && Type.isNumber(a) && Type.isNumber(b)) {
+			this.L = L;
+			this.a = a;
+			this.b = b;
+		} else if (L instanceof this.constructor) {
+			this.L = L.L;
+			this.a = L.a;
+			this.b = L.b;
+		} else {
+			return toColorSpace(L, Color.HUNTERLAB);
+		}
+
+		return this;
+	}
+
+	$.HunterLab = HunterLab;
+
+	HunterLab.prototype.L = undefined;
+	HunterLab.prototype.a = undefined;
+	HunterLab.prototype.b = undefined;
+
+	/**
+	 * Check whether the object values are set
+	 * @returns {Boolean}
+	 */
+	HunterLab.prototype.isSet = function () {
+		return Type.isNumber(this.L) && Type.isNumber(this.a) && Type.isNumber(this.b);
+	};
+
+	/**
+	 * Convert to RGB color
+	 * @returns {RGB}
+	 */
+	HunterLab.prototype.toRGB = function () {
+		return this.isSet() ? this.toXYZ().toRGB() : null;
+	};
+
+	/**
+	 * Convert to RGBA color
+	 * @returns {RGBA}
+	 */
+	HunterLab.prototype.toRGBA = function () {
+		return this.isSet() ? this.toXYZ().toRGBA() : null;
+	};
+
+	/**
+	 * Convert to RYB color
+	 * @returns {RYB}
+	 */
+	HunterLab.prototype.toRYB = function () {
+		return this.isSet() ? this.toXYZ().toRYB() : null;
+	};
+
+	/**
+	 * Convert to Hex color
+	 * @returns {Hex}
+	 */
+	HunterLab.prototype.toHex = function () {
+		return this.isSet() ? this.toXYZ().toHex() : null;
+	};
+
+	/**
+	 * Convert to HSL color
+	 * @returns {HSL}
+	 */
+	HunterLab.prototype.toHSL = function () {
+		return this.isSet() ? this.toXYZ().toHSL() : null;
+	};
+
+	/**
+	 * Convert to HSLA color
+	 * @returns {HSLA}
+	 */
+	HunterLab.prototype.toHSLA = function () {
+		return this.isSet() ? this.toXYZ().toHSLA() : null;
+	};
+
+	/**
+	 * Convert to HSV color
+	 * @returns {HSV}
+	 */
+	HunterLab.prototype.toHSV = function () {
+		return this.isSet() ? this.toXYZ().toHSV() : null;
+	};
+
+	/**
+	 * Convert to CIELab color
+	 * @returns {CIELab}
+	 */
+	HunterLab.prototype.toCIELab = function () {
+		return this.isSet() ? this.toXYZ().toCIELab() : null;
+	};
+
+	/**
+	 * Convert to XYZ color
+	 * @returns {XYZ}
+	 */
+	HunterLab.prototype.toXYZ = function () {
+		if (this.isSet()) {
+			var Y = Math.pow(this.L / 10, 2);
+			var X = ((this.a / 17.5 * this.L / 10) + Y) / 1.02;
+			var Z = -((this.b / 7 * this.L / 10) - Y) / 0.847;
+
+			return new XYZ(X, Y, Z);
+		}
+
+		return null;
+	};
+
+	/**
+	 * Convert to xyY color
+	 * @returns {xyY}
+	 */
+	HunterLab.prototype.toxyY = function () {
+		return this.isSet() ? this.toXYZ().toxyY() : null;
+	};
+
+	/**
+	 * Convert to CMYK color
+	 * @returns {CMYK}
+	 */
+	HunterLab.prototype.toCMYK = function () {
+		return this.isSet() ? this.toXYZ().toCMYK() : null;
+	};
+
+	/**
+	 * Convert to YIQ color
+	 * @returns {YIQ}
+	 */
+	HunterLab.prototype.toYIQ = function () {
+		return this.isSet() ? this.toXYZ().toYIQ() : null;
+	};
+
+	/**
+	 * Convert to YUV color
+	 * @returns {YUV}
+	 */
+	HunterLab.prototype.toYUV = function () {
+		return this.isSet() ? this.toXYZ().toYUV() : null;
+	};
+
+	/**
+	 * Convert to YDbDr color
+	 * @returns {YDbDr}
+	 */
+	HunterLab.prototype.toYDbDr = function () {
+		return this.isSet() ? this.toXYZ().toYDbDr() : null;
+	};
+
+	/**
+	 * Convert to YCbCr color
+	 * @returns {YCbCr}
+	 */
+	HunterLab.prototype.toYCbCr = function () {
+		return this.isSet() ? this.toXYZ().toYCbCr() : null;
+	};
+
+	/**
+	 * Convert to YPbPr color
+	 * @returns {YPbPr}
+	 */
+	HunterLab.prototype.toYPbPr = function () {
+		return this.isSet() ? this.toXYZ().toYPbPr() : null;
+	};
+
+	/**
+	 * Get a random HunterLab color
+	 * @static
+	 * @returns {HunterLab}
+	 */
+	HunterLab.random = function () {
+		return XYZ.random().toHunterLab();
 	};
 
 	/**
@@ -4625,6 +4908,14 @@
 	 */
 	CMYK.prototype.toCIELab = function () {
 		return this.isSet() ? this.toRGB().toCIELab() : null;
+	};
+
+	/**
+	 * Convert to HunterLab color
+	 * @returns {HunterLab}
+	 */
+	CMYK.prototype.toHunterLab = function () {
+		return this.isSet() ? this.toRGB().toHunterLab() : null;
 	};
 
 	/**
@@ -4820,6 +5111,14 @@
 	};
 
 	/**
+	 * Convert to HunterLab color
+	 * @returns {HunterLab}
+	 */
+	YIQ.prototype.toHunterLab = function () {
+		return this.isSet() ? this.toRGB().toHunterLab() : null;
+	};
+
+	/**
 	 * Convert to CMYK color
 	 * @returns {CMYK}
 	 */
@@ -5003,6 +5302,14 @@
 	 */
 	YUV.prototype.toCIELab = function () {
 		return this.isSet() ? this.toRGB().toCIELab() : null;
+	};
+
+	/**
+	 * Convert to HunterLab color
+	 * @returns {HunterLab}
+	 */
+	YUV.prototype.toHunterLab = function () {
+		return this.isSet() ? this.toRGB().toHunterLab() : null;
 	};
 
 	/**
@@ -5199,6 +5506,14 @@
 	};
 
 	/**
+	 * Convert to HunterLab color
+	 * @returns {HunterLab}
+	 */
+	YDbDr.prototype.toHunterLab = function () {
+		return this.isSet() ? this.toRGB().toHunterLab() : null;
+	};
+
+	/**
 	 * Convert to CMYK color
 	 * @returns {CMYK}
 	 */
@@ -5388,6 +5703,14 @@
 	};
 
 	/**
+	 * Convert to HunterLab color
+	 * @returns {HunterLab}
+	 */
+	YCbCr.prototype.toHunterLab = function () {
+		return this.isSet() ? this.toRGB().toHunterLab() : null;
+	};
+
+	/**
 	 * Convert to CMYK color
 	 * @returns {CMYK}
 	 */
@@ -5571,6 +5894,14 @@
 	 */
 	YPbPr.prototype.toCIELab = function () {
 		return this.isSet() ? this.toRGB().toCIELab() : null;
+	};
+
+	/**
+	 * Convert to HunterLab color
+	 * @returns {HunterLab}
+	 */
+	YPbPr.prototype.toHunterLab = function () {
+		return this.isSet() ? this.toRGB().toHunterLab() : null;
 	};
 
 	/**
