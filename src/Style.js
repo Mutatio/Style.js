@@ -249,6 +249,13 @@
 	 * @constant
 	 * @type {String}
 	 */
+	Color.CIELCH = 'CIELCH';
+
+	/**
+	 * @static
+	 * @constant
+	 * @type {String}
+	 */
 	Color.HUNTERLAB = 'HunterLab';
 
 	/**
@@ -1754,6 +1761,8 @@
 					return this.CIELAB;
 				} else if (color instanceof CIELuv) {
 					return this.CIELUV;
+				} else if (color instanceof CIELCH) {
+					return this.CIELCH;
 				} else if (color instanceof HunterLab) {
 					return this.HUNTERLAB;
 				} else if (color instanceof CMYK) {
@@ -1801,6 +1810,7 @@
 				case this.XYY:
 				case this.CIELAB:
 				case this.CIELUV:
+				case this.CIELCH:
 				case this.HUNTERLAB:
 				case this.YIQ:
 				case this.YUV:
@@ -2385,6 +2395,14 @@
 	};
 
 	/**
+	 * Convert to CIELCH color
+	 * @returns {CIELCH}
+	 */
+	RGB.prototype.toCIELCH = function () {
+		return this.isSet() ? this.toCIELuv().toCIELCH() : null;
+	};
+
+	/**
 	 * Convert to HunterLab color
 	 * @returns {HunterLab}
 	 */
@@ -2699,6 +2717,15 @@
 	 */
 	RGBA.prototype.toCIELuv = function (background) {
 		return this.isSet() ? this.toRGB(background).toCIELuv() : null;
+	};
+
+	/**
+	 * Convert to CIELCH color
+	 * @param {Object} background
+	 * @returns {CIELCH}
+	 */
+	RGBA.prototype.toCIELCH = function (background) {
+		return this.isSet() ? this.toRGB(background).toCIELCH() : null;
 	};
 
 	/**
@@ -3053,6 +3080,14 @@
 	};
 
 	/**
+	 * Convert to CIELCH color
+	 * @returns {CIELCH}
+	 */
+	RYB.prototype.toCIELCH = function () {
+		return this.isSet() ? this.toRGB().toCIELCH() : null;
+	};
+
+	/**
 	 * Convert to HunterLab color
 	 * @returns {HunterLab}
 	 */
@@ -3250,6 +3285,14 @@
 	 */
 	Hex.prototype.toCIELuv = function () {
 		return this.isSet() ? this.toRGB().toCIELuv() : null;
+	};
+
+	/**
+	 * Convert to CIELCH color
+	 * @returns {CIELCH}
+	 */
+	Hex.prototype.toCIELCH = function () {
+		return this.isSet() ? this.toRGB().toCIELCH() : null;
 	};
 
 	/**
@@ -3512,6 +3555,14 @@
 	};
 
 	/**
+	 * Convert to CIELCH color
+	 * @returns {CIELCH}
+	 */
+	HSL.prototype.toCIELCH = function () {
+		return this.isSet() ? this.toRGB().toCIELCH() : null;
+	};
+
+	/**
 	 * Convert to HunterLab color
 	 * @returns {HunterLab}
 	 */
@@ -3731,7 +3782,16 @@
 	 * @returns {CIELuv}
 	 */
 	HSLA.prototype.toCIELuv = function (background) {
-		return this.isSet() ? this.toRGB(background).toCIELuv() : null;
+		return this.isSet() ? this.toRGBA(background).toCIELuv() : null;
+	};
+
+	/**
+	 * Convert to CIELCH color
+	 * @param {Object} background
+	 * @returns {CIELCH}
+	 */
+	HSLA.prototype.toCIELCH = function (background) {
+		return this.isSet() ? this.toRGBA(background).toCIELCH() : null;
 	};
 
 	/**
@@ -3794,7 +3854,7 @@
 	 * @returns {YPbPr}
 	 */
 	HSLA.prototype.toYPbPr = function (background) {
-		return this.isSet() ? this.toRGB(background).toYPbPr() : null;
+		return this.isSet() ? this.toRGBA(background).toYPbPr() : null;
 	};
 
 	/**
@@ -4005,6 +4065,14 @@
 	 */
 	HSV.prototype.toCIELuv = function () {
 		return this.isSet() ? this.toRGB().toCIELuv() : null;
+	};
+
+	/**
+	 * Convert to CIELCH color
+	 * @returns {CIELCH}
+	 */
+	HSV.prototype.toCIELCH = function () {
+		return this.isSet() ? this.toRGB().toCIELCH() : null;
 	};
 
 	/**
@@ -4245,6 +4313,14 @@
 	};
 
 	/**
+	 * Convert to CIELCH color
+	 * @returns {CIELCH}
+	 */
+	XYZ.prototype.toCIELCH = function () {
+		return this.isSet() ? this.toCIELab().toCIELCH() : null;
+	};
+
+	/**
 	 * Convert to HunterLab color
 	 * @returns {HunterLab}
 	 */
@@ -4447,6 +4523,14 @@
 	};
 
 	/**
+	 * Convert to CIELCH color
+	 * @returns {CIELCH}
+	 */
+	xyY.prototype.toCIELCH = function () {
+		return this.isSet() ? this.toXYZ().toCIELCH() : null;
+	};
+
+	/**
 	 * Convert to HunterLab color
 	 * @returns {HunterLab}
 	 */
@@ -4644,6 +4728,25 @@
 	};
 
 	/**
+	 * Convert to CIELCH color
+	 * @returns {CIELCH}
+	 */
+	CIELab.prototype.toCIELCH = function () {
+		if (this.isSet()) {
+			var C = Math.pow(Math.pow(this.a, 2) + Math.pow(this.b, 2), 1 / 2);
+			var hue = Math.atan2(this.b, this.a) * 360 / 2 / Math.PI;
+
+			if (hue < 0) {
+				hue = 360 + hue;
+			}
+
+			return new CIELCH(this.L, C, hue);
+		}
+
+		return null;
+	};
+
+	/**
 	 * Convert to HunterLab color
 	 * @returns {HunterLab}
 	 */
@@ -4836,19 +4939,27 @@
 	};
 
 	/**
-	 * Convert to HunterLab color
-	 * @returns {HunterLab}
-	 */
-	CIELuv.prototype.toHunterLab = function () {
-		return this.isSet() ? this.toXYZ().toHunterLab() : null;
-	};
-
-	/**
 	 * Convert to CIELab color
 	 * @returns {CIELab}
 	 */
 	CIELuv.prototype.toCIELab = function () {
 		return this.isSet() ? this.toXYZ().toCIELab() : null;
+	};
+
+	/**
+	 * Convert to CIELCH color
+	 * @returns {CIELCH}
+	 */
+	CIELuv.prototype.toCIELCH = function () {
+		return this.isSet() ? this.toXYZ().toCIELCH() : null;
+	};
+
+	/**
+	 * Convert to HunterLab color
+	 * @returns {HunterLab}
+	 */
+	CIELuv.prototype.toHunterLab = function () {
+		return this.isSet() ? this.toXYZ().toHunterLab() : null;
 	};
 
 	/**
@@ -4906,6 +5017,210 @@
 	 */
 	CIELuv.random = function () {
 		return XYZ.random().toCIELab();
+	};
+
+	/**
+	 * CIELCH color class
+	 * @constructor
+	 * @param {Number|Object} L L value / color object
+	 * @param {Number} C
+	 * @param {Number} H
+	 */
+	function CIELCH(L, C, H) {
+		if (Type.isNumber(L) && Type.isNumber(C) && Type.isNumber(H)) {
+			this.L = L;
+			this.C = C;
+			this.H = H;
+		} else if (L instanceof this.constructor) {
+			this.L = L.L;
+			this.C = L.C;
+			this.H = L.H;
+		} else {
+			return toColorSpace(L, Color.CIELCH);
+		}
+
+		return this;
+	}
+
+	$.CIELCH = CIELCH;
+
+	CIELCH.prototype.L = undefined;
+	CIELCH.prototype.C = undefined;
+	CIELCH.prototype.H = undefined;
+
+	/**
+	 * Check whether the CIELab object values are set
+	 * @returns {Boolean}
+	 */
+	CIELCH.prototype.isSet = function () {
+		return Type.isNumber(this.L) && Type.isNumber(this.C) && Type.isNumber(this.H);
+	};
+
+	/**
+	 * Convert to RGB color
+	 * @returns {RGB}
+	 */
+	CIELCH.prototype.toRGB = function () {
+		return this.isSet() ? this.toCIELab().toRGB() : null;
+	};
+
+	/**
+	 * Convert to RGBA color
+	 * @returns {RGBA}
+	 */
+	CIELCH.prototype.toRGBA = function () {
+		return this.isSet() ? this.toCIELab().toRGBA() : null;
+	};
+
+	/**
+	 * Convert to RYB color
+	 * @returns {RYB}
+	 */
+	CIELCH.prototype.toRYB = function () {
+		return this.isSet() ? this.toCIELab().toRYB() : null;
+	};
+
+	/**
+	 * Convert to Hex color
+	 * @returns {Hex}
+	 */
+	CIELCH.prototype.toHex = function () {
+		return this.isSet() ? this.toCIELab().toHex() : null;
+	};
+
+	/**
+	 * Convert to HSL color
+	 * @returns {HSL}
+	 */
+	CIELCH.prototype.toHSL = function () {
+		return this.isSet() ? this.toCIELab().toHSL() : null;
+	};
+
+	/**
+	 * Convert to HSLA color
+	 * @returns {HSLA}
+	 */
+	CIELCH.prototype.toHSLA = function () {
+		return this.isSet() ? this.toCIELab().toHSLA() : null;
+	};
+
+	/**
+	 * Convert to HSV color
+	 * @returns {HSV}
+	 */
+	CIELCH.prototype.toHSV = function () {
+		return this.isSet() ? this.toCIELab().toHSV() : null;
+	};
+
+	/**
+	 * Convert to XYZ color
+	 * @returns {XYZ}
+	 */
+	CIELCH.prototype.toXYZ = function () {
+		return this.isSet() ? this.toCIELab().toXYZ() : null;
+	};
+
+	/**
+	 * Convert to xyY color
+	 * @returns {xyY}
+	 */
+	CIELCH.prototype.toxyY = function () {
+		return this.isSet() ? this.toCIELab().toxyY() : null;
+	};
+
+	/**
+	 * Convert to CIELab color
+	 * @returns {CIELab}
+	 */
+	CIELCH.prototype.toCIELab = function () {
+		if (this.isSet()) {
+			var rad = this.H / 360 * 2 * Math.PI;
+
+			return new CIELab(this.L, Math.cos(rad) * this.C, Math.sin(rad) * this.C);
+		}
+
+		return null;
+	};
+
+	/**
+	 * Convert to CIELuv color
+	 * @returns {CIELuv}
+	 */
+	CIELCH.prototype.toCIELuv = function () {
+		return this.isSet() ? this.toCIELab().toCIELuv() : null;
+	};
+
+	/**
+	 * Convert to CIELuv color
+	 * @returns {CIELuv}
+	 */
+	CIELCH.prototype.toHunterLab = function () {
+		return this.isSet() ? this.toCIELab().toCIELuv() : null;
+	};
+
+	/**
+	 * Convert to HunterLab color
+	 * @returns {HunterLab}
+	 */
+	CIELCH.prototype.toHunterLab = function () {
+		return this.isSet() ? this.toCIELab().toHunterLab() : null;
+	};
+
+	/**
+	 * Convert to CMYK color
+	 * @returns {CMYK}
+	 */
+	CIELCH.prototype.toCMYK = function () {
+		return this.isSet() ? this.toCIELab().toCMYK() : null;
+	};
+
+	/**
+	 * Convert to YIQ color
+	 * @returns {YIQ}
+	 */
+	CIELCH.prototype.toYIQ = function () {
+		return this.isSet() ? this.toCIELab().toYIQ() : null;
+	};
+
+	/**
+	 * Convert to YUV color
+	 * @returns {YUV}
+	 */
+	CIELCH.prototype.toYUV = function () {
+		return this.isSet() ? this.toCIELab().toYUV() : null;
+	};
+
+	/**
+	 * Convert to YDbDr color
+	 * @returns {YDbDr}
+	 */
+	CIELCH.prototype.toYDbDr = function () {
+		return this.isSet() ? this.toCIELab().toYDbDr() : null;
+	};
+
+	/**
+	 * Convert to YCbCr color
+	 * @returns {YCbCr}
+	 */
+	CIELCH.prototype.toYCbCr = function () {
+		return this.isSet() ? this.toCIELab().toYCbCr() : null;
+	};
+
+	/**
+	 * Convert to YPbPr color
+	 * @returns {YPbPr}
+	 */
+	CIELCH.prototype.toYPbPr = function () {
+		return this.isSet() ? this.toCIELab().toYPbPr() : null;
+	};
+
+	/**
+	 * Get a random CIELuv color
+	 * @static
+	 * @returns {CIELuv}
+	 */
+	CIELCH.random = function () {
+		return CIELab.random().toCIELCH();
 	};
 
 	/**
@@ -5002,22 +5317,6 @@
 	};
 
 	/**
-	 * Convert to CIELab color
-	 * @returns {CIELab}
-	 */
-	HunterLab.prototype.toCIELab = function () {
-		return this.isSet() ? this.toXYZ().toCIELab() : null;
-	};
-
-	/**
-	 * Convert to CIELuv color
-	 * @returns {CIELuv}
-	 */
-	HunterLab.prototype.toCIELuv = function () {
-		return this.isSet() ? this.toXYZ().toCIELuv() : null;
-	};
-
-	/**
 	 * Convert to XYZ color
 	 * @returns {XYZ}
 	 */
@@ -5039,6 +5338,30 @@
 	 */
 	HunterLab.prototype.toxyY = function () {
 		return this.isSet() ? this.toXYZ().toxyY() : null;
+	};
+
+	/**
+	 * Convert to CIELab color
+	 * @returns {CIELab}
+	 */
+	HunterLab.prototype.toCIELab = function () {
+		return this.isSet() ? this.toXYZ().toCIELab() : null;
+	};
+
+	/**
+	 * Convert to CIELuv color
+	 * @returns {CIELuv}
+	 */
+	HunterLab.prototype.toCIELuv = function () {
+		return this.isSet() ? this.toXYZ().toCIELuv() : null;
+	};
+
+	/**
+	 * Convert to CIELCH color
+	 * @returns {CIELCH}
+	 */
+	HunterLab.prototype.toCIELCH = function () {
+		return this.isSet() ? this.toXYZ().toCIELCH() : null;
 	};
 
 	/**
@@ -5234,6 +5557,14 @@
 	 */
 	CMYK.prototype.toCIELuv = function () {
 		return this.isSet() ? this.toRGB().toCIELuv() : null;
+	};
+
+	/**
+	 * Convert to CIELCH color
+	 * @returns {CIELCH}
+	 */
+	CMYK.prototype.toCIELCH = function () {
+		return this.isSet() ? this.toRGB().toCIELCH() : null;
 	};
 
 	/**
@@ -5445,6 +5776,14 @@
 	};
 
 	/**
+	 * Convert to CIELCH color
+	 * @returns {CIELCH}
+	 */
+	YIQ.prototype.toCIELCH = function () {
+		return this.isSet() ? this.toRGB().toCIELCH() : null;
+	};
+
+	/**
 	 * Convert to HunterLab color
 	 * @returns {HunterLab}
 	 */
@@ -5644,6 +5983,14 @@
 	 */
 	YUV.prototype.toCIELuv = function () {
 		return this.isSet() ? this.toRGB().toCIELuv() : null;
+	};
+
+	/**
+	 * Convert to CIELCH color
+	 * @returns {CIELCH}
+	 */
+	YUV.prototype.toCIELCH = function () {
+		return this.isSet() ? this.toRGB().toCIELCH() : null;
 	};
 
 	/**
@@ -5856,6 +6203,14 @@
 	};
 
 	/**
+	 * Convert to CIELCH color
+	 * @returns {CIELCH}
+	 */
+	YDbDr.prototype.toCIELCH = function () {
+		return this.isSet() ? this.toRGB().toCIELCH() : null;
+	};
+
+	/**
 	 * Convert to HunterLab color
 	 * @returns {HunterLab}
 	 */
@@ -6061,6 +6416,14 @@
 	};
 
 	/**
+	 * Convert to CIELCH color
+	 * @returns {CIELCH}
+	 */
+	YCbCr.prototype.toCIELCH = function () {
+		return this.isSet() ? this.toRGB().toCIELCH() : null;
+	};
+
+	/**
 	 * Convert to HunterLab color
 	 * @returns {HunterLab}
 	 */
@@ -6260,6 +6623,14 @@
 	 */
 	YPbPr.prototype.toCIELuv = function () {
 		return this.isSet() ? this.toRGB().toCIELuv() : null;
+	};
+
+	/**
+	 * Convert to CIELCH color
+	 * @returns {CIELCH}
+	 */
+	YPbPr.prototype.toCIELCH = function () {
+		return this.isSet() ? this.toRGB().toCIELCH() : null;
 	};
 
 	/**
